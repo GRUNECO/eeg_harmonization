@@ -67,6 +67,7 @@ for eeg_file in eegs:
 
         json_dict = {"Description":desc_sovaflow,"RawSources":[eeg_file.replace(bids_root,'')]}
         write_json(json_dict,prepoc_path.replace('.fif','.json'))
+        json_dict["Sources"]=prepoc_path.replace(bids_root,'')
         write_json(json_dict,power_path.replace('.txt','.json'))
 
     except Exception as error:

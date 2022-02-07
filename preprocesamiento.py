@@ -47,9 +47,10 @@ description = layout.get_dataset_description()
 desc_sovaflow = "sovaflow, an automatic resting-state eeg processing pipeline using: 1) Robust Reference (PREP); 2) High Pass 1Hz; 3) Wavelet ICA Denoising; 4) Low Pass 50Hz; 5) Epoch Auto Rejection; 6) Band Power Calculation"
 description['GeneratedBy']=[{'Name':'sovaflow','Description':desc_sovaflow,'CodeURL':'https://github.com/GRUNECO/sovaflow'}]
 write_json(description,os.path.join(derivatives_root,'dataset_description.json'))
-for eeg_file in eegs:
+num_files = len(eegs)
+for i,eeg_file in enumerate(eegs):
     try:
-
+        logger.info(f"File {i+1} of {num_files} ({(i+1)*100/num_files}%) : {eeg_file}")
         power_path = get_derivative_path(eeg_file,'preprocessed','powers','.txt',bids_root,derivatives_root)
         prepoc_path = get_derivative_path(eeg_file,'preprocessed','eeg','.fif',bids_root,derivatives_root)
         os.makedirs(os.path.split(power_path)[0], exist_ok=True)

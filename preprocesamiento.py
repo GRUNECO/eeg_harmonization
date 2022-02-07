@@ -64,8 +64,8 @@ for i,eeg_file in enumerate(eegs):
         stats_path = get_derivative_path(eeg_file,'preprocessed','stats','.txt',bids_root,derivatives_root)
         os.makedirs(os.path.split(power_path)[0], exist_ok=True)
 
-        if os.path.isfile(power_path) and os.path.isfile(prepoc_path):
-            logger.info(f'{power_path} and {prepoc_path} already existed, skipping...')
+        if os.path.isfile(power_path) and os.path.isfile(prepoc_path) and os.path.isfile(stats_path):
+            logger.info(f'{power_path}, {prepoc_path} and {stats_path} already existed, skipping...')
             continue
 
         power_dict,signal,stats=single_flow(eeg_file,correct_montage=channels,drop_channels=None,line_freqs=[60],fast_mode=fast_mode)

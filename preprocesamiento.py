@@ -1,5 +1,6 @@
 from re import I
 from sovaflow.flow import single_flow
+from sovaflow.utils import cfg_logger
 import json
 import os
 import csv
@@ -7,37 +8,10 @@ from bids import BIDSLayout
 import logging
 from datetime import datetime
 
-def cfg_logger(log_path):
-    """Configures the logger of the pipeline.
-    Parameters
-    ----------
-    log_path : string
-        Directory of the log file without filename.
-    Returns
-    -------
-    dalogger : logging.Logger instance
-        The logger object to be used by the pipeline.
-    currentDT : instance of datetime.datetime
-        The current date and time.
-    Examples
-    --------
-    >>> log, date = cfg_logger(log_path)
-    """
-    for handler in logging.root.handlers[:]:
-            logging.root.removeHandler(handler)
-    currentDT = datetime.now()
-    currentDT.strftime("%Y-%m-%d %H:%M:%S")
-    log_name = os.path.join(log_path, 'sovaflow__' + currentDT.strftime("%Y-%m-%d__%H_%M_%S") + '.log')
-    logging.basicConfig(filename= log_name, level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
-    dalogger=logging.getLogger(__name__)
-    return dalogger, currentDT
-
 #Inputs
 input_path = r'Y:\datasets\CodificadoBIDSMini'
 channels = ['FP1', 'FPZ', 'FP2', 'AF3', 'AF4', 'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8', 'FC5', 'FC3', 'FC1', 'FCZ', 'FC2', 'FC4', 'FC6', 'T7', 'C5', 'C3', 'C1', 'CZ', 'C2', 'C4', 'C6', 'T8', 'TP7', 'CP5', 'CP3', 'CP1', 'CPZ', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3', 'P1', 'PZ', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POZ', 'PO4', 'PO6', 'PO8', 'O1', 'OZ', 'O2']
 fast_mode = False
-
-
 
 # Static Params
 pipeline = 'sovaflow'
@@ -53,24 +27,31 @@ log_path = os.path.join(derivatives_root,'code')
 os.makedirs(log_path, exist_ok=True)
 logger,currentdt = cfg_logger(log_path)
 
-def get_derivative_path(eeg_file,output_entity,output_extension,bids_root,derivatives_root):
+def get_derivative_path(eeg_file,output_entity,suffix,output_extension,bids_root,derivatives_root):
     entities = layout.parse_file_entities(eeg_file)
     derivative_path = eeg_file.replace(bids_root,derivatives_root)
     derivative_path = derivative_path.replace(entities['extension'],'')
     derivative_path = derivative_path.split('_')
     desc = 'desc-' + output_entity
-    derivative_path = derivative_path[:-1] + [desc] + [derivative_path[-1]]
+    derivative_path = derivative_path[:-1] + [desc] + [suffix]
     derivative_path = '_'.join(derivative_path) + output_extension 
     return derivative_path
 
+def write_json(data,filepath):
+    with open(filepath, 'w') as fp:
+        json.dump(data, fp,indent=4)
 e = 0
 archivosconerror = []
 
+description = layout.get_dataset_description()
+desc_sovaflow = "sovaflow, an automatic resting-state eeg processing pipeline using: 1) Robust Reference (PREP); 2) High Pass 1Hz; 3) Wavelet ICA Denoising; 4) Low Pass 50Hz; 5) Epoch Auto Rejection; 6) Band Power Calculation"
+description['GeneratedBy']=[{'Name':'sovaflow','Description':desc_sovaflow,'CodeURL':'https://github.com/GRUNECO/sovaflow'}]
+write_json(description,os.path.join(derivatives_root,'dataset_description.json'))
 for eeg_file in eegs:
     try:
 
-        power_path = get_derivative_path(eeg_file,'power','.json',bids_root,derivatives_root)
-        prepoc_path = get_derivative_path(eeg_file,'preprocessed','.fif',bids_root,derivatives_root)
+        power_path = get_derivative_path(eeg_file,'preprocessed','powers','.txt',bids_root,derivatives_root)
+        prepoc_path = get_derivative_path(eeg_file,'preprocessed','eeg','.fif',bids_root,derivatives_root)
         os.makedirs(os.path.split(power_path)[0], exist_ok=True)
 
         if os.path.isfile(power_path) and os.path.isfile(prepoc_path):
@@ -79,9 +60,15 @@ for eeg_file in eegs:
 
         power_dict,signal=single_flow(eeg_file,correct_montage=channels,drop_channels=None,line_freqs=[60],fast_mode=fast_mode)
         
-        with open(power_path, 'w') as fp:
-            json.dump(power_dict, fp)
+        write_json(power_dict,power_path)
         signal.save(prepoc_path ,split_naming='bids', overwrite=True)
+
+        #Saving jsons
+
+        json_dict = {"Description":desc_sovaflow,"RawSources":[eeg_file.replace(bids_root,'')]}
+        write_json(json_dict,prepoc_path.replace('.fif','.json'))
+        write_json(json_dict,power_path.replace('.txt','.json'))
+
     except Exception as error:
         e+=1
         logger.exception(f'Error for {eeg_file}')

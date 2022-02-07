@@ -1,0 +1,1 @@
+pip install --upgrade --no-deps --force-reinstall git+https://gitfront.io/r/yjmantilla/6d58684c0822a9bac57ed5ea04ef0b0c306b75da/sovaflow.git

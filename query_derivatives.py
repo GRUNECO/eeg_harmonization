@@ -1,7 +1,15 @@
 
+
 import json
 from bids import BIDSLayout
 import numpy as np
+import pandas as pd
+
+
+data_path = r'E:\Academico\Universidad\Posgrado\Tesis\repositorio\CodificadoBIDSMini'
+layout = BIDSLayout(data_path,derivatives=True)
+layout.get(scope='derivatives', return_type='file')
+
 data_path = r'Y:\datasets\CodificadoBIDSMini'
 layout = BIDSLayout(data_path,derivatives=True)
 layout.get(scope='derivatives', return_type='file')
@@ -19,6 +27,8 @@ roi_labels = ['F','C','PO','T']
 for i in range(len(eegs_powers)):
     with open(eegs_powers[i], 'r') as f:
         data = json.load(f)
+
+
     print(None)
     channels=np.array(data['channels'])
     bandas = data['bands']
@@ -34,10 +44,23 @@ for i in range(len(eegs_powers)):
         new_rois.append(new_roi)
 
     datos_1_sujeto = {}
+    name_1_sujeto = {}
+    tasks_1_sujeto = {}
     for b,band in enumerate(bandas):
         for r,roi in enumerate(new_rois):
             potencia_promedio = np.average(np.array(data['channel_power'])[b,roi])
             datos_1_sujeto[f'ROI_{roi_labels[r]}_a{band.title()}']=potencia_promedio
-    print(None)
+            name_1_sujeto[f'subject']=layout.get_subjects()
+            tasks_1_sujeto[f'group']=layout.get_tasks()
 
-    pd.DataFrame([datos_1_sujeto,datos_1_sujeto])
+#col = ['subject','group','visit','condition','ROI_F_aDelta','ROI_C_aDelta','ROI_PO_aDelta','ROI_T_aDelta','ROI_F_aTheta',
+#'ROI_C_aTheta','ROI_PO_aTheta','ROI_T_aTheta','ROI_F_aAlpha1','ROI_C_aAlpha1','ROI_PO_aAlpha1','ROI_T_aAlpha1','ROI_F_aAlpha2',
+#'ROI_C_aAlpha2','ROI_PO_aAlpha2','ROI_T_aAlpha2','ROI_F_aBeta1','ROI_C_aBeta1','ROI_PO_aBeta1','ROI_T_aBeta1','ROI_F_aBeta2',
+#'ROI_C_aBeta2','ROI_PO_aBeta2','ROI_T_aBeta2','ROI_F_aBeta3','ROI_C_aBeta3','ROI_PO_aBeta3','ROI_T_aBeta3','ROI_F_aGamma','ROI_C_aGamma',
+#'ROI_PO_aGamma','ROI_T_aGamma','ROI_F_rDelta','ROI_C_rDelta','ROI_PO_rDelta','ROI_T_rDelta','ROI_F_rTheta','ROI_C_rTheta','ROI_PO_rTheta',
+#'ROI_T_rTheta','ROI_F_rAlpha1','ROI_C_rAlpha1','ROI_PO_rAlpha1','ROI_T_rAlpha1','ROI_F_rAlpha2','ROI_C_rAlpha2','ROI_PO_rAlpha2','ROI_T_rAlpha2',
+#'ROI_F_rBeta1','ROI_C_rBeta1','ROI_PO_rBeta1','ROI_T_rBeta1','ROI_F_rBeta2','ROI_C_rBeta2','ROI_PO_rBeta2','ROI_T_rBeta2','ROI_F_rBeta3','ROI_C_rBeta3',
+#'ROI_PO_rBeta3','ROI_T_rBeta3','ROI_F_rGamma','ROI_C_rGamma','ROI_PO_rGamma','ROI_T_rGamma']
+print(pd.DataFrame([datos_1_sujeto]))
+print(pd.DataFrame([name_1_sujeto]))
+print(pd.DataFrame([tasks_1_sujeto]))

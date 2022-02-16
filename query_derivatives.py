@@ -2,10 +2,12 @@
 import json
 from bids import BIDSLayout
 import numpy as np
+import re
 data_path = r'Y:\datasets\CodificadoBIDSMini'
 layout = BIDSLayout(data_path,derivatives=True)
 layout.get(scope='derivatives', return_type='file')
 import pandas as pd
+from bids.layout import parse_file_entities
 eegs_powers = layout.get(extension='.txt', task='CE',suffix='powers', return_type='filename')
 eegs_powers += layout.get(extension='.txt', task='OE',suffix='powers', return_type='filename')
 
@@ -16,10 +18,12 @@ PO = ['P7', 'P5', 'P3', 'P1', 'PZ', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3',
 rois = [F,C,PO,T]
 roi_labels = ['F','C','PO','T']
 
+list_subjects = []
 for i in range(len(eegs_powers)):
     with open(eegs_powers[i], 'r') as f:
         data = json.load(f)
     print(None)
+
     channels=np.array(data['channels'])
     bandas = data['bands']
     new_rois = []
@@ -29,15 +33,22 @@ for i in range(len(eegs_powers)):
         channels = set(data['channels']).intersection(roi)
         new_roi = []
         for channel in channels:
-            i=data['channels'].index(channel)
-            new_roi.append(i)
+            index=data['channels'].index(channel)
+            new_roi.append(index)
         new_rois.append(new_roi)
 
     datos_1_sujeto = {}
+    info_bids_sujeto = parse_file_entities(eegs_powers[i])
+    datos_1_sujeto['subject'] = info_bids_sujeto['subject']
+    regex = re.search('(.+).{3}',info_bids_sujeto['subject'])
+    datos_1_sujeto['group'] = regex.string[regex.regs[-1][0]:regex.regs[-1][1]]
+    datos_1_sujeto['visit'] = info_bids_sujeto['session']
+    datos_1_sujeto['condition'] = info_bids_sujeto['task']
     for b,band in enumerate(bandas):
         for r,roi in enumerate(new_rois):
             potencia_promedio = np.average(np.array(data['channel_power'])[b,roi])
-            datos_1_sujeto[f'ROI_{roi_labels[r]}_a{band.title()}']=potencia_promedio
-    print(None)
+            datos_1_sujeto[f'ROI_{roi_labels[r]}_r{band.title()}']=potencia_promedio
+    list_subjects.append(datos_1_sujeto)
 
-    pd.DataFrame([datos_1_sujeto,datos_1_sujeto])
+
+df = pd.DataFrame(list_subjects)

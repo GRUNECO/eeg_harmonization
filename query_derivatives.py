@@ -1,4 +1,5 @@
 
+
 import json
 from bids import BIDSLayout
 import numpy as np
@@ -22,6 +23,8 @@ list_subjects = []
 for i in range(len(eegs_powers)):
     with open(eegs_powers[i], 'r') as f:
         data = json.load(f)
+
+
     print(None)
 
     channels=np.array(data['channels'])

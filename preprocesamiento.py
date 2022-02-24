@@ -89,7 +89,7 @@ for i,eeg_file in enumerate(eegs):
             write_json(power_dict,power_path)
             write_json(json_dict,power_path.replace('.txt','.json'))
 
-        if True:#not os.path.isfile(icpowers_path) and spatial_filter is not None:
+        if not os.path.isfile(icpowers_path) and spatial_filter is not None:
             ic_powers_dict = get_ics_power_derivatives(signal,spatial_filter)
             write_json(ic_powers_dict,icpowers_path)
             write_json(json_dict,icpowers_path.replace('.txt','.json'))

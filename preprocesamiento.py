@@ -1,6 +1,7 @@
 from re import I
-from sovaflow.flow import single_flow
-from sovaflow.utils import cfg_logger
+from sovaflow.flow import preflow,get_ics_power_derivatives,get_power_derivates
+from sovaflow.utils import cfg_logger,get_spatial_filter
+import mne
 import json
 import os
 import csv
@@ -12,6 +13,7 @@ import numpy as np
 input_path = r'Y:\datasets\CodificadoBIDSMini'
 channels = ['FP1', 'FPZ', 'FP2', 'AF3', 'AF4', 'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8', 'FC5', 'FC3', 'FC1', 'FCZ', 'FC2', 'FC4', 'FC6', 'T7', 'C5', 'C3', 'C1', 'CZ', 'C2', 'C4', 'C6', 'T8', 'TP7', 'CP5', 'CP3', 'CP1', 'CPZ', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3', 'P1', 'PZ', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POZ', 'PO4', 'PO6', 'PO8', 'O1', 'OZ', 'O2']
 fast_mode = False
+spatial_filter = get_spatial_filter('62x19')
 
 # Static Params
 pipeline = 'sovaflow'
@@ -62,26 +64,39 @@ for i,eeg_file in enumerate(eegs):
         power_path = get_derivative_path(eeg_file,'preprocessed','powers','.txt',bids_root,derivatives_root)
         prepoc_path = get_derivative_path(eeg_file,'preprocessed','eeg','.fif',bids_root,derivatives_root)
         stats_path = get_derivative_path(eeg_file,'preprocessed','stats','.txt',bids_root,derivatives_root)
+        icpowers_path = get_derivative_path(eeg_file,'preprocessed','icpowers','.txt',bids_root,derivatives_root)
+
         os.makedirs(os.path.split(power_path)[0], exist_ok=True)
 
-        if os.path.isfile(power_path) and os.path.isfile(prepoc_path) and os.path.isfile(stats_path):
-            logger.info(f'{power_path}, {prepoc_path} and {stats_path} already existed, skipping...')
-            continue
-
-        power_dict,signal,stats=single_flow(eeg_file,correct_montage=channels,drop_channels=None,line_freqs=[60],fast_mode=fast_mode)
-        
-        write_json(power_dict,power_path)
-        signal.save(prepoc_path ,split_naming='bids', overwrite=True)
-        write_json(stats,stats_path)
-
-        #Saving jsons
-
         json_dict = {"Description":desc_sovaflow,"RawSources":[eeg_file.replace(bids_root,'')]}
-        write_json(json_dict,prepoc_path.replace('.fif','.json'))
-
         json_dict["Sources"]=prepoc_path.replace(bids_root,'')
-        write_json(json_dict,power_path.replace('.txt','.json'))
-        write_json(json_dict,stats_path.replace('.txt','.json'))
+
+        if os.path.isfile(prepoc_path) and os.path.isfile(stats_path):
+            logger.info(f'{prepoc_path} and {stats_path} already existed, skipping preprocessing...')
+        else:
+            signal,stats=preflow(eeg_file,correct_montage=channels,drop_channels=None,line_freqs=[60],fast_mode=fast_mode)
+            write_json(stats,stats_path)
+            signal.save(prepoc_path ,split_naming='bids', overwrite=True)
+            write_json(json_dict,prepoc_path.replace('.fif','.json'))
+            write_json(json_dict,stats_path.replace('.txt','.json'))
+
+        signal = mne.read_epochs(prepoc_path)
+
+        if os.path.isfile(power_path):
+            logger.info(f'{power_path}) already existed, skipping...')
+        else:
+            power_dict = get_power_derivates(signal)
+            write_json(power_dict,power_path)
+            write_json(json_dict,power_path.replace('.txt','.json'))
+
+        if not os.path.isfile(icpowers_path) and spatial_filter is not None:
+            ic_powers_dict = get_ics_power_derivatives(signal,spatial_filter)
+            write_json(ic_powers_dict,icpowers_path)
+            write_json(json_dict,icpowers_path.replace('.txt','.json'))
+
+        else:
+            logger.info(f'{icpowers_path}) already existed or no spatial filter given, skipping...')
+
 
     except Exception as error:
         e+=1

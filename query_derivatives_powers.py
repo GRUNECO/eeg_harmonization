@@ -4,7 +4,7 @@ import json
 from bids import BIDSLayout
 import numpy as np
 import re
-data_path = r'Y:\datasets\CodificadoBIDSMini'
+data_path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\SRM'
 layout = BIDSLayout(data_path,derivatives=True)
 layout.get(scope='derivatives', return_type='file')
 import pandas as pd
@@ -21,12 +21,9 @@ roi_labels = ['F','C','PO','T']
 
 list_subjects = []
 for i in range(len(eegs_powers)):
+    print(eegs_powers[i])
     with open(eegs_powers[i], 'r') as f:
         data = json.load(f)
-
-
-    print(None)
-
     channels=np.array(data['channels'])
     bandas = data['bands']
     new_rois = []
@@ -55,3 +52,4 @@ for i in range(len(eegs_powers)):
 
 
 df = pd.DataFrame(list_subjects)
+df.to_excel(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\longitudinal_data_rois_SRM_avengers.xlsx')

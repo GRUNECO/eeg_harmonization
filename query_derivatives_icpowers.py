@@ -4,7 +4,7 @@ import json
 from bids import BIDSLayout
 import numpy as np
 import re
-data_path = r'Y:\datasets\CodificadoBIDSMini'
+data_path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS'
 layout = BIDSLayout(data_path,derivatives=True)
 layout.get(scope='derivatives', return_type='file')
 import pandas as pd
@@ -36,3 +36,4 @@ for i in range(len(eegs_powers)):
 
 
 df = pd.DataFrame(list_subjects)
+df.to_excel(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\longitudinal_data_icpowers_avengers.xlsx')

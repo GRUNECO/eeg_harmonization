@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-df = pd.read_excel(r"C:\Users\user\Desktop\longitudinal_data_icpowers_avengers.xlsx",sheet_name="Sheet1")
+df = pd.read_excel(r"E:\Academico\Universidad\Posgrado\Tesis\Datos\longitudinal_data_icpowers_avengers.xlsx",sheet_name="Sheet1")
 
 ALL_COLUMNS = list(df.columns)
 DERIVATIVES = set([x  for x in ALL_COLUMNS if '_r' in x])
@@ -23,7 +23,7 @@ print(BANDS)
 task = 'CE'
 component = 15
 visit = 'V1'
-band = 'Alpha-2'
+band = 'Beta'
 dft = df[df['visit']==visit]
 dft = dft[dft['condition']==task]
 dft.boxplot(column=['C'+str(component)+'_r'+band] ,by='group')
@@ -31,7 +31,6 @@ plt.show()
 
 # Longitudinal Analysis
 component = 15
-band = 'Alpha-2'
 group = 'DCL'
 
 dfl = df[df['group']==group]

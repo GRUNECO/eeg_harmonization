@@ -10,10 +10,12 @@ import logging
 from datetime import datetime
 import numpy as np
 #Inputs
-input_path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS'
+#input_path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS'
+#input_path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\SRM'
+input_path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\CHBMP\ds_bids_chbmp'
 channels = ['FP1', 'FPZ', 'FP2', 'AF3', 'AF4', 'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8', 'FC5', 'FC3', 'FC1', 'FCZ', 'FC2', 'FC4', 'FC6', 'T7', 'C5', 'C3', 'C1', 'CZ', 'C2', 'C4', 'C6', 'T8', 'TP7', 'CP5', 'CP3', 'CP1', 'CPZ', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3', 'P1', 'PZ', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POZ', 'PO4', 'PO6', 'PO8', 'O1', 'OZ', 'O2']
 fast_mode = False
-spatial_filter = get_spatial_filter('62x19')
+spatial_filter = get_spatial_filter('58x25')
 
 # Static Params
 pipeline = 'sovaflow'
@@ -21,8 +23,8 @@ layout = BIDSLayout(input_path)
 bids_root = layout.root
 output_path = os.path.join(bids_root,'derivatives',pipeline)
 
-eegs = layout.get(extension='.vhdr', task='CE',suffix='eeg', return_type='filename')
-eegs += layout.get(extension='.vhdr', task='OE',suffix='eeg', return_type='filename')
+eegs = layout.get(extension='.edf', task='protmap',suffix='eeg', return_type='filename')
+#eegs += layout.get(extension='.vhdr', task='OE',suffix='eeg', return_type='filename')
 
 derivatives_root = os.path.join(layout.root,'derivatives',pipeline)
 log_path = os.path.join(derivatives_root,'code')

@@ -1,0 +1,19 @@
+entities:                                       # Configuring the file name structure of bids
+  task : resting                                # Setting the task of all files to a fixed string
+
+dataset_description:                            # Configuring the dataset_description.json file
+  Name : Lemon                                  # Name of the dataset, set up as a fixed string
+  Authors:                                      # Here I put the personnel involved in the acquisition of the dataset
+    - Anahit Babayan                            # See http://fcon_1000.projects.nitrc.org/indi/retro/MPI_LEMON.html
+sidecar:                                        # Configuring the sidecar eeg file
+  PowerLineFrequency : 50                       # Noted from the visual inspection of the eeg spectrum
+  EEGReference : FCz                            # As mentioned in https://www.nature.com/articles/sdata2018308
+
+channels:                                       # Configuring the channels tsv
+  type :                                        # This property allow us to overwrite channel types inferred by MNE
+    VEOG : VEOG                                 # Here the syntax is <channel name> : <channel type according to bids notation>
+    F3 : EEG                                    # Here we set the type of F3, it was already correctly inferred by mne but it is included to illustrate retyping of various channels.
+non-bids:                                       # Additional configuration not belonging specifically to any of the previous objects
+  eeg_extension : .vhdr                         # Sets which extension to read as an eeg file
+  path_analysis:                                # Some bids properties can be inferred from the path of the source files
+    pattern : /RSEEG/sub-%entities.subject%.vhdr # For example here we extract from the path the "subject" child of the "entities" object

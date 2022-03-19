@@ -1,0 +1,7 @@
+Download and install https://aws.amazon.com/cli/
+
+Open powershell
+
+aws s3 sync --no-sign-request s3://openneuro.org/ds003775 Y:/ds003775-download/
+
+Donde Y:/ds003775-download/ es el path donde se va a descargar

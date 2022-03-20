@@ -6,4 +6,4 @@ aws s3 sync --no-sign-request s3://openneuro.org/ds003775 Y:/ds003775-download/
 
 Donde Y:/ds003775-download/ es el path donde se va a descargar
 
-aws s3 sync --no-sign-request s3://openneuro.org/ds003768 --exclude "*" --include ".*_eeg*" --include "*dataset_description.json" --include "README" --include "CHANGES" Y:/ds003775-download/ 
+aws s3 sync --no-sign-request s3://openneuro.org/ds003768 Y:/ds003768-download/ --exclude "*" --include "*_eeg.*" --include "*dataset_description.json" --include "README" --include "CHANGES"

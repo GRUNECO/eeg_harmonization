@@ -79,7 +79,9 @@ for i,eeg_file in enumerate(eegs):
         if os.path.isfile(prepoc_path) and os.path.isfile(stats_path):
             logger.info(f'{prepoc_path} and {stats_path} already existed, skipping preprocessing...')
         else:
-            signal,prep_signal,stats=preflow(eeg_file,correct_montage=channels,drop_channels=None,line_freqs=[60],fast_mode=fast_mode)
+            raw = mne.io.read_raw(eeg_file,preload=True)
+            signal,prep_signal,stats=preflow(raw,correct_montage=channels,drop_channels=None,line_freqs=[60],fast_mode=fast_mode)
+            del raw
             write_json(stats,stats_path)
             signal.save(prepoc_path ,split_naming='bids', overwrite=True)
             prep_signal.save(prep_path ,split_naming='bids', overwrite=True)

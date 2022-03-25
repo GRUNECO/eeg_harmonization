@@ -25,7 +25,8 @@ bids_root = layout.root
 output_path = os.path.join(bids_root,'derivatives',pipeline)
 
 #eegs = layout.get(extension='.edf', task='protmap',suffix='eeg', return_type='filename')
-eegs = layout.get(extension='.vhdr', task='resting',suffix='eeg', return_type='filename')
+eegs = layout.get(extension='.edf', task='resteyesc',suffix='eeg', return_type='filename')
+#eegs = layout.get(extension='.vhdr', task='resting',suffix='eeg', return_type='filename')
 #eegs += layout.get(extension='.vhdr', task='',suffix='eeg', return_type='filename')
 
 derivatives_root = os.path.join(layout.root,'derivatives',pipeline)

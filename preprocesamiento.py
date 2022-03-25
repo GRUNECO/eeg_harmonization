@@ -87,6 +87,7 @@ for i,eeg_file in enumerate(eegs):
             prep_signal.save(prep_path ,split_naming='bids', overwrite=True)
             del prep_signal
             write_json(json_dict,prepoc_path.replace('.fif','.json'))
+            write_json(json_dict,prep_path.replace('.fif','.json'))
             write_json(json_dict,stats_path.replace('.txt','.json'))
 
         signal = mne.read_epochs(prepoc_path)

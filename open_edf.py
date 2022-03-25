@@ -7,5 +7,5 @@ filename = r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\SRM\sub-
 raw = read_raw(filename)
 #raw.rename_channels({name: name.replace(' -REF', '').upper() for name in raw.ch_names})
 print(raw.ch_names)
-#raw.plot_psd(fmax=200)
+#raw.plot_psd(fmax=99)
 print(raw.info)

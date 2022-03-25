@@ -80,7 +80,7 @@ for i,eeg_file in enumerate(eegs):
             logger.info(f'{prepoc_path} and {stats_path} already existed, skipping preprocessing...')
         else:
             raw = mne.io.read_raw(eeg_file,preload=True)
-            signal,prep_signal,stats=preflow(raw,correct_montage=channels,line_freqs=[60],fast_mode=fast_mode)
+            signal,prep_signal,stats=preflow(raw,correct_montage=channels,fast_mode=fast_mode, **THE_DATASET.get('layout',{}))
             del raw
             write_json(stats,stats_path)
             signal.save(prepoc_path ,split_naming='bids', overwrite=True)

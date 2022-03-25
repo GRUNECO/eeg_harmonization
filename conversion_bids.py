@@ -6,10 +6,16 @@ from sovabids.convert import convert_them # Do the conversion
 from sovabids.datasets import lemon_prepare # Download the dataset
 from sovabids.settings import REPO_PATH
 
-source_path = os.path.abspath(r'D:\Codificado_EEG_V0_V1_V2_V3') # For the input data we will convert
-bids_path= os.path.abspath(r'D:\CodificadoBIDS') # The output directory that will have the converted data
-rules_path = os.path.abspath(r'C:\Users\veroh\OneDrive\Escritorio\Universidad\Flujo preprocesamiento\SCRIPTS_PREPROCESAMIENTO\reglasBiomarcadores.yml') # The rules file that setups the rule for conversion
+#source_path = os.path.abspath(r'D:\Codificado_EEG_V0_V1_V2_V3') # For the input data we will convert
+#bids_path= os.path.abspath(r'D:\CodificadoBIDS') # The output directory that will have the converted data
+#rules_path = os.path.abspath(r'C:\Users\veroh\OneDrive\Escritorio\Universidad\Flujo preprocesamiento\SCRIPTS_PREPROCESAMIENTO\reglasBiomarcadores.yml') # The rules file that setups the rule for conversion
+#mapping_path = os.path.abspath(os.path.join(bids_path,'code','sovabids','mappings.yml')) # The mapping file that will hold the results of applying the rules to each file
+
+source_path = os.path.abspath(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\LEMON') # For the input data we will convert
+bids_path= os.path.abspath(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\LEMON_BIDS') # The output directory that will have the converted data
+rules_path = os.path.abspath(r"E:\Academico\Universidad\Posgrado\Tesis\repositorio\reglasLEMON.yml") # The rules file that setups the rule for conversion
 mapping_path = os.path.abspath(os.path.join(bids_path,'code','sovabids','mappings.yml')) # The mapping file that will hold the results of applying the rules to each file
+
 
 print('source_path:',source_path.replace(REPO_PATH,''))
 print('bids_path:', bids_path.replace(REPO_PATH,''))

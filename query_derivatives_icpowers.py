@@ -1,16 +1,15 @@
-
-
 import json
 from bids import BIDSLayout
 import numpy as np
 import re
-data_path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS'
+data_path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\CHBMP\ds_bids_chbmp'
 layout = BIDSLayout(data_path,derivatives=True)
 layout.get(scope='derivatives', return_type='file')
 import pandas as pd
 from bids.layout import parse_file_entities
-eegs_powers = layout.get(extension='.txt', task='CE',suffix='icpowers', return_type='filename')
-eegs_powers += layout.get(extension='.txt', task='OE',suffix='icpowers', return_type='filename')
+#eegs_powers = layout.get(extension='.txt', task='CE',suffix='icpowers', return_type='filename')
+#eegs_powers += layout.get(extension='.txt', task='OE',suffix='icpowers', return_type='filename')
+eegs_powers = layout.get(extension='.txt', task='protmap',suffix='icpowers', return_type='filename')
 
 list_subjects = []
 for i in range(len(eegs_powers)):
@@ -27,7 +26,7 @@ for i in range(len(eegs_powers)):
     datos_1_sujeto['subject'] = info_bids_sujeto['subject']
     regex = re.search('(.+).{3}',info_bids_sujeto['subject'])
     datos_1_sujeto['group'] = regex.string[regex.regs[-1][0]:regex.regs[-1][1]]
-    datos_1_sujeto['visit'] = info_bids_sujeto['session']
+    #datos_1_sujeto['visit'] = info_bids_sujeto['session']
     datos_1_sujeto['condition'] = info_bids_sujeto['task']
     for b,band in enumerate(bandas):
         for c in range(ncomps):
@@ -36,4 +35,4 @@ for i in range(len(eegs_powers)):
 
 
 df = pd.DataFrame(list_subjects)
-df.to_excel(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\longitudinal_data_icpowers_avengers.xlsx')
+df.to_excel(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\longitudinal_data_icpowers_chbmp.xlsx')

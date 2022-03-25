@@ -111,6 +111,7 @@ for i,eeg_file in enumerate(eegs):
         e+=1
         logger.exception(f'Error for {eeg_file}')
         archivosconerror.append(eeg_file)
+        print(error)
         pass
 
 print('end')

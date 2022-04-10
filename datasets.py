@@ -18,7 +18,7 @@ SRM = {
 
 CHBMP = {
     'name':'CHBMP',
-    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\CHBMP\ds_bids_chbmp',
+    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\CHBMP',
     'layout':{'extension':'.edf', 'task':'protmap','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':None,

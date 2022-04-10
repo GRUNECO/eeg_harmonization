@@ -78,7 +78,15 @@ for i,eeg_file in enumerate(eegs):
             logger.info(f'{prepoc_path} and {stats_path} already existed, skipping preprocessing...')
         else:
             raw = mne.io.read_raw(eeg_file,preload=True)
-            signal,prep_signal,stats=preflow(raw,correct_montage=channels,fast_mode=fast_mode, **THE_DATASET.get('args',{}))
+            if THE_DATASET.get('args',{}).get('events_to_keep', None) is not None:
+                events_file = os.path.splitext(eeg_file)[0].replace('_eeg','_events.tsv')
+                events_raw=pd.read_csv(events_file,sep='\t')
+                samples = events_raw['sample'].tolist()
+                values = events_raw['value'].tolist()
+                events = list(zip(values,samples))
+            else:
+                events = None
+            signal,prep_signal,stats=preflow(raw,correct_montage=channels,fast_mode=fast_mode, events=events,**THE_DATASET.get('args',{}))
             del raw
             write_json(stats,stats_path)
             signal.save(prepoc_path ,split_naming='bids', overwrite=True)

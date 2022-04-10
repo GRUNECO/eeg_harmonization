@@ -4,12 +4,10 @@ from sovaflow.utils import cfg_logger,get_spatial_filter
 import mne
 import json
 import os
-import csv
 from bids import BIDSLayout
-import logging
 from datetime import datetime
 import numpy as np
-from datasets import SRM as THE_DATASET
+from datasets import CHBMP as THE_DATASET
 
 # Dataset dependent inputs
 input_path = THE_DATASET.get('input_path',None)

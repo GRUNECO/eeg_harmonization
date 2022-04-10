@@ -4,13 +4,20 @@ import json
 from bids import BIDSLayout
 import numpy as np
 import re
-data_path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\SRM'
-layout = BIDSLayout(data_path,derivatives=True)
-layout.get(scope='derivatives', return_type='file')
 import pandas as pd
 from bids.layout import parse_file_entities
-eegs_powers = layout.get(extension='.txt', task='CE',suffix='powers', return_type='filename')
-eegs_powers += layout.get(extension='.txt', task='OE',suffix='powers', return_type='filename')
+from datasets import SRM as THE_DATASET
+
+
+input_path = THE_DATASET.get('input_path',None)
+task = THE_DATASET.get('layout',None).get('task',None)
+group_regex = THE_DATASET.get('group_regex',None)
+name = THE_DATASET.get('name',None)
+
+data_path = input_path
+layout = BIDSLayout(data_path,derivatives=True)
+layout.get(scope='derivatives', return_type='file')
+eegs_powers = layout.get(extension='.txt', task=task,suffix='powers', return_type='filename')
 
 F = ['FP1', 'FPZ', 'FP2', 'AF3', 'AF4', 'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8'] 
 T = ['FT7', 'FC5', 'FC6', 'FT8', 'T7', 'C5', 'C6', 'T8', 'TP7', 'CP5', 'CP6', 'TP8']
@@ -41,7 +48,9 @@ for i in range(len(eegs_powers)):
     info_bids_sujeto = parse_file_entities(eegs_powers[i])
     datos_1_sujeto['subject'] = info_bids_sujeto['subject']
     regex = re.search('(.+).{3}',info_bids_sujeto['subject'])
-    datos_1_sujeto['group'] = regex.string[regex.regs[-1][0]:regex.regs[-1][1]]
+    if group_regex:
+        regex = re.search('(.+).{3}',info_bids_sujeto['subject'])
+        datos_1_sujeto['group'] = regex.string[regex.regs[-1][0]:regex.regs[-1][1]]
     datos_1_sujeto['visit'] = info_bids_sujeto['session']
     datos_1_sujeto['condition'] = info_bids_sujeto['task']
     for b,band in enumerate(bandas):
@@ -52,4 +61,4 @@ for i in range(len(eegs_powers)):
 
 
 df = pd.DataFrame(list_subjects)
-df.to_excel(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\longitudinal_data_rois_SRM_avengers.xlsx')
+df.to_excel(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\longitudinal_data_rois_'+name+'.xlsx')

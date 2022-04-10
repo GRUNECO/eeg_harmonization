@@ -2,14 +2,23 @@ import json
 from bids import BIDSLayout
 import numpy as np
 import re
-data_path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\CHBMP\ds_bids_chbmp'
-layout = BIDSLayout(data_path,derivatives=True)
-layout.get(scope='derivatives', return_type='file')
 import pandas as pd
 from bids.layout import parse_file_entities
-#eegs_powers = layout.get(extension='.txt', task='CE',suffix='icpowers', return_type='filename')
-#eegs_powers += layout.get(extension='.txt', task='OE',suffix='icpowers', return_type='filename')
-eegs_powers = layout.get(extension='.txt', task='protmap',suffix='icpowers', return_type='filename')
+from datasets import SRM as THE_DATASET
+
+
+input_path = THE_DATASET.get('input_path',None)
+task = THE_DATASET.get('layout',None).get('task',None)
+group_regex = THE_DATASET.get('group_regex',None)
+name = THE_DATASET.get('name',None)
+
+data_path = input_path
+layout = BIDSLayout(data_path,derivatives=True)
+layout.get(scope='derivatives', return_type='file')
+
+
+
+eegs_powers = layout.get(extension='.txt',task=task,suffix='icpowers', return_type='filename')
 
 list_subjects = []
 for i in range(len(eegs_powers)):
@@ -24,9 +33,13 @@ for i in range(len(eegs_powers)):
     datos_1_sujeto = {}
     info_bids_sujeto = parse_file_entities(eegs_powers[i])
     datos_1_sujeto['subject'] = info_bids_sujeto['subject']
-    regex = re.search('(.+).{3}',info_bids_sujeto['subject'])
-    datos_1_sujeto['group'] = regex.string[regex.regs[-1][0]:regex.regs[-1][1]]
-    #datos_1_sujeto['visit'] = info_bids_sujeto['session']
+    if group_regex:
+        regex = re.search('(.+).{3}',info_bids_sujeto['subject'])
+        datos_1_sujeto['group'] = regex.string[regex.regs[-1][0]:regex.regs[-1][1]]
+    try:
+        datos_1_sujeto['visit'] = info_bids_sujeto['session']
+    except:
+        pass
     datos_1_sujeto['condition'] = info_bids_sujeto['task']
     for b,band in enumerate(bandas):
         for c in range(ncomps):
@@ -35,4 +48,4 @@ for i in range(len(eegs_powers)):
 
 
 df = pd.DataFrame(list_subjects)
-df.to_excel(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\longitudinal_data_icpowers_chbmp.xlsx')
+df.to_excel(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\longitudinal_data_icpowers_'+name+'.xlsx')

@@ -53,7 +53,10 @@ for i in range(len(eegs_powers)):
     if group_regex:
         regex = re.search('(.+).{3}',info_bids_sujeto['subject'])
         datos_1_sujeto['group'] = regex.string[regex.regs[-1][0]:regex.regs[-1][1]]
-    datos_1_sujeto['visit'] = info_bids_sujeto['session']
+    try:
+        datos_1_sujeto['visit'] = info_bids_sujeto['session']
+    except:
+        pass
     datos_1_sujeto['condition'] = info_bids_sujeto['task']
     for b,band in enumerate(bandas):
         for r,roi in enumerate(new_rois):

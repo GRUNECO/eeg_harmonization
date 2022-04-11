@@ -19,8 +19,8 @@ layout.get(scope='derivatives', return_type='file')
 
 
 
-eegs_powers = layout.get(extension='.txt',task=task,desc ='component'+f'[{runlabel}]',suffix='powers', return_type='filename')
-
+eegs_powers = layout.get(extension='.txt',task=task,suffix='powers', return_type='filename')
+eeg_powers = [x for x in powers if f'desc-component[{runlabel}]' in x]
 list_subjects = []
 for i in range(len(eegs_powers)):
     with open(eegs_powers[i], 'r') as f:

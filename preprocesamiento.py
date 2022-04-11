@@ -1,5 +1,5 @@
 from re import I
-from sovaflow.flow import preflow,get_ics_power_derivatives,get_power_derivates
+from sovaflow.flow import preflow,get_ics_power_derivatives,get_power_derivates,crop_raw_data,run_reject
 from sovaflow.utils import cfg_logger,get_spatial_filter
 import mne
 import json
@@ -72,21 +72,13 @@ for i,eeg_file in enumerate(eegs):
 
         os.makedirs(os.path.split(power_path)[0], exist_ok=True)
 
-        json_dict = {"Description":desc_sovaflow,"RawSources":[eeg_file.replace(bids_root,'')]}
+        json_dict = {"Description":desc_sovaflow,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
         json_dict["Sources"]=prepoc_path.replace(bids_root,'')
 
         if os.path.isfile(prepoc_path) and os.path.isfile(stats_path):
             logger.info(f'{prepoc_path} and {stats_path} already existed, skipping preprocessing...')
         else:
             raw = mne.io.read_raw(eeg_file,preload=True)
-            if THE_DATASET.get('args',{}).get('events_to_keep', None) is not None:
-                events_file = os.path.splitext(eeg_file)[0].replace('_eeg','_events.tsv')
-                events_raw=pd.read_csv(events_file,sep='\t')
-                samples = events_raw['sample'].tolist()
-                values = events_raw['value'].tolist()
-                events = list(zip(values,samples))
-            else:
-                events = None
             signal,prep_signal,stats=preflow(raw,correct_montage=channels,fast_mode=fast_mode, events=events,**THE_DATASET.get('args',{}))
             del raw
             write_json(stats,stats_path)
@@ -96,8 +88,22 @@ for i,eeg_file in enumerate(eegs):
             write_json(json_dict,prepoc_path.replace('.fif','.json'))
             write_json(json_dict,prep_path.replace('.fif','.json'))
             write_json(json_dict,stats_path.replace('.txt','.json'))
+      
+        if THE_DATASET.get('args',{}).get('events_to_keep', None) is not None:
+            events_file = os.path.splitext(eeg_file)[0].replace('_eeg','_events.tsv')
+            events_raw=pd.read_csv(events_file,sep='\t')
+            samples = events_raw['sample'].tolist()
+            values = events_raw['value'].tolist()
+            events = list(zip(values,samples))
+            events_to_keep = THE_DATASET.get('args',{}).get('events_to_keep', None)
+        else:
+            events = None
+            events_to_keep = None
 
-        signal = mne.read_epochs(prepoc_path)
+        signal = mne.io.read_raw(prepoc_path,preload=True)
+        signal = crop_raw_data(signal,events, events_to_keep)
+        signal = run_reject(signal)
+
 
         if os.path.isfile(power_path):
             logger.info(f'{power_path}) already existed, skipping...')

@@ -84,7 +84,7 @@ for i,eeg_file in enumerate(eegs):
             logger.info(f'{prep_path} and {wica_path} already existed, skipping...')
         else:
             raw = mne.io.read_raw(eeg_file,preload=True)
-            signal,prep_signal,stats=preflow(raw,correct_montage=channels,fast_mode=fast_mode, events=events,**THE_DATASET.get('args',{}))
+            signal,prep_signal,stats=preflow(raw,correct_montage=channels,fast_mode=fast_mode,**THE_DATASET.get('args',{}))
             
             del raw
             

@@ -72,7 +72,7 @@ for i,eeg_file in enumerate(eegs):
         stats_path = get_derivative_path(eeg_file,'label','stats','.txt',bids_root,derivatives_root)
         
         power_path = get_derivative_path(eeg_file,'channel'+pipelabel,'powers','.txt',bids_root,derivatives_root)
-        icpowers_path = get_derivative_path(eeg_file,'components'+pipelabel,'powers','.txt',bids_root,derivatives_root)
+        icpowers_path = get_derivative_path(eeg_file,'component'+pipelabel,'powers','.txt',bids_root,derivatives_root)
         reject_path = get_derivative_path(eeg_file,'reject'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
 
         os.makedirs(os.path.split(power_path)[0], exist_ok=True)

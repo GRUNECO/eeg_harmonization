@@ -11,6 +11,7 @@ input_path = THE_DATASET.get('input_path',None)
 task = THE_DATASET.get('layout',None).get('task',None)
 group_regex = THE_DATASET.get('group_regex',None)
 name = THE_DATASET.get('name',None)
+runlabel = THE_DATASET.get('run-label','')
 
 data_path = input_path
 layout = BIDSLayout(data_path,derivatives=True)
@@ -18,8 +19,8 @@ layout.get(scope='derivatives', return_type='file')
 
 
 
-eegs_powers = layout.get(extension='.txt',task=task,suffix='icpowers', return_type='filename')
-
+eegs_powers = layout.get(extension='.txt',task=task,suffix='powers', return_type='filename')
+eegs_powers = [x for x in eegs_powers if f'desc-component[{runlabel}]' in x]
 list_subjects = []
 for i in range(len(eegs_powers)):
     with open(eegs_powers[i], 'r') as f:

@@ -13,11 +13,13 @@ input_path = THE_DATASET.get('input_path',None)
 task = THE_DATASET.get('layout',None).get('task',None)
 group_regex = THE_DATASET.get('group_regex',None)
 name = THE_DATASET.get('name',None)
+runlabel = THE_DATASET.get('run-label','')
 
 data_path = input_path
 layout = BIDSLayout(data_path,derivatives=True)
 layout.get(scope='derivatives', return_type='file')
 eegs_powers = layout.get(extension='.txt', task=task,suffix='powers', return_type='filename')
+eegs_powers = [x for x in eegs_powers if f'desc-channel[{runlabel}]' in x]
 
 F = ['FP1', 'FPZ', 'FP2', 'AF3', 'AF4', 'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8'] 
 T = ['FT7', 'FC5', 'FC6', 'FT8', 'T7', 'C5', 'C6', 'T8', 'TP7', 'CP5', 'CP6', 'TP8']
@@ -51,7 +53,10 @@ for i in range(len(eegs_powers)):
     if group_regex:
         regex = re.search('(.+).{3}',info_bids_sujeto['subject'])
         datos_1_sujeto['group'] = regex.string[regex.regs[-1][0]:regex.regs[-1][1]]
-    datos_1_sujeto['visit'] = info_bids_sujeto['session']
+    try:
+        datos_1_sujeto['visit'] = info_bids_sujeto['session']
+    except:
+        pass
     datos_1_sujeto['condition'] = info_bids_sujeto['task']
     for b,band in enumerate(bandas):
         for r,roi in enumerate(new_rois):

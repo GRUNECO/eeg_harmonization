@@ -1,0 +1,4 @@
+sovaflow
+pybids
+mne-bids
+versioneer

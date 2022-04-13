@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from sovaharmony.info import info as info_dict
 
-def get_derivative_path(eeg_file,output_entity,suffix,output_extension,bids_root,derivatives_root):
+def get_derivative_path(layout,eeg_file,output_entity,suffix,output_extension,bids_root,derivatives_root):
     entities = layout.parse_file_entities(eeg_file)
     derivative_path = eeg_file.replace(bids_root,derivatives_root)
     derivative_path = derivative_path.replace(entities['extension'],'')
@@ -103,14 +103,14 @@ def harmonize(THE_DATASET,fast_mode=False):
         try:
             logger.info(f"File {i+1} of {num_files} ({(i+1)*100/num_files}%) : {eeg_file}")
 
-            wica_path = get_derivative_path(eeg_file,'wica','eeg','.fif',bids_root,derivatives_root)
-            prep_path = get_derivative_path(eeg_file,'prep','eeg','.fif',bids_root,derivatives_root)
+            wica_path = get_derivative_path(layout,eeg_file,'wica','eeg','.fif',bids_root,derivatives_root)
+            prep_path = get_derivative_path(layout,eeg_file,'prep','eeg','.fif',bids_root,derivatives_root)
             
-            stats_path = get_derivative_path(eeg_file,'label','stats','.txt',bids_root,derivatives_root)
+            stats_path = get_derivative_path(layout,eeg_file,'label','stats','.txt',bids_root,derivatives_root)
             
-            power_path = get_derivative_path(eeg_file,'channel'+pipelabel,'powers','.txt',bids_root,derivatives_root)
-            icpowers_path = get_derivative_path(eeg_file,'component'+pipelabel,'powers','.txt',bids_root,derivatives_root)
-            reject_path = get_derivative_path(eeg_file,'reject'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
+            power_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'powers','.txt',bids_root,derivatives_root)
+            icpowers_path = get_derivative_path(layout,eeg_file,'component'+pipelabel,'powers','.txt',bids_root,derivatives_root)
+            reject_path = get_derivative_path(layout,eeg_file,'reject'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
 
             os.makedirs(os.path.split(power_path)[0], exist_ok=True)
 

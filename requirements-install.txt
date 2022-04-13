@@ -5,4 +5,4 @@ git+https://gitfront.io/r/yjmantilla/6d58684c0822a9bac57ed5ea04ef0b0c306b75da/so
 pybids
 https://api.github.com/repos/mne-tools/mne-bids/zipball/main
 versioneer
-.
+-e .

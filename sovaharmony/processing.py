@@ -183,4 +183,5 @@ def harmonize(THE_DATASET,fast_mode=False):
             archivosconerror.append(eeg_file)
             print(error)
             pass
-    return archivosconerror
+        process=i/len(eegs)
+        return process

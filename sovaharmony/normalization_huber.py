@@ -6,7 +6,7 @@ from datasets import BIOMARCADORES
 import os
 import statistics
 
-THE_DATASET=[BIOMARCADORES]
+THE_DATASET=BIOMARCADORES
 layout_dict = THE_DATASET.get('layout',None)
 input_path = THE_DATASET.get('input_path',None)
 layout = BIDSLayout(input_path)

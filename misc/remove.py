@@ -12,7 +12,7 @@ for sub in subjects:
     if sub.endswith(suffix,0,3) == True:
         #ses = os.listdir(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaflow'+'/'+sub)
         ses = os.listdir(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\SRM'+'/'+sub)
-        for v in ses[0]:
+        for v in ses:
             #icpowers_json_files = glob.glob(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaflow'+'/'+sub+'/'+v+'\eeg/*_icpowers.txt')
             icpowers_json_files = glob.glob(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\SRM'+'/'+sub+'/'+v+'\eeg/*_eeg.edf')
             json_remove.append(icpowers_json_files)

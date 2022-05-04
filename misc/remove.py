@@ -23,4 +23,4 @@ for i in json_remove:
              print(i[j])
              os.remove(i[j])
          except:
-             continue 
+          continue 

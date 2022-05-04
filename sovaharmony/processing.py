@@ -100,6 +100,7 @@ def harmonize(THE_DATASET,fast_mode=False):
     write_json(description,os.path.join(derivatives_root,'dataset_description.json'))
     num_files = len(eegs)
     for i,eeg_file in enumerate(eegs):
+        process=str(i)+'/'+str(num_files)
         try:
             logger.info(f"File {i+1} of {num_files} ({(i+1)*100/num_files}%) : {eeg_file}")
 
@@ -183,5 +184,5 @@ def harmonize(THE_DATASET,fast_mode=False):
             archivosconerror.append(eeg_file)
             print(error)
             pass
-        process=i/len(eegs)
+
         return process

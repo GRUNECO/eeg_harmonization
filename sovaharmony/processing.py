@@ -100,13 +100,12 @@ def harmonize(THE_DATASET,fast_mode=False):
     write_json(description,os.path.join(derivatives_root,'dataset_description.json'))
     num_files = len(eegs)
     for i,eeg_file in enumerate(eegs):
-        process=str(i)+'/'+str(num_files)
+        #process=str(i)+'/'+str(num_files)
         try:
             logger.info(f"File {i+1} of {num_files} ({(i+1)*100/num_files}%) : {eeg_file}")
 
             wica_path = get_derivative_path(layout,eeg_file,'wica','eeg','.fif',bids_root,derivatives_root)
             prep_path = get_derivative_path(layout,eeg_file,'prep','eeg','.fif',bids_root,derivatives_root)
-            
             stats_path = get_derivative_path(layout,eeg_file,'label','stats','.txt',bids_root,derivatives_root)
             
             power_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'powers','.txt',bids_root,derivatives_root)
@@ -139,7 +138,8 @@ def harmonize(THE_DATASET,fast_mode=False):
                 
                 write_json(stats.get('prep',{}),stats_path.replace('label','prep'))
                 write_json(stats.get('wica',{}),stats_path.replace('label','wica'))
-                
+            
+
             if THE_DATASET.get('events_to_keep', None) is not None:
                 events_file = os.path.splitext(eeg_file)[0].replace('_eeg','_events.tsv')
                 events_raw=pd.read_csv(events_file,sep='\t')
@@ -161,15 +161,17 @@ def harmonize(THE_DATASET,fast_mode=False):
                 write_json(json_dict,reject_path.replace('.fif','.json'))
                 write_json(json_dict,stats_path.replace('label','reject'+pipelabel).replace('.txt','.json'))
                 write_json(reject_info,stats_path.replace('label','reject'+pipelabel))
-            
+        
             if os.path.isfile(power_path):
                 logger.info(f'{power_path}) already existed, skipping...')
             else:
+                signal = mne.read_epochs(reject_path)
                 power_dict = get_power_derivates(signal)
                 write_json(power_dict,power_path)
                 write_json(json_dict,power_path.replace('.txt','.json'))
 
             if not os.path.isfile(icpowers_path) and spatial_filter is not None:
+                signal = mne.read_epochs(reject_path)
                 ic_powers_dict = get_ics_power_derivatives(signal,spatial_filter)
                 write_json(ic_powers_dict,icpowers_path)
                 write_json(json_dict,icpowers_path.replace('.txt','.json'))
@@ -185,4 +187,4 @@ def harmonize(THE_DATASET,fast_mode=False):
             print(error)
             pass
 
-        return process
+    return archivosconerror

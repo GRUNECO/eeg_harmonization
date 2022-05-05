@@ -7,10 +7,11 @@ from datasets import BIOMARCADORES
 import os
 import numpy as np
 from sovaflow.utils import createRaw
-from sovaflow.flow import  get_power_derivates
+from sovaflow.flow import  get_power_derivates, crop_raw_data, make_fixed_length_epochs
 from astropy.stats import mad_std
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
 
 THE_DATASET=BIOMARCADORES
 layout_dict = THE_DATASET.get('layout',None)
@@ -25,8 +26,10 @@ desc_pipeline = "sovaharmony, a harmonization eeg pipeline using the bids standa
 
 
 for i,eeg_file in enumerate(eegs):
-    json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
     power_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'_norm_powers','.txt',bids_root,derivatives_root)
+    norm_path = get_derivative_path(layout,eeg_file,'norm','eeg','.fif',bids_root,derivatives_root)
+    json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
+    json_dict["Sources"]=norm_path.replace(bids_root,'')
     reject_path = get_derivative_path(layout,eeg_file,'reject'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
     signal = mne.read_epochs(reject_path)
     signal_hp = signal.filter(None,20,fir_design='firwin')
@@ -38,12 +41,38 @@ for i,eeg_file in enumerate(eegs):
         std_ch.append(mad_std(ch))
     
     k = sm.robust.scale.huber(np.array(std_ch))
-    signal_norm = signal/k[0]
+    signal_norm = signal._data/k[0]
+    (e, c, t) = signal_norm.shape
+    signal_norm = np.reshape(signal_norm,(c,e*t),order='F')
+    signal_norma = createRaw(signal_norm,signal.info['sfreq'],ch_names=signal.info['ch_names'])
+    #signal = make_fixed_length_epochs(signal,duration=e/signal.info['sfreq'],reject_by_annotation=False,preload=True) 
+    
+    if THE_DATASET.get('events_to_keep', None) is not None:
+        events_file = os.path.splitext(eeg_file)[0].replace('_eeg','_events.tsv')
+        events_raw=pd.read_csv(events_file,sep='\t')
+        samples = events_raw['sample'].tolist()
+        values = events_raw['value'].tolist()
+        events = list(zip(values,samples))
+        events_to_keep = THE_DATASET.get('events_to_keep', None)
+    else:
+        events = None
+        events_to_keep = None
+    
+    signal_n = mne.io.read_raw(norm_path,preload=True)
+    signal_n = crop_raw_data(signal,events, events_to_keep)
 
-    power_norm = get_power_derivates(signal_norm)
+                
+    signal.save(norm_path ,split_naming='bids', overwrite=True)
+    write_json(json_dict,norm_path.replace('.fif','.json'))
+    
+    signal_normas = mne.read_epochs(norm_path)
+    power_norm = get_power_derivates(signal_normas)
+    
+    
+    
     write_json(power_norm,power_norm_path)
-    write_json(json_dict,power_norm.replace('.txt','.json'))
-    print('listo')
+    write_json(json_dict,power_norm_path.replace('.txt','.json'))
+
     
 
 

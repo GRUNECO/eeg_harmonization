@@ -1,11 +1,11 @@
 BIOMARCADORES = {
     'name':'BIOMARCADORES',
     'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS',
-    'layout':{'extension':'.vhdr', 'task':'OE','suffix':'eeg', 'return_type':'filename'},
+    'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
-    'run-label':'restEC'
+    'run-label':'restCE'
 }
 
 SRM = {
@@ -15,7 +15,7 @@ SRM = {
     'args':{'line_freqs':[50]},
     'group_regex':None,
     'events_to_keep':None,
-    'run-label':'restEC'
+    'run-label':'restCE'
 }
 
 CHBMP = {
@@ -25,7 +25,7 @@ CHBMP = {
     'args':{'line_freqs':[60],},
     'group_regex':None,
     'events_to_keep':[65],
-    'run-label':'restEC'
+    'run-label':'restCE'
 }
 
 LEMON = {
@@ -35,5 +35,5 @@ LEMON = {
     'args':{'resample':1000,'line_freqs':[50],},
     'group_regex':None,
     'events_to_keep':[5],
-    'run-label':'restEC'
+    'run-label':'restCE'
 }

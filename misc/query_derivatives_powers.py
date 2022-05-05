@@ -6,7 +6,7 @@ import numpy as np
 import re
 import pandas as pd
 from bids.layout import parse_file_entities
-from datasets import SRM as THE_DATASET
+from datasets import BIOMARCADORES as THE_DATASET
 
 
 input_path = THE_DATASET.get('input_path',None)

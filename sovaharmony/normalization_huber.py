@@ -7,7 +7,7 @@ from datasets import BIOMARCADORES
 import os
 import numpy as np
 from sovaflow.utils import createRaw
-from sovaflow.flow import  get_power_derivates, crop_raw_data, make_fixed_length_epochs
+from sovaflow.flow import  get_power_derivates, crop_raw_data, make_fixed_length_epochs, run_power_channels
 from astropy.stats import mad_std
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -72,12 +72,14 @@ for i,eeg_file in enumerate(eegs):
     signal_norm_up = np.reshape(signal_up,(c,e*t),order='F')
     signal_norma_up = createRaw(signal_norm_up,signal.info['sfreq'],ch_names=signal.info['ch_names'])
 
-    power_norm = get_power_derivates(signal_norma_up)
+    power_norm = get_power_derivates(signal_normas)
     
     
     
     write_json(power_norm,power_norm_path)
     write_json(json_dict,power_norm_path.replace('.txt','.json'))
+
+    print('listo')
 
     
 

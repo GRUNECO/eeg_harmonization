@@ -41,8 +41,15 @@ for i,eeg_file in enumerate(eegs):
     for ch in signal_ch._data:
         std_ch.append(mad_std(ch))
     
-    k = sm.robust.scale.huber(np.array(std_ch))
-    signal2._data=signal._data/k[0]
+    huber = sm.robust.scale.Huber()
+    cont = 0
+    try:
+        k = huber(np.array(std_ch))[0]
+    except:
+        k = np.median(np.array(std_ch))
+        cont+=1        
+    
+    signal2._data=signal._data/k
     signal2.save(norm_path ,split_naming='bids', overwrite=True)
     write_json(json_dict,norm_path.replace('.fif','.json'))
 
@@ -55,7 +62,7 @@ for i,eeg_file in enumerate(eegs):
     write_json(power_norm,power_norm_path)
     write_json(json_dict,power_norm_path.replace('.txt','.json'))
 
-    print('listo')
+    print(cont)
 
     
 

@@ -42,10 +42,12 @@ for i,eeg_file in enumerate(eegs):
     
     k = sm.robust.scale.huber(np.array(std_ch))
     signal_norm = signal._data/k[0]
-    (e, c, t) = signal_norm.shape
-    signal_norm = np.reshape(signal_norm,(c,e*t),order='F')
+    
+    signal_nn = np.resize(signal_norm,(c,e,t))
+    (c, e, t) = signal_nn.shape
+    signal_norm = np.reshape(signal_nn,(c,e*t),order='F')
     signal_norma = createRaw(signal_norm,signal.info['sfreq'],ch_names=signal.info['ch_names'])
-    #signal = make_fixed_length_epochs(signal,duration=e/signal.info['sfreq'],reject_by_annotation=False,preload=True) 
+    
     
     if THE_DATASET.get('events_to_keep', None) is not None:
         events_file = os.path.splitext(eeg_file)[0].replace('_eeg','_events.tsv')
@@ -58,15 +60,19 @@ for i,eeg_file in enumerate(eegs):
         events = None
         events_to_keep = None
     
-    signal_n = mne.io.read_raw(norm_path,preload=True)
-    signal_n = crop_raw_data(signal,events, events_to_keep)
-
-                
-    signal.save(norm_path ,split_naming='bids', overwrite=True)
+    signal_n = crop_raw_data(signal_norma,events, events_to_keep)
+    raw_norm = make_fixed_length_epochs(signal_n,duration=e/signal.info['sfreq'],reject_by_annotation=False,preload=True) 
+    raw_norm.save(norm_path ,split_naming='bids', overwrite=True)
     write_json(json_dict,norm_path.replace('.fif','.json'))
-    
+
+    #signal_n = mne.io.read_raw(norm_path,preload=True)
     signal_normas = mne.read_epochs(norm_path)
-    power_norm = get_power_derivates(signal_normas)
+    signal_up = np.resize(signal_normas,(c,e,t))
+    (c, e, t) = signal_up.shape
+    signal_norm_up = np.reshape(signal_up,(c,e*t),order='F')
+    signal_norma_up = createRaw(signal_norm_up,signal.info['sfreq'],ch_names=signal.info['ch_names'])
+
+    power_norm = get_power_derivates(signal_norma_up)
     
     
     

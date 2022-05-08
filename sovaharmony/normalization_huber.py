@@ -1,9 +1,8 @@
 import mne
-from regex import E
 import statsmodels.api as sm
 from sovaharmony.processing import get_derivative_path, write_json
 from bids import BIDSLayout
-from datasets import BIOMARCADORES 
+from datasets import BIOMARCADORES, SRM_test
 import os
 import numpy as np
 from sovaflow.utils import createRaw
@@ -13,7 +12,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-THE_DATASET=BIOMARCADORES
+THE_DATASET=SRM_test
 layout_dict = THE_DATASET.get('layout',None)
 input_path = THE_DATASET.get('input_path',None)
 layout = BIDSLayout(input_path)

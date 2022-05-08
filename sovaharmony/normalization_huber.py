@@ -6,11 +6,10 @@ from datasets import BIOMARCADORES, SRM_test
 import os
 import numpy as np
 from sovaflow.utils import createRaw
-from sovaflow.flow import  get_power_derivates, crop_raw_data, make_fixed_length_epochs, run_power_channels
+from sovaflow.flow import  get_power_derivates
 from astropy.stats import mad_std
 import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
+from sovaflow.utils import cfg_logger
 
 THE_DATASET=SRM_test
 layout_dict = THE_DATASET.get('layout',None)
@@ -48,18 +47,24 @@ for i,eeg_file in enumerate(eegs):
         k = np.median(np.array(std_ch))
         cont+=1        
     
-    signal2._data=signal._data/k
-    signal2.save(norm_path ,split_naming='bids', overwrite=True)
-    write_json(json_dict,norm_path.replace('.fif','.json'))
+    derivatives_root = os.path.join(layout.root,'derivatives',pipeline)
+    log_path = os.path.join(derivatives_root,'code')
+    os.makedirs(log_path, exist_ok=True)
+    logger,currentdt = cfg_logger(log_path)
 
-    #signal_n = mne.io.read_raw(norm_path,preload=True)
-    signal_normas = mne.read_epochs(norm_path)
-    power_norm = get_power_derivates(signal_normas)
-    
-    
-    
-    write_json(power_norm,power_norm_path)
-    write_json(json_dict,power_norm_path.replace('.txt','.json'))
+    if os.path.isfile(norm_path):
+        logger.info(f'{norm_path}) already existed, skipping...')
+    else:
+        signal2._data=signal._data/k
+        signal2.save(norm_path ,split_naming='bids', overwrite=True)
+        write_json(json_dict,norm_path.replace('.fif','.json'))
+
+        signal_normas = mne.read_epochs(norm_path)
+        power_norm = get_power_derivates(signal_normas)
+        
+                
+        write_json(power_norm,power_norm_path)
+        write_json(json_dict,power_norm_path.replace('.txt','.json'))
 
     print(cont)
 

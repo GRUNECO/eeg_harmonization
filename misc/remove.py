@@ -3,10 +3,10 @@ import glob
 
 name = [']_eeg',']_stats','_powers','norm_eeg','norm_powers']
 ext = ['.fif','.json','.txt']
-#path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaharmony'
+path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaharmony'
 #path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\CHBMP\derivatives\sovaharmony'
 #path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\SRM\derivatives\sovaharmony'
-path = r'D:\WEB\backend\filesSaved\SRM\derivatives\sovaharmony'
+#path = r'D:\WEB\backend\filesSaved\SRM\derivatives\sovaharmony'
 def remove_data(path,sub,v,name,ext):
 #def remove_data(path,sub,name,ext):
     path_def = path+'\\'+sub+'\\'+v+'\\eeg\\'+name+ext
@@ -23,7 +23,7 @@ for sub in subjects:
     if sub.endswith(suffix,0,3) == True:
         ses = os.listdir(path+'/'+sub)
         for v in ses:
-            json_remove = remove_data(path,sub,v,name[3],ext[1])
+            json_remove = remove_data(path,sub,v,name[3],ext[0])
         #json_remove = remove_data(path,sub,name,ext[1])
 print(json_remove)
 

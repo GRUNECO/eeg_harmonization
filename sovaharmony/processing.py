@@ -113,6 +113,7 @@ def harmonize(THE_DATASET,fast_mode=False):
             power_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'powers','.txt',bids_root,derivatives_root)
             icpowers_path = get_derivative_path(layout,eeg_file,'component'+pipelabel,'powers','.txt',bids_root,derivatives_root)
             power_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'powers_norm','.txt',bids_root,derivatives_root)
+            icpowers_norm_path = get_derivative_path(layout,eeg_file,'component'+pipelabel,'powers_norm','.txt',bids_root,derivatives_root)
             norm_path = get_derivative_path(layout,eeg_file,'norm','eeg','.fif',bids_root,derivatives_root)
             reject_path = get_derivative_path(layout,eeg_file,'reject'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
 
@@ -174,28 +175,29 @@ def harmonize(THE_DATASET,fast_mode=False):
                 write_json(power_dict,power_path)
                 write_json(json_dict,power_path.replace('.txt','.json'))
             
+            signal = mne.read_epochs(reject_path)
+            signal2=signal.copy()
+            signal_hp = signal.filter(None,20,fir_design='firwin')
+            (e, c, t) = signal_hp._data.shape
+            da_eeg_cont = np.reshape(signal_hp,(c,e*t),order='F')
+            signal_ch = createRaw(da_eeg_cont,signal_hp.info['sfreq'],ch_names=signal_hp.info['ch_names'])
+            std_ch = []
+            for ch in signal_ch._data:
+                std_ch.append(mad_std(ch))
+            
+            huber = sm.robust.scale.Huber()
+            cont = 0
+            try:
+                k = huber(np.array(std_ch))[0]
+            except:
+                k = np.median(np.array(std_ch))
+                cont+=1    
+
+            signal2._data=signal._data/k
+
             if os.path.isfile(norm_path):
                 logger.info(f'{norm_path}) already existed, skipping...')
-            else:
-                signal = mne.read_epochs(reject_path)
-                signal2=signal.copy()
-                signal_hp = signal.filter(None,20,fir_design='firwin')
-                (e, c, t) = signal_hp._data.shape
-                da_eeg_cont = np.reshape(signal_hp,(c,e*t),order='F')
-                signal_ch = createRaw(da_eeg_cont,signal_hp.info['sfreq'],ch_names=signal_hp.info['ch_names'])
-                std_ch = []
-                for ch in signal_ch._data:
-                    std_ch.append(mad_std(ch))
-                
-                huber = sm.robust.scale.Huber()
-                cont = 0
-                try:
-                    k = huber(np.array(std_ch))[0]
-                except:
-                    k = np.median(np.array(std_ch))
-                    cont+=1    
-
-                signal2._data=signal._data/k
+            else: 
                 signal2.save(norm_path ,split_naming='bids', overwrite=True)
                 write_json(json_dict,norm_path.replace('.fif','.json'))
 
@@ -203,8 +205,16 @@ def harmonize(THE_DATASET,fast_mode=False):
                 power_norm = get_power_derivates(signal_normas)
                 
                 write_json(power_norm,power_norm_path)
-                write_json(json_dict,power_norm_path.replace('.txt','.json'))    
+                write_json(json_dict,power_norm_path.replace('.txt','.json'))
+               
+            if not os.path.isfile(icpowers_norm_path) and spatial_filter is not None:
+                ic_powers_dict_norm = get_ics_power_derivatives(signal2,spatial_filter)
+                write_json(ic_powers_dict_norm,icpowers_norm_path)
+                write_json(json_dict,icpowers_norm_path.replace('.txt','.json'))
+            else:
+                logger.info(f'{icpowers_path}) already existed or no spatial filter given, skipping...')
 
+                
             if not os.path.isfile(icpowers_path) and spatial_filter is not None:
                 signal = mne.read_epochs(reject_path)
                 ic_powers_dict = get_ics_power_derivatives(signal,spatial_filter)

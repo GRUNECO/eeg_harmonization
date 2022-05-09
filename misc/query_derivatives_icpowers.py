@@ -4,7 +4,7 @@ import numpy as np
 import re
 import pandas as pd
 from bids.layout import parse_file_entities
-from datasets import BIOMARCADORES as THE_DATASET
+from datasets import CHBMP as THE_DATASET
 
 
 input_path = THE_DATASET.get('input_path',None)
@@ -20,7 +20,9 @@ layout.get(scope='derivatives', return_type='file')
 
 
 eegs_powers = layout.get(extension='.txt',task=task,suffix='powers', return_type='filename')
-eegs_powers = [x for x in eegs_powers if f'desc-component[{runlabel}]' in x]
+#eegs_powers = [x for x in eegs_powers if f'desc-component[{runlabel}]' in x]
+eegs_powers = [x for x in eegs_powers if f'desc-component[{runlabel}]__norm' in x]
+
 list_subjects = []
 for i in range(len(eegs_powers)):
     with open(eegs_powers[i], 'r') as f:
@@ -49,4 +51,4 @@ for i in range(len(eegs_powers)):
 
 
 df = pd.DataFrame(list_subjects)
-df.to_excel(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\longitudinal_data_icpowers_'+name+'.xlsx')
+df.to_excel(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\longitudinal_data_icpowers_norm_'+name+'.xlsx')

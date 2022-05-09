@@ -20,8 +20,7 @@ BIOMARCADORES_test = {
 
 SRM_test = {
     'name':'SRM',
-    #'input_path':r'D:\WEB\backend\filesSaved\SRMPrueba',
-    'input_path':r'D:\WEB\backend\filesSaved\SRM_02',
+    'input_path':r'D:\WEB\backend\filesSaved\SRMPrueba',
     'layout':{'extension':'.edf', 'task':'resteyesc','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[50]},
     'group_regex':None,

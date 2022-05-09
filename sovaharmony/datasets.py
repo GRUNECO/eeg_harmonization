@@ -10,7 +10,7 @@ BIOMARCADORES = {
 
 BIOMARCADORES_test = {
     'name':'BIOMARCADORES',
-    'input_path':r'D:\WEB\backend\filesSaved\PRUEBA',
+    'input_path':r'F:\BIOMARCADORES_TEST',
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',

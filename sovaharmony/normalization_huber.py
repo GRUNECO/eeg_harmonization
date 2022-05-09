@@ -2,7 +2,7 @@ import mne
 import statsmodels.api as sm
 from sovaharmony.processing import get_derivative_path, write_json
 from bids import BIDSLayout
-from datasets import BIOMARCADORES, SRM_test
+from datasets import BIOMARCADORES, BIOMARCADORES_test, SRM_test
 import os
 import numpy as np
 from sovaflow.utils import createRaw
@@ -11,7 +11,7 @@ from astropy.stats import mad_std
 import matplotlib.pyplot as plt
 from sovaflow.utils import cfg_logger
 
-THE_DATASET=SRM_test
+THE_DATASET=BIOMARCADORES_test
 layout_dict = THE_DATASET.get('layout',None)
 input_path = THE_DATASET.get('input_path',None)
 layout = BIDSLayout(input_path)
@@ -24,7 +24,7 @@ desc_pipeline = "sovaharmony, a harmonization eeg pipeline using the bids standa
 
 
 for i,eeg_file in enumerate(eegs):
-    power_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'_norm_powers','.txt',bids_root,derivatives_root)
+    power_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'powers_norm','.txt',bids_root,derivatives_root)
     norm_path = get_derivative_path(layout,eeg_file,'norm','eeg','.fif',bids_root,derivatives_root)
     json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
     json_dict["Sources"]=norm_path.replace(bids_root,'')

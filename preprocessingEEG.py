@@ -1,7 +1,7 @@
 from sovaharmony.processing import harmonize 
-from datasets import SRM,SRM_test
+from datasets import BIOMARCADORES
 
 
-THE_DATASETS=[SRM]
+THE_DATASETS=[BIOMARCADORES]
 for dataset in THE_DATASETS:
     process=harmonize(dataset,fast_mode=False)

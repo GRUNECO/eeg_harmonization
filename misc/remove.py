@@ -23,7 +23,7 @@ for sub in subjects:
     if sub.endswith(suffix,0,3) == True:
         ses = os.listdir(path+'/'+sub)
         for v in ses:
-            json_remove = remove_data(path,sub,v,name[3],ext[0])
+            json_remove = remove_data(path,sub,v,name[1],ext[2])
         #json_remove = remove_data(path,sub,name,ext[1])
 print(json_remove)
 

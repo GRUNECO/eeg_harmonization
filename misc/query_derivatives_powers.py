@@ -4,7 +4,7 @@ import numpy as np
 import re
 import pandas as pd
 from bids.layout import parse_file_entities
-from datasets import CHBMP as THE_DATASET
+from datasets import BIOMARCADORES as THE_DATASET
 
 
 input_path = THE_DATASET.get('input_path',None)
@@ -18,7 +18,7 @@ layout = BIDSLayout(data_path,derivatives=True)
 layout.get(scope='derivatives', return_type='file')
 eegs_powers = layout.get(extension='.txt', task=task,suffix='powers', return_type='filename')
 #eegs_powers = [x for x in eegs_powers if f'desc-channel[{runlabel}]' in x]
-eegs_powers = [x for x in eegs_powers if f'desc-channel[{runlabel}]__norm' in x]
+eegs_powers = [x for x in eegs_powers if f'desc-channel[{runlabel}]_powers_norm' in x]
 
 F = ['FP1', 'FPZ', 'FP2', 'AF3', 'AF4', 'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8'] 
 T = ['FT7', 'FC5', 'FC6', 'FT8', 'T7', 'C5', 'C6', 'T8', 'TP7', 'CP5', 'CP6', 'TP8']

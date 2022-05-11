@@ -8,6 +8,16 @@ BIOMARCADORES = {
     'run-label':'restCE'
 }
 
+BIOMARCADORESMini = {
+    'name':'BIOMARCADORES',
+    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\CodificadoBIDSMini',
+    'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
+    'args':{'line_freqs':[60]},
+    'group_regex':'(.+).{3}',
+    'events_to_keep':None,
+    'run-label':'restCE'
+}
+
 SRM = {
     'name':'SRM',
     'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\SRM',

@@ -16,8 +16,6 @@ def remove_data(path,sub,name,ext): #Sin visitas
     
     path_def = path+'\\'+sub+'\\eeg\\'+name+ext #sin visitas
     if name in path_def:
-        
-        
         #icpowers_json_files = glob.glob(path+'\\'+sub+'\\'+v+'\\eeg\\*'+name+ext)#Con visitas
         icpowers_json_files = glob.glob(path+'\\'+sub+'\\eeg\\*'+name+ext)#sin visitas
         print(path+'\\'+sub+'\\eeg\\*'+name+ext)
@@ -43,7 +41,7 @@ for sub in subjects:#For sin visitas
     if sub.endswith(suffix,0,3) == True:
         #ses = os.listdir(path+'/'+sub)
         
-        json_remove = remove_data(path,sub,name[2],ext[1])
+        json_remove = remove_data(path,sub,name[0],ext[1])
             #json_remove = remove_data(path,sub,v,name[1],ext[1])
             #json_remove = remove_data(path,sub,v,name[1],ext[2])
 print(json_remove)

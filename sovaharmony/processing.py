@@ -1,14 +1,17 @@
 from sovaflow.flow import preflow,get_ics_power_derivatives,get_power_derivates,crop_raw_data,run_reject
 from sovaflow.utils import cfg_logger,get_spatial_filter,createRaw
+from sovaViolin.functions_postprocessing_channels import compare_nD_power
 import mne
 import json
 import os
 from bids import BIDSLayout
+from bids.layout import parse_file_entities
 from datetime import datetime
 import numpy as np
 import pandas as pd
 from sovaharmony.info import info as info_dict
 import statsmodels.api as sm
+import pandas as pd
 from astropy.stats import mad_std
 
 def get_derivative_path(layout,eeg_file,output_entity,suffix,output_extension,bids_root,derivatives_root):
@@ -109,7 +112,6 @@ def harmonize(THE_DATASET,fast_mode=False):
             wica_path = get_derivative_path(layout,eeg_file,'wica','eeg','.fif',bids_root,derivatives_root)
             prep_path = get_derivative_path(layout,eeg_file,'prep','eeg','.fif',bids_root,derivatives_root)
             stats_path = get_derivative_path(layout,eeg_file,'label','stats','.txt',bids_root,derivatives_root)
-            
             power_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'powers','.txt',bids_root,derivatives_root)
             icpowers_path = get_derivative_path(layout,eeg_file,'component'+pipelabel,'powers','.txt',bids_root,derivatives_root)
             power_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'powers_norm','.txt',bids_root,derivatives_root)

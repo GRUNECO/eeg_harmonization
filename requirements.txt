@@ -1,4 +1,5 @@
 sovaflow
+sovaViolin
 pybids
 mne-bids
 versioneer

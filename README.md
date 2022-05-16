@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-git clone https://github.com/GRUNECO/eeg-harmonization.git
+git clone https://github.com/GRUNECO/eeg_harmonization.git
 cd eeg_harmonization
 pip install -r requirements-install.txt
 ```

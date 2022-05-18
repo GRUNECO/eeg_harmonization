@@ -197,43 +197,6 @@ def rejectGraphic(files,list_studies=None,list_subjects=None,list_groups=None,li
   dataReject=pd.concat((dataframesReject))
   return dataReject
 
-def final_rejection_percentages(listIn,data,keyInput):
-  '''
-  Function to extract percentages
-  Parameters
-  ----------
-  listIn:
-  data:
-  keyInput:
-
-  Returns
-  -------
-  '''
-  dataframes={}
-  print("-------------------------")
- 
-  for i,key in enumerate(data['rejection']['criteria']):
-    dataframes[key]=data['rejection'][keyInput][i]
-  listIn.append(dataframes)
-  return listIn 
-
-# FILTROS
-def filter_nS_nG_1M(superdata,group_dict):
-    """
-    group_dict={
-        'BIOMARCADORES':[CTR,DCL],
-        'SRM':['SRM'] # assume datasets with no groups have Group=Study
-    }
-    """
-    fil=superdata
-    list_df=[]
-    for dataset,group_list in group_dict.items():
-        for group in group_list:
-            auxfil = fil[fil['Group']==group]
-            list_df.append(auxfil)
-    df=pd.concat((list_df))
-    return df
-
 def component_power(data,name_study="None",subject="None",group="None",session="None",stage="None"):
   df_powers={}
   df_powers['Powers']=[]
@@ -278,3 +241,21 @@ def PowersComponents(powersFiles,list_studies=None,list_subjects=None,list_group
     dataframesPowers.append(statsPowers)
   datosPowers=pd.concat((dataframesPowers))
   return datosPowers 
+
+
+# FILTROS
+def filter_nS_nG_1M(superdata,group_dict):
+    """
+    group_dict={
+        'BIOMARCADORES':[CTR,DCL],
+        'SRM':['SRM'] # assume datasets with no groups have Group=Study
+    }
+    """
+    fil=superdata
+    list_df=[]
+    for dataset,group_list in group_dict.items():
+        for group in group_list:
+            auxfil = fil[fil['Group']==group]
+            list_df.append(auxfil)
+    df=pd.concat((list_df))
+    return df

@@ -51,7 +51,7 @@ def get_information_data(THE_DATASET):
   layout = BIDSLayout(data_path,derivatives=True)
   return layout,task,runlabel,name,group_regex,session_set
    
-def get_dataframe_powers(Studies,mode="channels",stage=None):
+def get_dataframe_powers(THE_DATASET,mode="channels",stage=None):
     """
     Function to read and store the data in the form of a dataframe for powers 
 
@@ -72,55 +72,55 @@ def get_dataframe_powers(Studies,mode="channels",stage=None):
 
     """
     dataframesPowers=[]
-    for THE_DATASET in Studies:
-        layout,task,runlabel,name,group_regex,session_set=get_information_data(THE_DATASET)
-        Stage=stage
-        if Stage == 'norm' and mode== "channels":
-            # Data with stage of normalized for channels
-            eegs_powers= layout.get(extension='.txt', task=task,suffix='norm', return_type='filename')
-            eegs_powers = [x for x in eegs_powers if f'desc-channel[{runlabel}]' in x]
+    #for THE_DATASET in Studies:
+    layout,task,runlabel,name,group_regex,session_set=get_information_data(THE_DATASET)
+    Stage=stage
+    if Stage == 'norm' and mode== "channels":
+        # Data with stage of normalized for channels
+        eegs_powers= layout.get(extension='.txt', task=task,suffix='norm', return_type='filename')
+        eegs_powers = [x for x in eegs_powers if f'desc-channel[{runlabel}]' in x]
 
-        elif Stage== None and mode== "channels":
-        # Data without stage of normalized for channels
-            eegs_powers= layout.get(extension='.txt', task=task,suffix='powers', return_type='filename')
-            eegs_powers = [x for x in eegs_powers if f'desc-channel[{runlabel}]' in x]
+    elif Stage== None and mode== "channels":
+    # Data without stage of normalized for channels
+        eegs_powers= layout.get(extension='.txt', task=task,suffix='powers', return_type='filename')
+        eegs_powers = [x for x in eegs_powers if f'desc-channel[{runlabel}]' in x]
 
-        elif Stage == 'norm' and mode == "components":
-            # Data with stage of normalized for components 
-            eegs_powers= layout.get(extension='.txt', task=task,suffix='norm', return_type='filename')
-            eegs_powers = [x for x in eegs_powers if f'desc-component[{runlabel}]' in x]
+    elif Stage == 'norm' and mode == "components":
+        # Data with stage of normalized for components 
+        eegs_powers= layout.get(extension='.txt', task=task,suffix='norm', return_type='filename')
+        eegs_powers = [x for x in eegs_powers if f'desc-component[{runlabel}]' in x]
 
+    else: 
+    #Stage== None and mode == "components ":
+    # Data without stage of normalized for components 
+        eegs_powers= layout.get(extension='.txt', task=task,suffix='powers', return_type='filename')
+        eegs_powers = [x for x in eegs_powers if f'desc-component[{runlabel}]' in x]
+    
+    list_studies=[name]*len(eegs_powers)
+    list_info=[parse_file_entities(eegs_powers[i]) for i in range(len(eegs_powers))]
+    list_subjects=[info['subject'] for info in list_info]
+    # Grupos
+    if group_regex:
+        list_groups=[re.search('(.+).{3}',group).string[re.search('(.+).{3}',group).regs[-1][0]:re.search('(.+).{3}',group).regs[-1][1]] for group in list_subjects]
+    else:
+        list_groups=list_studies
+    # Visita 
+    if session_set == None:
+        list_sessions=list_studies
+    else:
+        list_sessions=[info['session'] for info in list_info]
+
+    list_stage=["Normalized data"]*len(list_info)
+    if  Stage == 'norm':
+        if mode=='channels':
+            dataframesPowers.append(PowersChannels(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=list_stage))
         else: 
-        #Stage== None and mode == "components ":
-        # Data without stage of normalized for components 
-            eegs_powers= layout.get(extension='.txt', task=task,suffix='powers', return_type='filename')
-            eegs_powers = [x for x in eegs_powers if f'desc-component[{runlabel}]' in x]
-        
-        list_studies=[name]*len(eegs_powers)
-        list_info=[parse_file_entities(eegs_powers[i]) for i in range(len(eegs_powers))]
-        list_subjects=[info['subject'] for info in list_info]
-        # Grupos
-        if group_regex:
-            list_groups=[re.search('(.+).{3}',group).string[re.search('(.+).{3}',group).regs[-1][0]:re.search('(.+).{3}',group).regs[-1][1]] for group in list_subjects]
+            dataframesPowers.append(PowersComponents(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=list_stage))
+    else:
+        if mode=='channels':
+            dataframesPowers.append(PowersChannels(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=None))
         else:
-            list_groups=list_studies
-        # Visita 
-        if session_set == None:
-            list_sessions=list_studies
-        else:
-            list_sessions=[info['session'] for info in list_info]
-
-        list_stage=["Normalized data"]*len(list_info)
-        if  Stage == 'norm':
-            if mode=='channels':
-                dataframesPowers.append(PowersChannels(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=list_stage))
-            else: 
-                dataframesPowers.append(PowersComponents(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=list_stage))
-        else:
-            if mode=='channels':
-                dataframesPowers.append(PowersChannels(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=None))
-            else:
-                dataframesPowers.append(PowersComponents(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=None))       
+            dataframesPowers.append(PowersComponents(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=None))       
     dataPowers=pd.concat((dataframesPowers))
     path_derivatives=os.path.join(layout.root,'derivatives')
     if  mode== 'channels' and stage ==None:
@@ -133,7 +133,7 @@ def get_dataframe_powers(Studies,mode="channels",stage=None):
         dataPowers.to_excel(path_derivatives+r'\longitudinal_data_powers_long_{mode}_{stage}.xlsx'.format(mode=mode,stage=stage))  
     return dataPowers
 
-def get_dataframe_reject(Studies):
+def get_dataframe_reject(THE_DATASET):
   '''
   Function to read and store the data in the form of a dataframe for stage the rejects of processing 
 
@@ -149,30 +149,30 @@ def get_dataframe_reject(Studies):
 
   '''
   dataframesReject=[]
-  for THE_DATASET in Studies:
-    layout,task,runlabel,name,group_regex,session_set=get_information_data(THE_DATASET)
-    stats_reject = layout.get(extension='.txt', task=task,suffix='stats', return_type='filename')
-    stats_reject = [x for x in stats_reject if f'desc-reject[{runlabel}]' in x]        #rej_stats_studies+=stats_reject
-    list_studies=[name]*len(stats_reject)
-    list_info=[parse_file_entities(stats_reject[i]) for i in range(len(stats_reject))]
-    list_subjects=[info['subject'] for info in list_info]
-    if group_regex:
-      list_groups=[re.search('(.+).{3}',group).string[re.search('(.+).{3}',group).regs[-1][0]:re.search('(.+).{3}',group).regs[-1][1]] for group in list_subjects]
-    else:
-      list_groups=list_studies
-    if session_set == None:
-      list_sessions=list_studies
-    else:
-      list_sessions=[info['session'] for info in list_info]
-      
-    dataframesReject.append(rejectGraphic(stats_reject,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
+  #for THE_DATASET in Studies:
+  layout,task,runlabel,name,group_regex,session_set=get_information_data(THE_DATASET)
+  stats_reject = layout.get(extension='.txt', task=task,suffix='stats', return_type='filename')
+  stats_reject = [x for x in stats_reject if f'desc-reject[{runlabel}]' in x]        #rej_stats_studies+=stats_reject
+  list_studies=[name]*len(stats_reject)
+  list_info=[parse_file_entities(stats_reject[i]) for i in range(len(stats_reject))]
+  list_subjects=[info['subject'] for info in list_info]
+  if group_regex:
+    list_groups=[re.search('(.+).{3}',group).string[re.search('(.+).{3}',group).regs[-1][0]:re.search('(.+).{3}',group).regs[-1][1]] for group in list_subjects]
+  else:
+    list_groups=list_studies
+  if session_set == None:
+    list_sessions=list_studies
+  else:
+    list_sessions=[info['session'] for info in list_info]
+    
+  dataframesReject.append(rejectGraphic(stats_reject,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
         
   dataReject=pd.concat((dataframesReject))
   path_derivatives=os.path.join(layout.root,'derivatives')
   dataReject.to_excel(path_derivatives+r'\data_reject.xlsx')
   return dataReject       
 
-def get_dataframe_wica(Studies):
+def get_dataframe_wica(THE_DATASET):
   '''
   Function to read and store the data in the form of a dataframe for stage the wICA of processing
   
@@ -187,30 +187,30 @@ def get_dataframe_wica(Studies):
     dataWica: dataframe
   '''
   dataframesWica=[]
-  for THE_DATASET in Studies:
-    layout,task,runlabel,name,group_regex,session_set=get_information_data(THE_DATASET)
-    stats_wica = layout.get(extension='.txt', task=task,suffix='stats', return_type='filename')
-    stats_wica = [x for x in stats_wica if f'desc-wica' in x]
-    list_studies=[name]*len(stats_wica)
-    list_info=[parse_file_entities(stats_wica[i]) for i in range(len(stats_wica))]
-    list_subjects=[info['subject'] for info in list_info]
-    if group_regex:
-      list_groups=[re.search('(.+).{3}',group).string[re.search('(.+).{3}',group).regs[-1][0]:re.search('(.+).{3}',group).regs[-1][1]] for group in list_subjects]
-    else:
-      list_groups=list_studies
-    if session_set == None:
-      list_sessions=list_studies
-    else:
-      list_sessions=[info['session'] for info in list_info]
-      
-    dataframesWica.append(indicesWica(stats_wica,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
+  #for THE_DATASET in Studies:
+  layout,task,runlabel,name,group_regex,session_set=get_information_data(THE_DATASET)
+  stats_wica = layout.get(extension='.txt', task=task,suffix='stats', return_type='filename')
+  stats_wica = [x for x in stats_wica if f'desc-wica' in x]
+  list_studies=[name]*len(stats_wica)
+  list_info=[parse_file_entities(stats_wica[i]) for i in range(len(stats_wica))]
+  list_subjects=[info['subject'] for info in list_info]
+  if group_regex:
+    list_groups=[re.search('(.+).{3}',group).string[re.search('(.+).{3}',group).regs[-1][0]:re.search('(.+).{3}',group).regs[-1][1]] for group in list_subjects]
+  else:
+    list_groups=list_studies
+  if session_set == None:
+    list_sessions=list_studies
+  else:
+    list_sessions=[info['session'] for info in list_info]
+    
+  dataframesWica.append(indicesWica(stats_wica,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
         
   dataWica=pd.concat((dataframesWica))
   path_derivatives=os.path.join(layout.root,'derivatives')
   dataWica.to_excel(path_derivatives+r'\data_wICA.xlsx')
   return dataWica 
 
-def get_dataframe_prep(Studies):
+def get_dataframe_prep(THE_DATASET):
   '''
   Function to read and store the data in the form of a dataframe for stage the PREP of processing
   
@@ -225,23 +225,23 @@ def get_dataframe_prep(Studies):
     data_Prep: dataframe
   '''
   dataframes=[]
-  for THE_DATASET in Studies:
-    layout,task,runlabel,name,group_regex,session_set=get_information_data(THE_DATASET)
-    stats_prep = layout.get(extension='.txt', task=task,suffix='stats', return_type='filename')
-    stats_prep = [x for x in stats_prep if f'desc-prep' in x]
-    list_studies=[name]*len(stats_prep)
-    list_info=[parse_file_entities(stats_prep[i]) for i in range(len(stats_prep))]
-    list_subjects=[info['subject'] for info in list_info]
-    if group_regex:
-      list_groups=[re.search('(.+).{3}',group).string[re.search('(.+).{3}',group).regs[-1][0]:re.search('(.+).{3}',group).regs[-1][1]] for group in list_subjects]
-    else:
-      list_groups=list_studies
-    if session_set == None:
-      list_sessions=list_studies
-    else:
-      list_sessions=[info['session'] for info in list_info]
-    data_Prep=indicesPrep(stats_prep,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions)
-    dataframes.append(data_Prep)
+  #for THE_DATASET in Studies:
+  layout,task,runlabel,name,group_regex,session_set=get_information_data(THE_DATASET)
+  stats_prep = layout.get(extension='.txt', task=task,suffix='stats', return_type='filename')
+  stats_prep = [x for x in stats_prep if f'desc-prep' in x]
+  list_studies=[name]*len(stats_prep)
+  list_info=[parse_file_entities(stats_prep[i]) for i in range(len(stats_prep))]
+  list_subjects=[info['subject'] for info in list_info]
+  if group_regex:
+    list_groups=[re.search('(.+).{3}',group).string[re.search('(.+).{3}',group).regs[-1][0]:re.search('(.+).{3}',group).regs[-1][1]] for group in list_subjects]
+  else:
+    list_groups=list_studies
+  if session_set == None:
+    list_sessions=list_studies
+  else:
+    list_sessions=[info['session'] for info in list_info]
+  data_Prep=indicesPrep(stats_prep,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions)
+  dataframes.append(data_Prep)
 
   data_Prep=pd.concat(dataframes)
   path_derivatives=os.path.join(layout.root,'derivatives')

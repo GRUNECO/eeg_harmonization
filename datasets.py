@@ -11,7 +11,7 @@ BIOMARCADORES = {
 
 BIOMARCADORES_test = {
     'name':'BIOMARCADORES',
-    'input_path':r'D:\BASESDEDATOS\biomarcadoresprueba',
+    'input_path':r'D:\WEB\backend\filesSaved\BIOMARCADORES_TEST',
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',
@@ -31,7 +31,7 @@ SRM_test = {
 
 SRM= {
     'name':'SRM',
-    'input_path':r'D:\BASESDEDATOS\SRM',
+    'input_path':r'D:\WEB\backend\filesSaved\SRM',
     'layout':{'extension':'.edf', 'task':'resteyesc','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[50]},
     'group_regex':None,

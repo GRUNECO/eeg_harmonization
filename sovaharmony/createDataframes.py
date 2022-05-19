@@ -1,3 +1,7 @@
+"""
+@autor:Luisa María Zapata Saldarriaga, Universidad de Antioquia, luisazapatasaldarriaga@gmail.com
+"""
+
 from requests import session
 import seaborn as sns
 import json
@@ -14,18 +18,34 @@ def load_txt(file):
 
   Parameters
   ----------
-  file:
+    file: extend .txt 
 
   Returns
   -------
-
+    data: 
+      Contains the information that was stored in the txt file
   '''
   with open(file, 'r') as f:
     data=json.load(f)
   return data
 
 def indicesPrep(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
-  
+  '''
+
+  Parameters
+  ----------
+    file: extend .txt 
+    list_studies: None
+    list_subjects: None
+    list_groups: None
+    list_sessions: None
+
+  Returns
+  -------
+    df: dataframe
+      Contains the information that was stored in the txt file in format dataframe
+  '''
+
   if list_studies is None:
     list_studies=["None"]*len(files)
   if list_subjects is None:
@@ -34,7 +54,7 @@ def indicesPrep(files,list_studies=None,list_subjects=None,list_groups=None,list
     list_groups=["None"]*len(files)
   if list_sessions is None:
     list_sessions=["None"]*len(files)
-  # 3 state (Original, after and before)
+  # 3 state (Original, after and before) *9 (different metrics)
   metrics=3*9
   df_prep={}
   df_prep['Study']=list_studies*metrics
@@ -63,17 +83,23 @@ def indicesPrep(files,list_studies=None,list_subjects=None,list_groups=None,list
     df_prep['Metric_value']+=[len(val) for key,val in noisy_channels_after_interpolation.items()]
     df_prep['State']+=['after_interpolation']*len(dataFile['noisy_channels_after_interpolation'])
 
-  dataframe=pd.DataFrame((df_prep))
-  return dataframe
+  df=pd.DataFrame((df_prep))
+  return df
 
 def indicesWica(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
   '''
-  canales,epocas
   Parameters
   ----------
+    files: extend '.txt'
+    list_studies:None
+    list_subjects: None
+    list_groups: None
+    list_sessions: None 
 
   Returns
   -------
+    dfstats_wica: dataframe 
+      dataframe containing information of all subjects
   '''
   if list_studies is None:
     list_studies=["None"]*len(files)
@@ -101,10 +127,21 @@ def channelsPowers(data,name_study="None",subject="None",group="None",session="N
 
   Parameters
   ----------
-  data:
+    data:
+    name_study: str
+      Database study name
+    subject: str
+      Name with which the subject was encoded
+    group:  str
+      Name with which the group was encoded. This refers to the condition of a group of patients.
+    session: str
+      Name with which the session was encoded. This refers to the visit of a subject. 
+    stage: str 
 
   Returns
   -------
+    powers: dataframe 
+      Dataframe containing unique information about a subject
   '''
 
   df_powers={}
@@ -130,6 +167,21 @@ def channelsPowers(data,name_study="None",subject="None",group="None",session="N
   return powers 
 
 def PowersChannels(powersFiles,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None,list_stage=None):
+  '''
+
+  Parameters
+  ----------
+    powersFiles
+    list_studies:None
+    list_subjects:None
+    list_groups:None
+    list_sessions:None
+    list_stage:None
+
+  Returns
+  -------
+  
+  '''
   dataframesPowers=[]
   if list_studies is None:
     list_studies=["None"]*len(powersFiles)
@@ -150,25 +202,21 @@ def PowersChannels(powersFiles,list_studies=None,list_subjects=None,list_groups=
 
 def reject_thresholds(data,name_study="None",subject="None",group="None",session="None"):
   '''
-  Function to extract the initial and the final thresholds from the reject metric
+  Function to extract the thresholds from the reject metric
 
   Parameters
   ----------
-  data:
+    data:
+    name_study:"None"
+    subject:"None"
+    group:"None"
+    session:"None"
 
   Returns
   -------
+    df= dataframe 
 
   '''
-  # df_reject={}
-  # df_reject['Study']=list_studies*metrics
-  # df_reject['Subject']=list_subjects*metrics
-  # df_reject['Group']=list_groups*metrics
-  # df_reject['Session']=list_sessions*metrics
-  # df_reject['Metric']=[]
-  # df_reject['Metric_value']=[]
- 
-
   df= pd.DataFrame({
   'Study':[name_study]*len(data['final_thresholds']['spectrum'][1]),
   'Subject':[subject]*len(data['final_thresholds']['spectrum'][1]),
@@ -191,6 +239,22 @@ def reject_thresholds(data,name_study="None",subject="None",group="None",session
   return df
 
 def reject_thresholds_format_long(data,name_study="None",subject="None",group="None",session="None"):
+  '''
+  Function to extract the thresholds from the reject metric
+
+  Parameters
+  ----------
+    data:
+    name_study:"None"
+    subject:"None"
+    group:"None"
+    session:"None"
+
+  Returns
+  -------
+    df= dataframe 
+
+  '''
   metrics=['i_kurtosis_min','i_kurtosis_max','i_amplitude_min','i_amplitude_max','i_trend','f_kurtosis_min','f_kurtosis_max','f_amplitude_min','f_amplitude_max','f_trend','f_spectrum_min','f_spectrum_max']
   metrics_value=[*data['initial_thresholds']['kurtosis'][0],*data['initial_thresholds']['kurtosis'][1],*data['initial_thresholds']['amplitude'][0],*data['initial_thresholds']['amplitude'][1],*data['initial_thresholds']['trend'][0],*data['final_thresholds']['kurtosis'][0],*data['final_thresholds']['kurtosis'][1],*data['final_thresholds']['amplitude'][0],*data['final_thresholds']['amplitude'][1],*data['final_thresholds']['trend'][0],*data['final_thresholds']['spectrum'][0],*data['final_thresholds']['spectrum'][1]]
   df= pd.DataFrame({
@@ -201,13 +265,26 @@ def reject_thresholds_format_long(data,name_study="None",subject="None",group="N
    })
   list_metrics=[]
   for pos,metric in enumerate(metrics):
-      # 58 porque es la longitud de los canales 
-      list_metrics.extend([metric]*58)
+    # 58 porque es la longitud de los canales 
+    list_metrics.extend([metric]*58)
   df['Metric']=list_metrics
   df['Metric_Value']=metrics_value
   return df 
 
 def rejectGraphic(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
+  '''
+  
+  Parameters
+  ----------
+    files
+    list_studies:None
+    list_subjects:None
+    list_groups:None
+    list_sessions:None
+
+  Returns
+  -------
+  '''
   if list_studies is None:
     list_studies=["None"]*len(files)
   if list_subjects is None:
@@ -225,6 +302,22 @@ def rejectGraphic(files,list_studies=None,list_subjects=None,list_groups=None,li
   return dataReject
 
 def component_power(data,name_study="None",subject="None",group="None",session="None",stage="None"):
+  '''
+
+  Parameters
+  ----------
+    data
+    name_study:str
+    subject:str
+    group:str
+    session:str
+    stage:str
+
+  Returns
+  -------
+    powers: dataframe
+      Dataframe containing unique information about a subject
+  '''
   df_powers={}
   df_powers['Powers']=[]
   df_powers['Bands']=[]
@@ -238,7 +331,6 @@ def component_power(data,name_study="None",subject="None",group="None",session="
   for i,key in enumerate(data['bands']):
     ncomps = np.array(data['ics_power']).shape[1]
     comp_labels = ['C'+str(i+1) for i in range(ncomps)]
-    #icpowers = np.array(data['ics_power'])
     df_powers['Study']+=[name_study]*len(comp_labels)
     df_powers['Subject']+=[subject]*len(comp_labels)
     df_powers['Group']+=[group]*len(comp_labels)
@@ -251,6 +343,21 @@ def component_power(data,name_study="None",subject="None",group="None",session="
   return powers 
 
 def PowersComponents(powersFiles,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None,list_stage=None):
+  '''
+
+  Parameters
+  ----------
+    powersFiles
+    list_studies=None
+    list_subjects=None
+    list_groups=None
+    list_sessions=None
+    list_stage=None
+  
+  Returns
+  -------
+    datosPowers:dataframe
+  '''
   dataframesPowers=[]
   if list_studies is None:
     list_studies=["None"]*len(powersFiles)
@@ -273,6 +380,7 @@ def PowersComponents(powersFiles,list_studies=None,list_subjects=None,list_group
 # FILTROS
 def filter_nS_nG_1M(superdata,group_dict):
     """
+    superdata
     group_dict={
         'BIOMARCADORES':[CTR,DCL],
         'SRM':['SRM'] # assume datasets with no groups have Group=Study

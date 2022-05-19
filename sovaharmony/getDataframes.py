@@ -1,9 +1,7 @@
-'''
-***************************************
+"""
+@autor:Luisa María Zapata Saldarriaga, Universidad de Antioquia, luisazapatasaldarriaga@gmail.com
 
-
-*************************************
-'''
+"""
 
 import re
 import pandas as pd 
@@ -98,8 +96,6 @@ def get_dataframe_powers(THE_DATASET,mode="channels",stage=None):
         eegs_powers = [x for x in eegs_powers if f'desc-component[{runlabel}]' in x]
 
     else: 
-    #Stage== None and mode == "components ":
-    # Data without stage of normalized for components 
         eegs_powers= layout.get(extension='.txt', task=task,suffix='powers', return_type='filename')
         eegs_powers = [x for x in eegs_powers if f'desc-component[{runlabel}]' in x]
     

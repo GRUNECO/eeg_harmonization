@@ -1,3 +1,10 @@
+'''
+***************************************
+
+
+*************************************
+'''
+
 import re
 import pandas as pd 
 from bids import BIDSLayout

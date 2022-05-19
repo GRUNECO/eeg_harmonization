@@ -34,6 +34,7 @@ def indicesPrep(files,list_studies=None,list_subjects=None,list_groups=None,list
     list_groups=["None"]*len(files)
   if list_sessions is None:
     list_sessions=["None"]*len(files)
+  # 3 state (Original, after and before)
   metrics=3*9
   df_prep={}
   df_prep['Study']=list_studies*metrics
@@ -159,6 +160,15 @@ def reject_thresholds(data,name_study="None",subject="None",group="None",session
   -------
 
   '''
+  # df_reject={}
+  # df_reject['Study']=list_studies*metrics
+  # df_reject['Subject']=list_subjects*metrics
+  # df_reject['Group']=list_groups*metrics
+  # df_reject['Session']=list_sessions*metrics
+  # df_reject['Metric']=[]
+  # df_reject['Metric_value']=[]
+ 
+
   df= pd.DataFrame({
   'Study':[name_study]*len(data['final_thresholds']['spectrum'][1]),
   'Subject':[subject]*len(data['final_thresholds']['spectrum'][1]),
@@ -180,6 +190,23 @@ def reject_thresholds(data,name_study="None",subject="None",group="None",session
   })
   return df
 
+def reject_thresholds_format_long(data,name_study="None",subject="None",group="None",session="None"):
+  metrics=['i_kurtosis_min','i_kurtosis_max','i_amplitude_min','i_amplitude_max','i_trend','f_kurtosis_min','f_kurtosis_max','f_amplitude_min','f_amplitude_max','f_trend','f_spectrum_min','f_spectrum_max']
+  metrics_value=[*data['initial_thresholds']['kurtosis'][0],*data['initial_thresholds']['kurtosis'][1],*data['initial_thresholds']['amplitude'][0],*data['initial_thresholds']['amplitude'][1],*data['initial_thresholds']['trend'][0],*data['final_thresholds']['kurtosis'][0],*data['final_thresholds']['kurtosis'][1],*data['final_thresholds']['amplitude'][0],*data['final_thresholds']['amplitude'][1],*data['final_thresholds']['trend'][0],*data['final_thresholds']['spectrum'][0],*data['final_thresholds']['spectrum'][1]]
+  df= pd.DataFrame({
+  'Study':[name_study]*len(data['final_thresholds']['spectrum'][1])*len(metrics),
+  'Subject':[subject]*len(data['final_thresholds']['spectrum'][1])*len(metrics),
+  'Group':[group]*len(data['final_thresholds']['spectrum'][1])*len(metrics),
+  'Session':[session]*len(data['final_thresholds']['spectrum'][1])*len(metrics)
+   })
+  list_metrics=[]
+  for pos,metric in enumerate(metrics):
+      # 58 porque es la longitud de los canales 
+      list_metrics.extend([metric]*58)
+  df['Metric']=list_metrics
+  df['Metric_Value']=metrics_value
+  return df 
+
 def rejectGraphic(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
   if list_studies is None:
     list_studies=["None"]*len(files)
@@ -192,7 +219,7 @@ def rejectGraphic(files,list_studies=None,list_subjects=None,list_groups=None,li
   dataframesReject=[]
   for file,name_study,subject,group,session in zip(files,list_studies,list_subjects,list_groups,list_sessions):
     dataFile=load_txt(file)
-    statsReject=reject_thresholds(dataFile,name_study,subject,group,session)
+    statsReject=reject_thresholds_format_long(dataFile,name_study,subject,group,session)
     dataframesReject.append(statsReject)
   dataReject=pd.concat((dataframesReject))
   return dataReject

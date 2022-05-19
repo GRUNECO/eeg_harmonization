@@ -1,6 +1,6 @@
 BIOMARCADORES = {
     'name':'BIOMARCADORES',
-    'input_path':r'D:\BASESDEDATOS\BIOMARCADORES_BIDS',
+    'input_path':r'F:\BIOMARCADORES',
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',

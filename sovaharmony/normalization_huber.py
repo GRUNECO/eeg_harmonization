@@ -2,11 +2,7 @@ import mne
 import statsmodels.api as sm
 from sovaharmony.processing import get_derivative_path, write_json
 from bids import BIDSLayout
-<<<<<<< HEAD
 from datasets import BIOMARCADORES, BIOMARCADORES_test, SRM_test
-=======
-from datasets import SRM 
->>>>>>> c5511851a053fc0a4cc48e384c8d5eeaf37f8c43
 import os
 import numpy as np
 from sovaflow.utils import createRaw
@@ -14,11 +10,7 @@ from sovaflow.flow import  get_power_derivates,get_ics_power_derivatives
 from astropy.stats import mad_std
 from sovaflow.utils import cfg_logger,get_spatial_filter
 
-<<<<<<< HEAD
 THE_DATASET=BIOMARCADORES_test
-=======
-THE_DATASET=SRM
->>>>>>> c5511851a053fc0a4cc48e384c8d5eeaf37f8c43
 layout_dict = THE_DATASET.get('layout',None)
 input_path = THE_DATASET.get('input_path',None)
 layout = BIDSLayout(input_path)

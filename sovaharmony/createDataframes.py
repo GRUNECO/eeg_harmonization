@@ -257,6 +257,8 @@ def reject_thresholds_format_long(data,name_study="None",subject="None",group="N
   '''
   metrics=['i_kurtosis_min','i_kurtosis_max','i_amplitude_min','i_amplitude_max','i_trend','f_kurtosis_min','f_kurtosis_max','f_amplitude_min','f_amplitude_max','f_trend','f_spectrum_min','f_spectrum_max']
   metrics_value=[*data['initial_thresholds']['kurtosis'][0],*data['initial_thresholds']['kurtosis'][1],*data['initial_thresholds']['amplitude'][0],*data['initial_thresholds']['amplitude'][1],*data['initial_thresholds']['trend'][0],*data['final_thresholds']['kurtosis'][0],*data['final_thresholds']['kurtosis'][1],*data['final_thresholds']['amplitude'][0],*data['final_thresholds']['amplitude'][1],*data['final_thresholds']['trend'][0],*data['final_thresholds']['spectrum'][0],*data['final_thresholds']['spectrum'][1]]
+  metrics_value_=[data['initial_thresholds']['kurtosis'][0],data['initial_thresholds']['kurtosis'][1],data['initial_thresholds']['amplitude'][0],data['initial_thresholds']['amplitude'][1],data['initial_thresholds']['trend'][0],data['final_thresholds']['kurtosis'][0],data['final_thresholds']['kurtosis'][1],data['final_thresholds']['amplitude'][0],data['final_thresholds']['amplitude'][1],data['final_thresholds']['trend'][0],data['final_thresholds']['spectrum'][0],data['final_thresholds']['spectrum'][1]]
+
   df= pd.DataFrame({
   'Study':[name_study]*len(data['final_thresholds']['spectrum'][1])*len(metrics),
   'Subject':[subject]*len(data['final_thresholds']['spectrum'][1])*len(metrics),
@@ -266,7 +268,7 @@ def reject_thresholds_format_long(data,name_study="None",subject="None",group="N
   list_metrics=[]
   for pos,metric in enumerate(metrics):
     # 58 porque es la longitud de los canales 
-    list_metrics.extend([metric]*58)
+    list_metrics.extend([metric]*len(metrics_value_[pos]))
   df['Metric']=list_metrics
   df['Metric_Value']=metrics_value
   return df 

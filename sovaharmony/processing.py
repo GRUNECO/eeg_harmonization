@@ -13,6 +13,7 @@ from sovaharmony.info import info as info_dict
 import statsmodels.api as sm
 import pandas as pd
 from astropy.stats import mad_std
+import threading
 
 def get_derivative_path(layout,eeg_file,output_entity,suffix,output_extension,bids_root,derivatives_root):
     entities = layout.parse_file_entities(eeg_file)
@@ -94,8 +95,8 @@ def harmonize(THE_DATASET,fast_mode=False):
     log_path = os.path.join(derivatives_root,'code')
     os.makedirs(log_path, exist_ok=True)
     logger,currentdt = cfg_logger(log_path)
-
-
+    print(bids_root,'\n',layout,'\n',input_path)
+    print(layout_dict)
     e = 0
     archivosconerror = []
 

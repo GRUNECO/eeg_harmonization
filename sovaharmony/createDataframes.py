@@ -112,7 +112,6 @@ def indicesWica(files,list_studies=None,list_subjects=None,list_groups=None,list
 
   sums=[]
   for file in files:
-    print(file)
     dataFile=load_txt(file)
     mat=np.array(dataFile)
     sum=np.sum(mat.flatten())

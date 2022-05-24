@@ -11,6 +11,7 @@ from pydantic import NoneBytes
 from .createDataframes import PowersChannels,rejectGraphic,indicesWica,indicesPrep,PowersComponents
 import pandas as pd
 import os
+import csv
 
 def get_information_data(THE_DATASET):
   '''
@@ -127,13 +128,13 @@ def get_dataframe_powers(THE_DATASET,mode="channels",stage=None):
     dataPowers=pd.concat((dataframesPowers))
     path_derivatives=os.path.join(layout.root,'derivatives')
     if  mode== 'channels' and stage ==None:
-        dataPowers.to_excel(path_derivatives+r'\longitudinal_data_powers_long_{mode}.xlsx'.format(mode=mode))
+        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{mode}.feather'.format(mode=mode))
     if mode == 'components' and stage== None:
-        dataPowers.to_excel(path_derivatives+r'\longitudinal_data_powers_long_{mode}.xlsx'.format(mode=mode))
+        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{mode}.feather'.format(mode=mode))
     if mode == 'channels' and stage== 'norm':
-        dataPowers.to_excel(path_derivatives+'\longitudinal_data_powers_long_{mode}_{stage}.xlsx'.format(mode=mode,stage=stage))
+        dataPowers.reset_index().to_feather(path_derivatives+'\longitudinal_data_powers_long_{mode}_{stage}.feather'.format(mode=mode,stage=stage))
     if mode == 'components' and stage== 'norm':
-        dataPowers.to_excel(path_derivatives+r'\longitudinal_data_powers_long_{mode}_{stage}.xlsx'.format(mode=mode,stage=stage))  
+        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{mode}_{stage}.feather'.format(mode=mode,stage=stage))  
     return dataPowers
 
 def get_dataframe_reject(THE_DATASET):
@@ -172,7 +173,7 @@ def get_dataframe_reject(THE_DATASET):
         
   dataReject=pd.concat((dataframesReject))
   path_derivatives=os.path.join(layout.root,'derivatives')
-  dataReject.to_excel(path_derivatives+r'\data_reject.xlsx')
+  dataReject.reset_index().to_feather(path_derivatives+r'\data_reject.feather')
   return dataReject       
 
 def get_dataframe_wica(THE_DATASET):
@@ -210,7 +211,7 @@ def get_dataframe_wica(THE_DATASET):
         
   dataWica=pd.concat((dataframesWica))
   path_derivatives=os.path.join(layout.root,'derivatives')
-  dataWica.to_excel(path_derivatives+r'\data_wICA.xlsx')
+  dataWica.reset_index().to_feather(path_derivatives+r'\data_wICA.feather')
   return dataWica 
 
 def get_dataframe_prep(THE_DATASET):
@@ -248,6 +249,6 @@ def get_dataframe_prep(THE_DATASET):
 
   data_Prep=pd.concat(dataframes)
   path_derivatives=os.path.join(layout.root,'derivatives')
-  data_Prep.to_excel(path_derivatives+r'\data_PREP.xlsx')
+  data_Prep.reset_index().to_feather(path_derivatives+r'\data_PREP.feather')
   return data_Prep 
 

@@ -52,6 +52,42 @@ visitas=['V0','V1','V2','V3','V4']
 bandas=datos['Bands'].unique()
 Stage=datos['Stage'].unique()
 
+# for st in Stage:
+#     d_stage=datos[datos['Stage']==st] 
+#     for g in G:
+#         d_group=d_stage[d_stage['Group']==g]
+#         dic={}
+#         for comp in components:
+#             d_comp=d_group[d_group['Components']==comp]
+#             visits=list(d_comp['Session'].unique())
+#             matrix_c=pd.DataFrame(columns=visits) #Se le asigna a un dataframe los datos d elas columnas
+#             subjects=d_comp['Subject'].unique() 
+#             for sub in subjects:
+#                 d_sub=d_comp[d_comp['Subject']==sub] 
+#                 matrix_s=pd.DataFrame(columns=visits)
+                
+#                 for vis in visits:
+#                     power=d_sub[d_sub['Session']==vis]['Powers'].tolist()
+#                     matrix_s[vis]=power
+#                 matrix_c=matrix_c.append(matrix_s, ignore_index = True)
+
+#             #matrix_c=matrix_c.to_numpy() #Mtriz a hacer ICC 
+#             print('Matriz componente '+g+' '+st+' ',comp)
+#             #icc = pg.intraclass_corr(data=matrix_c, targets=index, raters='Judge', ratings='Scores').round(3)
+#             #icc.set_index("Type")
+            
+#             # print('Tamaño de la matriz: ',matrix_c.shape)
+#             # print(matrix_c)
+
+#             dic[comp]=matrix_c
+        
+#         if st=='Normalized data':
+#             st='Normalized'
+#         elif st=='Preprocessed data':
+#             st='Preprocessed'
+#         scipy.io.savemat(g+'_'+st+'.mat', dic)
+
+
 for st in Stage:
     d_stage=datos[datos['Stage']==st] 
     for g in G:
@@ -60,30 +96,29 @@ for st in Stage:
         for comp in components:
             d_comp=d_group[d_group['Components']==comp]
             visits=list(d_comp['Session'].unique())
-            matrix_c=pd.DataFrame(columns=visits) #Se le asigna a un dataframe los datos d elas columnas
+            matrix_c=pd.DataFrame(columns=['index','Session', 'Power']) #Se le asigna a un dataframe los datos d elas columnas
             subjects=d_comp['Subject'].unique() 
+
             for sub in subjects:
                 d_sub=d_comp[d_comp['Subject']==sub] 
-                matrix_s=pd.DataFrame(columns=visits)
+                matrix_s=pd.DataFrame(columns=['index','Session', 'Power'])
+                
                 for vis in visits:
+                    
                     power=d_sub[d_sub['Session']==vis]['Powers'].tolist()
-                    matrix_s[vis]=power
-                matrix_c=matrix_c.append(matrix_s, ignore_index = True)
+                    
+                    n_vis=[vis]*len(power)
+                    
+                    matrix_s['Session']=n_vis
+                    matrix_s['Power']=power              
+                    matrix_c=matrix_c.append(matrix_s, ignore_index = True)
+            index=list(np.arange(0,len(subjects)*8,1))*len(visits)
+            matrix_c['index']=index
 
             #matrix_c=matrix_c.to_numpy() #Mtriz a hacer ICC 
-            print('Matriz componente '+g+' '+st+' ',comp)
-            icc = pg.intraclass_corr(data=matrix_c, targets=index, raters='Judge', ratings='Scores').round(3)
-            icc.set_index("Type")
-            
-            # print('Tamaño de la matriz: ',matrix_c.shape)
-            # print(matrix_c)
-
-            dic[comp]=matrix_c
-        
-        if st=='Normalized data':
-            st='Normalized'
-        elif st=='Preprocessed data':
-            st='Preprocessed'
-        scipy.io.savemat(g+'_'+st+'.mat', dic)
-
+            print('\n Matriz componente '+g+' '+st+' ',comp)
+            #print(matrix_c)
+            print(matrix_c.shape)
+            icc = pg.intraclass_corr(data=matrix_c, targets='index', raters='Session', ratings='Power').round(3)
+            print(icc.set_index("Type"))
 

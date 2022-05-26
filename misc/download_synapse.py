@@ -1,4 +1,4 @@
-import synapseclient 
+'''import synapseclient 
 import synapseutils
 from synapseutils import walk
 from pathlib import Path
@@ -21,3 +21,18 @@ for x in w:
         files = synapseutils.syncFromSynapse(syn, current_id,path=desired_path)
     else:
         continue
+'''
+
+#####
+'''
+!pip install synapseclient
+!pip install synapseutils
+!pip3 install (--upgrade) synapseclient[pandas, pysftp]
+'''
+import synapseclient 
+import synapseutils 
+
+syn = synapseclient.Synapse() 
+syn.login('veronica.henaoi@udea.edu.co','veheis1215') 
+files = synapseutils.syncFromSynapse(syn, 'syn22324937')
+

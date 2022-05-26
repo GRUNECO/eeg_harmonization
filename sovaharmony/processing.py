@@ -33,9 +33,14 @@ def default(obj):
             return obj.item()
     raise TypeError('Unknown type:', type(obj))
 
-def write_json(data,filepath):
-    with open(filepath, 'w') as fp:
-        json.dump(data, fp,indent=4,default=default)
+def write_json(data,filepath,mode=None):
+    if mode=='a':
+        with open(filepath, 'a') as fp:
+            json.dump(data, fp,indent=4,default=default)
+    else:
+        with open(filepath, 'w') as fp:
+            json.dump(data, fp,indent=4,default=default)
+
 
 def harmonize(THE_DATASET,fast_mode=False):
     """Process a single bids dataset.
@@ -95,11 +100,8 @@ def harmonize(THE_DATASET,fast_mode=False):
     log_path = os.path.join(derivatives_root,'code')
     os.makedirs(log_path, exist_ok=True)
     logger,currentdt = cfg_logger(log_path)
-    print(bids_root,'\n',layout,'\n',input_path)
-    print(layout_dict)
     e = 0
     archivosconerror = []
-
     description = layout.get_dataset_description()
     desc_pipeline = "sovaharmony, a harmonization eeg pipeline using the bids standard"
     description['GeneratedBy']=[info_dict]

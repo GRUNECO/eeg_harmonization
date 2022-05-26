@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd 
 import collections
 import scipy.io
+import pingouin as pg
 
 datos1=pd.read_excel('longitudinal_data_powers_long_components.xlsx') 
 datos2=pd.read_excel('longitudinal_data_powers_long_components_norm.xlsx')
@@ -69,8 +70,11 @@ for st in Stage:
                     matrix_s[vis]=power
                 matrix_c=matrix_c.append(matrix_s, ignore_index = True)
 
-            matrix_c=matrix_c.to_numpy()
-            # print('Matriz componente '+st,comp)
+            #matrix_c=matrix_c.to_numpy() #Mtriz a hacer ICC 
+            print('Matriz componente '+g+' '+st+' ',comp)
+            icc = pg.intraclass_corr(data=matrix_c, targets=index, raters='Judge', ratings='Scores').round(3)
+            icc.set_index("Type")
+            
             # print('Tamaño de la matriz: ',matrix_c.shape)
             # print(matrix_c)
 

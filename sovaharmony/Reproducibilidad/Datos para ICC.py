@@ -92,6 +92,7 @@ for st in Stage:
                 icc3['Stage']=filter['Stage'][i]
                 icc3['Group']=filter['Group'][i]
                 icc3['Bands']=ban
+                icc3['Components']=comp
                 icc_value=icc_value.append(icc3,ignore_index=True)
 
         icc_value.append(icc_value)

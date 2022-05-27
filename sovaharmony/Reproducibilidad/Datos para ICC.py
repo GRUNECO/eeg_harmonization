@@ -5,13 +5,13 @@ import collections
 import scipy.io
 import pingouin as pg
 
-datos1=pd.read_excel(r"E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\longitudinal_data_powers_long_components.xlsx") 
-datos2=pd.read_excel(r"E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\longitudinal_data_powers_long_components_norm.xlsx")
+datos1=pd.read_excel(r"sovaharmony\Reproducibilidad\longitudinal_data_powers_long_components.xlsx") 
+datos2=pd.read_excel(r"sovaharmony\Reproducibilidad\longitudinal_data_powers_long_components_norm.xlsx")
 datos=pd.concat((datos1,datos2))
 
 
 datos=datos.drop(datos[datos['Session']=='V4P'].index)#Borrar datos
-components=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25' ]
+components=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25']
 datos=datos[datos.Components.isin(components) ] #Solo los datos de las componentes seleccionadas
 
 sessions=datos['Session'].unique() #sesiones 
@@ -59,69 +59,41 @@ for st in Stage:
     for g in G:
         d_group=d_stage[d_stage['Group']==g]
         dic={}
+        icc_comp=[]
         for comp in components:
             d_comp=d_group[d_group['Components']==comp]
             visits=list(d_comp['Session'].unique())
-            matrix_c=pd.DataFrame(columns=['index','Session', 'Power']) #Se le asigna a un dataframe los datos d elas columnas
+            matrix_c=pd.DataFrame(columns=['index','Session', 'Power','Bands','Group','Stage']) #Se le asigna a un dataframe los datos d elas columnas
             subjects=d_comp['Subject'].unique() 
+            for vis in visits:
+                matrix_s=pd.DataFrame(columns=['index','Session', 'Power','Bands','Group','Stage'])
+                power=d_comp[d_comp['Session']==vis]['Powers'].tolist()
+                n_vis=[vis]*len(power)
+                matrix_s['Session']=n_vis
+                matrix_s['Power']=power  
+                matrix_s['Group']=d_comp[d_comp['Session']==vis]['Group'].tolist()
+                matrix_s['Bands']=d_comp[d_comp['Session']==vis]['Bands'].tolist()
+                matrix_s['Stage']=d_comp[d_comp['Session']==vis]['Stage'].tolist()
 
-            for sub in subjects:
-                d_sub=d_comp[d_comp['Subject']==sub] 
-                matrix_s=pd.DataFrame(columns=['index','Session', 'Power'])
-                
-                for vis in visits:
-                    
-                    power=d_sub[d_sub['Session']==vis]['Powers'].tolist()
-                    
-                    n_vis=[vis]*len(power)
-                    
-                    matrix_s['Session']=n_vis
-                    matrix_s['Power']=power  
-                    group=d_sub[d_sub['Session']==vis]['Group'].tolist()
-                    bands=d_sub[d_sub['Session']==vis]['Bands'].tolist()
-                    stage=d_sub[d_sub['Session']==vis]['Stage'].tolist()
-                    matrix_c=matrix_c.append(matrix_s, ignore_index = True)            
-                    matrix_c=matrix_c.append(matrix_s, ignore_index = True)
-            index=list(np.arange(0,len(subjects)*8,1))*len(visits)
-            matrix_c['index']=index
-
-            #matrix_c=matrix_c.to_numpy() #Mtriz a hacer ICC 
-            print('\n Matriz componente '+g+' '+st+' ',comp)
-            #print(matrix_c)
-            print(matrix_c.shape)
-            icc = pg.intraclass_corr(data=matrix_c, targets='index', raters='Session', ratings='Power').round(6)
-            print(icc.set_index("Type"))
-            icc3 = icc[icc['Type']=='ICC3']
-            icc3 = icc3.set_index('Type')
-            icc_value = icc_value.append(icc3,ignore_index=True)
-icc_value.to_csv(r'E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\ICC\icc_values.csv',sep=';')
-
-
-'''for st in Stage:
-    d_stage=datos[datos['Stage']==st] 
-    for g in G:
-        d_group=d_stage[d_stage['Group']==g]
-        dic={}
-        for comp in components:
-            d_comp=d_group[d_group['Components']==comp]
-            visits=list(d_comp['Session'].unique())
-            matrix_c=pd.DataFrame(columns=['Index','Session', 'Power','Bands','Group','Stage']) #Se le asigna a un dataframe los datos d elas columnas           
-            for sub in subjects:
-                d_sub=d_comp[d_comp['Subject']==sub] 
-                matrix_s=pd.DataFrame(columns=['index','Session', 'Power'])
-                for vis in visits:
-                    power=d_sub[d_sub['Session']==vis]['Powers'].tolist()
-                    #matrix_s=pd.DataFrame(columns=['Index','Session', 'Power','Bands','Group','Stage'])
-                    matrix_c['Power']=power 
-                    n_vis=[vis]*len(power)
-                    matrix_c['Session']=n_vis
-                    matrix_c['Group']=d_sub[d_sub['Session']==vis]['Group'].tolist()
-                    matrix_c['Bands']=d_sub[d_sub['Session']==vis]['Bands'].tolist()
-                    matrix_c['Stage']=d_sub[d_sub['Session']==vis]['Stage'].tolist()
-                    matrix_c=matrix_c.append(matrix_s, ignore_index = True)
-
-            subjects=d_comp['Subject'].unique() 
-
+                matrix_c=matrix_c.append(matrix_s, ignore_index = True)            
+            
             index=list(np.arange(0,len(subjects)*len(bandas),1))*len(visits)
             matrix_c['index']=index
-'''
+
+        
+            print('\n Matriz componente '+g+' '+st+' ',comp)
+            for i,ban in enumerate(bandas):
+                fil_bands=matrix_c['Bands']==ban
+                filter=matrix_c[fil_bands]
+                icc=pg.intraclass_corr(data=filter, targets='index', raters='Session', ratings='Power').round(6)
+                icc3 = icc[icc['Type']=='ICC3']
+                icc3 = icc3.set_index('Type')
+                print(filter['Stage'])
+                icc3['Stage']=filter['Stage'][i]
+                icc3['Group']=filter['Group'][i]
+                icc3['Bands']=ban
+                icc_value=icc_value.append(icc3,ignore_index=True)
+
+        icc_value.append(icc_value)
+    icc_value.append(icc_value)
+icc_value.to_csv(r'sovaharmony\Reproducibilidad\\icc_values.csv',sep=';')

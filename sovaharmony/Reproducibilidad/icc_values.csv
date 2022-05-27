@@ -1,0 +1,257 @@
+;Description;ICC;F;df1;df2;pval;CI95%;Stage;Group;Bands
+0;Single fixed raters;0.330923;2.978384;18;54;0.001008;[0.11 0.6 ];Preprocessed data;G1;delta
+1;Single fixed raters;0.621891;7.578969;18;54;0.0;[0.41 0.81];Preprocessed data;G1;theta
+2;Single fixed raters;0.742583;12.539014;18;54;0.0;[0.57 0.88];Preprocessed data;G1;alpha-1
+3;Single fixed raters;0.749546;12.971;18;54;0.0;[0.58 0.88];Preprocessed data;G1;alpha-2
+4;Single fixed raters;0.594746;6.870343;18;54;0.0;[0.38 0.79];Preprocessed data;G1;beta1
+5;Single fixed raters;0.77034;14.417024;18;54;0.0;[0.61 0.89];Preprocessed data;G1;beta2
+6;Single fixed raters;0.702241;10.433661;18;54;0.0;[0.51 0.85];Preprocessed data;G1;beta3
+7;Single fixed raters;0.630222;7.81729;18;54;0.0;[0.42 0.81];Preprocessed data;G1;gamma
+8;Single fixed raters;0.469312;4.537386;18;54;8e-06;[0.24 0.71];Preprocessed data;G1;delta
+9;Single fixed raters;0.603997;7.100927;18;54;0.0;[0.39 0.8 ];Preprocessed data;G1;theta
+10;Single fixed raters;0.662026;8.83524;18;54;0.0;[0.46 0.83];Preprocessed data;G1;alpha-1
+11;Single fixed raters;0.683605;9.642443;18;54;0.0;[0.49 0.84];Preprocessed data;G1;alpha-2
+12;Single fixed raters;0.720389;11.305573;18;54;0.0;[0.54 0.86];Preprocessed data;G1;beta1
+13;Single fixed raters;0.429517;4.011608;18;54;3.8e-05;[0.2  0.68];Preprocessed data;G1;beta2
+14;Single fixed raters;0.408633;3.763988;18;54;8.1e-05;[0.18 0.66];Preprocessed data;G1;beta3
+15;Single fixed raters;0.36702;3.319318;18;54;0.000332;[0.14 0.63];Preprocessed data;G1;gamma
+16;Single fixed raters;0.546385;5.818043;18;54;0.0;[0.32 0.76];Preprocessed data;G1;delta
+17;Single fixed raters;0.77543;14.811806;18;54;0.0;[0.61 0.89];Preprocessed data;G1;theta
+18;Single fixed raters;0.838309;21.738584;18;54;0.0;[0.71 0.93];Preprocessed data;G1;alpha-1
+19;Single fixed raters;0.698341;10.260012;18;54;0.0;[0.51 0.85];Preprocessed data;G1;alpha-2
+20;Single fixed raters;0.631901;7.866655;18;54;0.0;[0.42 0.81];Preprocessed data;G1;beta1
+21;Single fixed raters;0.696496;10.179414;18;54;0.0;[0.5  0.85];Preprocessed data;G1;beta2
+22;Single fixed raters;0.556295;6.015005;18;54;0.0;[0.33 0.77];Preprocessed data;G1;beta3
+23;Single fixed raters;0.503647;5.058784;18;54;2e-06;[0.27 0.73];Preprocessed data;G1;gamma
+24;Single fixed raters;0.433813;4.064806;18;54;3.2e-05;[0.2  0.68];Preprocessed data;G1;delta
+25;Single fixed raters;0.709228;10.756471;18;54;0.0;[0.52 0.86];Preprocessed data;G1;theta
+26;Single fixed raters;0.744752;12.671034;18;54;0.0;[0.57 0.88];Preprocessed data;G1;alpha-1
+27;Single fixed raters;0.61363;7.35277;18;54;0.0;[0.4 0.8];Preprocessed data;G1;alpha-2
+28;Single fixed raters;0.579518;6.512893;18;54;0.0;[0.36 0.78];Preprocessed data;G1;beta1
+29;Single fixed raters;0.628035;7.753687;18;54;0.0;[0.42 0.81];Preprocessed data;G1;beta2
+30;Single fixed raters;0.68107;9.541949;18;54;0.0;[0.48 0.84];Preprocessed data;G1;beta3
+31;Single fixed raters;0.464275;4.466516;18;54;1e-05;[0.23 0.7 ];Preprocessed data;G1;gamma
+32;Single fixed raters;0.335451;3.019124;18;54;0.000882;[0.11 0.6 ];Preprocessed data;G1;delta
+33;Single fixed raters;0.791056;16.143881;18;54;0.0;[0.64 0.9 ];Preprocessed data;G1;theta
+34;Single fixed raters;0.720624;11.317617;18;54;0.0;[0.54 0.86];Preprocessed data;G1;alpha-1
+35;Single fixed raters;0.734399;12.060161;18;54;0.0;[0.56 0.87];Preprocessed data;G1;alpha-2
+36;Single fixed raters;0.768391;14.270495;18;54;0.0;[0.6  0.89];Preprocessed data;G1;beta1
+37;Single fixed raters;0.807694;17.800197;18;54;0.0;[0.66 0.91];Preprocessed data;G1;beta2
+38;Single fixed raters;0.751072;13.068877;18;54;0.0;[0.58 0.88];Preprocessed data;G1;beta3
+39;Single fixed raters;0.797309;16.734447;18;54;0.0;[0.65 0.9 ];Preprocessed data;G1;gamma
+40;Single fixed raters;0.38523;3.506494;18;54;0.000183;[0.16 0.64];Preprocessed data;G1;delta
+41;Single fixed raters;0.761882;13.798413;18;54;0.0;[0.59 0.89];Preprocessed data;G1;theta
+42;Single fixed raters;0.740671;12.424394;18;54;0.0;[0.56 0.88];Preprocessed data;G1;alpha-1
+43;Single fixed raters;0.591526;6.792545;18;54;0.0;[0.37 0.79];Preprocessed data;G1;alpha-2
+44;Single fixed raters;0.78837;15.900907;18;54;0.0;[0.63 0.9 ];Preprocessed data;G1;beta1
+45;Single fixed raters;0.658399;8.709551;18;54;0.0;[0.45 0.83];Preprocessed data;G1;beta2
+46;Single fixed raters;0.714876;11.028978;18;54;0.0;[0.53 0.86];Preprocessed data;G1;beta3
+47;Single fixed raters;0.693196;10.037621;18;54;0.0;[0.5  0.85];Preprocessed data;G1;gamma
+48;Single fixed raters;0.261186;2.41408;18;54;0.006563;[0.05 0.54];Preprocessed data;G1;delta
+49;Single fixed raters;0.815671;18.700274;18;54;0.0;[0.67 0.91];Preprocessed data;G1;theta
+50;Single fixed raters;0.800622;17.062384;18;54;0.0;[0.65 0.91];Preprocessed data;G1;alpha-1
+51;Single fixed raters;0.725774;11.586517;18;54;0.0;[0.54 0.87];Preprocessed data;G1;alpha-2
+52;Single fixed raters;0.804544;17.465014;18;54;0.0;[0.66 0.91];Preprocessed data;G1;beta1
+53;Single fixed raters;0.83559;21.329478;18;54;0.0;[0.71 0.92];Preprocessed data;G1;beta2
+54;Single fixed raters;0.764092;13.955738;18;54;0.0;[0.6  0.89];Preprocessed data;G1;beta3
+55;Single fixed raters;0.614534;7.377048;18;54;0.0;[0.4 0.8];Preprocessed data;G1;gamma
+56;Single fixed raters;0.395345;3.61534;18;54;0.000129;[0.17 0.65];Preprocessed data;G1;delta
+57;Single fixed raters;0.687342;9.79354;18;54;0.0;[0.49 0.85];Preprocessed data;G1;theta
+58;Single fixed raters;0.777397;14.969221;18;54;0.0;[0.62 0.89];Preprocessed data;G1;alpha-1
+59;Single fixed raters;0.691532;9.967303;18;54;0.0;[0.5  0.85];Preprocessed data;G1;alpha-2
+60;Single fixed raters;0.849977;23.662599;18;54;0.0;[0.73 0.93];Preprocessed data;G1;beta1
+61;Single fixed raters;0.806344;17.655174;18;54;0.0;[0.66 0.91];Preprocessed data;G1;beta2
+62;Single fixed raters;0.79586;16.594408;18;54;0.0;[0.64 0.9 ];Preprocessed data;G1;beta3
+63;Single fixed raters;0.716372;11.102973;18;54;0.0;[0.53 0.86];Preprocessed data;G1;gamma
+64;Single fixed raters;0.565531;6.206634;24;72;0.0;[0.37 0.75];Preprocessed data;G2;delta
+65;Single fixed raters;0.758885;13.589578;24;72;0.0;[0.61 0.87];Preprocessed data;G2;theta
+66;Single fixed raters;0.751117;13.071816;24;72;0.0;[0.6  0.87];Preprocessed data;G2;alpha-1
+67;Single fixed raters;0.808261;17.861691;24;72;0.0;[0.69 0.9 ];Preprocessed data;G2;alpha-2
+68;Single fixed raters;0.632472;7.883535;24;72;0.0;[0.45 0.79];Preprocessed data;G2;beta1
+69;Single fixed raters;0.693784;10.06267;24;72;0.0;[0.53 0.83];Preprocessed data;G2;beta2
+70;Single fixed raters;0.771791;14.527778;24;72;0.0;[0.63 0.88];Preprocessed data;G2;beta3
+71;Single fixed raters;0.30354;2.743333;24;72;0.000523;[0.11 0.54];Preprocessed data;G2;gamma
+72;Single fixed raters;0.578768;6.495944;24;72;0.0;[0.39 0.76];Preprocessed data;G2;delta
+73;Single fixed raters;0.843658;22.585;24;72;0.0;[0.74 0.92];Preprocessed data;G2;theta
+74;Single fixed raters;0.770377;14.419851;24;72;0.0;[0.63 0.88];Preprocessed data;G2;alpha-1
+75;Single fixed raters;0.673493;9.2509;24;72;0.0;[0.5  0.82];Preprocessed data;G2;alpha-2
+76;Single fixed raters;0.775672;14.831055;24;72;0.0;[0.64 0.88];Preprocessed data;G2;beta1
+77;Single fixed raters;0.792334;16.261706;24;72;0.0;[0.66 0.89];Preprocessed data;G2;beta2
+78;Single fixed raters;0.767729;14.221274;24;72;0.0;[0.63 0.88];Preprocessed data;G2;beta3
+79;Single fixed raters;0.458776;4.390658;24;72;1e-06;[0.26 0.67];Preprocessed data;G2;gamma
+80;Single fixed raters;0.649678;8.418053;24;72;0.0;[0.47 0.8 ];Preprocessed data;G2;delta
+81;Single fixed raters;0.738445;12.293155;24;72;0.0;[0.59 0.86];Preprocessed data;G2;theta
+82;Single fixed raters;0.768628;14.288148;24;72;0.0;[0.63 0.88];Preprocessed data;G2;alpha-1
+83;Single fixed raters;0.731551;11.900396;24;72;0.0;[0.58 0.85];Preprocessed data;G2;alpha-2
+84;Single fixed raters;0.676775;9.375275;24;72;0.0;[0.51 0.82];Preprocessed data;G2;beta1
+85;Single fixed raters;0.751057;13.067957;24;72;0.0;[0.6  0.87];Preprocessed data;G2;beta2
+86;Single fixed raters;0.793419;16.362833;24;72;0.0;[0.66 0.89];Preprocessed data;G2;beta3
+87;Single fixed raters;0.581654;6.561468;24;72;0.0;[0.39 0.76];Preprocessed data;G2;gamma
+88;Single fixed raters;0.454686;4.335227;24;72;1e-06;[0.25 0.66];Preprocessed data;G2;delta
+89;Single fixed raters;0.806349;17.655701;24;72;0.0;[0.68 0.9 ];Preprocessed data;G2;theta
+90;Single fixed raters;0.752145;13.138458;24;72;0.0;[0.61 0.87];Preprocessed data;G2;alpha-1
+91;Single fixed raters;0.740633;12.422179;24;72;0.0;[0.59 0.86];Preprocessed data;G2;alpha-2
+92;Single fixed raters;0.641089;8.144818;24;72;0.0;[0.46 0.8 ];Preprocessed data;G2;beta1
+93;Single fixed raters;0.738869;12.317965;24;72;0.0;[0.59 0.86];Preprocessed data;G2;beta2
+94;Single fixed raters;0.689811;9.895378;24;72;0.0;[0.52 0.83];Preprocessed data;G2;beta3
+95;Single fixed raters;0.456392;4.358237;24;72;1e-06;[0.25 0.67];Preprocessed data;G2;gamma
+96;Single fixed raters;0.534751;5.597547;24;72;0.0;[0.34 0.72];Preprocessed data;G2;delta
+97;Single fixed raters;0.768839;14.303971;24;72;0.0;[0.63 0.88];Preprocessed data;G2;theta
+98;Single fixed raters;0.791339;16.169895;24;72;0.0;[0.66 0.89];Preprocessed data;G2;alpha-1
+99;Single fixed raters;0.767963;14.238666;24;72;0.0;[0.63 0.88];Preprocessed data;G2;alpha-2
+100;Single fixed raters;0.664038;8.906118;24;72;0.0;[0.49 0.81];Preprocessed data;G2;beta1
+101;Single fixed raters;0.810092;18.062862;24;72;0.0;[0.69 0.9 ];Preprocessed data;G2;beta2
+102;Single fixed raters;0.775455;14.813791;24;72;0.0;[0.64 0.88];Preprocessed data;G2;beta3
+103;Single fixed raters;0.577873;6.475821;24;72;0.0;[0.39 0.75];Preprocessed data;G2;gamma
+104;Single fixed raters;0.43465;4.075267;24;72;2e-06;[0.23 0.65];Preprocessed data;G2;delta
+105;Single fixed raters;0.716098;11.089373;24;72;0.0;[0.56 0.85];Preprocessed data;G2;theta
+106;Single fixed raters;0.594968;6.875754;24;72;0.0;[0.41 0.77];Preprocessed data;G2;alpha-1
+107;Single fixed raters;0.640118;8.11475;24;72;0.0;[0.46 0.8 ];Preprocessed data;G2;alpha-2
+108;Single fixed raters;0.639527;8.096536;24;72;0.0;[0.46 0.8 ];Preprocessed data;G2;beta1
+109;Single fixed raters;0.712624;10.919029;24;72;0.0;[0.55 0.84];Preprocessed data;G2;beta2
+110;Single fixed raters;0.539407;5.68446;24;72;0.0;[0.34 0.73];Preprocessed data;G2;beta3
+111;Single fixed raters;0.636041;7.990263;24;72;0.0;[0.46 0.79];Preprocessed data;G2;gamma
+112;Single fixed raters;0.47005;4.547879;24;72;0.0;[0.27 0.68];Preprocessed data;G2;delta
+113;Single fixed raters;0.802292;17.231876;24;72;0.0;[0.68 0.9 ];Preprocessed data;G2;theta
+114;Single fixed raters;0.70446;10.534532;24;72;0.0;[0.54 0.84];Preprocessed data;G2;alpha-1
+115;Single fixed raters;0.671559;9.178751;24;72;0.0;[0.5  0.82];Preprocessed data;G2;alpha-2
+116;Single fixed raters;0.660738;8.790296;24;72;0.0;[0.49 0.81];Preprocessed data;G2;beta1
+117;Single fixed raters;0.805515;17.567091;24;72;0.0;[0.68 0.9 ];Preprocessed data;G2;beta2
+118;Single fixed raters;0.600075;7.001864;24;72;0.0;[0.41 0.77];Preprocessed data;G2;beta3
+119;Single fixed raters;0.627873;7.749017;24;72;0.0;[0.45 0.79];Preprocessed data;G2;gamma
+120;Single fixed raters;0.394357;3.604551;24;72;1.3e-05;[0.19 0.62];Preprocessed data;G2;delta
+121;Single fixed raters;0.718997;11.234711;24;72;0.0;[0.56 0.85];Preprocessed data;G2;theta
+122;Single fixed raters;0.694823;10.107132;24;72;0.0;[0.53 0.83];Preprocessed data;G2;alpha-1
+123;Single fixed raters;0.722408;11.40962;24;72;0.0;[0.57 0.85];Preprocessed data;G2;alpha-2
+124;Single fixed raters;0.714752;11.022867;24;72;0.0;[0.55 0.84];Preprocessed data;G2;beta1
+125;Single fixed raters;0.843989;22.63922;24;72;0.0;[0.74 0.92];Preprocessed data;G2;beta2
+126;Single fixed raters;0.75718;13.473111;24;72;0.0;[0.61 0.87];Preprocessed data;G2;beta3
+127;Single fixed raters;0.706137;10.61177;24;72;0.0;[0.54 0.84];Preprocessed data;G2;gamma
+128;Single fixed raters;0.471734;4.571943;18;54;7e-06;[0.24 0.71];Normalized data;G1;delta
+129;Single fixed raters;0.643167;8.209723;18;54;0.0;[0.44 0.82];Normalized data;G1;theta
+130;Single fixed raters;0.673294;9.243429;18;54;0.0;[0.47 0.84];Normalized data;G1;alpha-1
+131;Single fixed raters;0.72812;11.712378;18;54;0.0;[0.55 0.87];Normalized data;G1;alpha-2
+132;Single fixed raters;0.556055;6.010118;18;54;0.0;[0.33 0.77];Normalized data;G1;beta1
+133;Single fixed raters;0.654207;8.567615;18;54;0.0;[0.45 0.83];Normalized data;G1;beta2
+134;Single fixed raters;0.545179;5.794673;18;54;0.0;[0.32 0.76];Normalized data;G1;beta3
+135;Single fixed raters;0.373685;3.38656;18;54;0.000268;[0.15 0.63];Normalized data;G1;gamma
+136;Single fixed raters;0.642027;8.17404;18;54;0.0;[0.43 0.82];Normalized data;G1;delta
+137;Single fixed raters;0.69467;10.100568;18;54;0.0;[0.5  0.85];Normalized data;G1;theta
+138;Single fixed raters;0.631049;7.841553;18;54;0.0;[0.42 0.81];Normalized data;G1;alpha-1
+139;Single fixed raters;0.653249;8.535644;18;54;0.0;[0.45 0.83];Normalized data;G1;alpha-2
+140;Single fixed raters;0.624223;7.644597;18;54;0.0;[0.41 0.81];Normalized data;G1;beta1
+141;Single fixed raters;0.256457;2.379649;18;54;0.007362;[0.04 0.53];Normalized data;G1;beta2
+142;Single fixed raters;0.217623;2.112623;18;54;0.0179;[0.01 0.5 ];Normalized data;G1;beta3
+143;Single fixed raters;0.373869;3.388437;18;54;0.000266;[0.15 0.63];Normalized data;G1;gamma
+144;Single fixed raters;0.664844;8.934758;18;54;0.0;[0.46 0.83];Normalized data;G1;delta
+145;Single fixed raters;0.777041;14.940489;18;54;0.0;[0.62 0.89];Normalized data;G1;theta
+146;Single fixed raters;0.817921;18.968484;18;54;0.0;[0.68 0.92];Normalized data;G1;alpha-1
+147;Single fixed raters;0.697599;10.227474;18;54;0.0;[0.51 0.85];Normalized data;G1;alpha-2
+148;Single fixed raters;0.607304;7.186002;18;54;0.0;[0.39 0.8 ];Normalized data;G1;beta1
+149;Single fixed raters;0.610219;7.262186;18;54;0.0;[0.39 0.8 ];Normalized data;G1;beta2
+150;Single fixed raters;0.610984;7.282343;18;54;0.0;[0.4 0.8];Normalized data;G1;beta3
+151;Single fixed raters;0.435877;4.090646;18;54;3e-05;[0.21 0.68];Normalized data;G1;gamma
+152;Single fixed raters;0.518054;5.299677;18;54;1e-06;[0.29 0.74];Normalized data;G1;delta
+153;Single fixed raters;0.689058;9.864151;18;54;0.0;[0.49 0.85];Normalized data;G1;theta
+154;Single fixed raters;0.709136;10.752119;18;54;0.0;[0.52 0.86];Normalized data;G1;alpha-1
+155;Single fixed raters;0.615367;7.399514;18;54;0.0;[0.4 0.8];Normalized data;G1;alpha-2
+156;Single fixed raters;0.441278;4.159198;18;54;2.4e-05;[0.21 0.69];Normalized data;G1;beta1
+157;Single fixed raters;0.492908;4.888112;18;54;3e-06;[0.26 0.72];Normalized data;G1;beta2
+158;Single fixed raters;0.507006;5.113686;18;54;2e-06;[0.28 0.73];Normalized data;G1;beta3
+159;Single fixed raters;0.352154;3.174309;18;54;0.000531;[0.13 0.62];Normalized data;G1;gamma
+160;Single fixed raters;0.456268;4.35656;18;54;1.3e-05;[0.23 0.7 ];Normalized data;G1;delta
+161;Single fixed raters;0.759487;13.63114;18;54;0.0;[0.59 0.89];Normalized data;G1;theta
+162;Single fixed raters;0.667966;9.046943;18;54;0.0;[0.47 0.83];Normalized data;G1;alpha-1
+163;Single fixed raters;0.723234;11.45263;18;54;0.0;[0.54 0.87];Normalized data;G1;alpha-2
+164;Single fixed raters;0.750685;13.043942;18;54;0.0;[0.58 0.88];Normalized data;G1;beta1
+165;Single fixed raters;0.776238;14.876117;18;54;0.0;[0.62 0.89];Normalized data;G1;beta2
+166;Single fixed raters;0.751374;13.088425;18;54;0.0;[0.58 0.88];Normalized data;G1;beta3
+167;Single fixed raters;0.514898;5.245695;18;54;1e-06;[0.29 0.74];Normalized data;G1;gamma
+168;Single fixed raters;0.453;4.31261;18;54;1.5e-05;[0.22 0.69];Normalized data;G1;delta
+169;Single fixed raters;0.730288;11.830646;18;54;0.0;[0.55 0.87];Normalized data;G1;theta
+170;Single fixed raters;0.722535;11.41622;18;54;0.0;[0.54 0.87];Normalized data;G1;alpha-1
+171;Single fixed raters;0.582069;6.570954;18;54;0.0;[0.36 0.78];Normalized data;G1;alpha-2
+172;Single fixed raters;0.772398;14.574561;18;54;0.0;[0.61 0.89];Normalized data;G1;beta1
+173;Single fixed raters;0.677098;9.387665;18;54;0.0;[0.48 0.84];Normalized data;G1;beta2
+174;Single fixed raters;0.703421;10.487131;18;54;0.0;[0.51 0.85];Normalized data;G1;beta3
+175;Single fixed raters;0.369172;3.340875;18;54;0.00031;[0.14 0.63];Normalized data;G1;gamma
+176;Single fixed raters;0.397196;3.635655;18;54;0.000121;[0.17 0.65];Normalized data;G1;delta
+177;Single fixed raters;0.808461;17.883443;18;54;0.0;[0.66 0.91];Normalized data;G1;theta
+178;Single fixed raters;0.785854;15.678841;18;54;0.0;[0.63 0.9 ];Normalized data;G1;alpha-1
+179;Single fixed raters;0.694688;10.101371;18;54;0.0;[0.5  0.85];Normalized data;G1;alpha-2
+180;Single fixed raters;0.796044;16.612095;18;54;0.0;[0.64 0.9 ];Normalized data;G1;beta1
+181;Single fixed raters;0.765349;14.046615;18;54;0.0;[0.6  0.89];Normalized data;G1;beta2
+182;Single fixed raters;0.659252;8.738871;18;54;0.0;[0.46 0.83];Normalized data;G1;beta3
+183;Single fixed raters;0.58083;6.542677;18;54;0.0;[0.36 0.78];Normalized data;G1;gamma
+184;Single fixed raters;0.509169;5.149448;18;54;1e-06;[0.28 0.73];Normalized data;G1;delta
+185;Single fixed raters;0.674921;9.304712;18;54;0.0;[0.48 0.84];Normalized data;G1;theta
+186;Single fixed raters;0.752601;13.168238;18;54;0.0;[0.58 0.88];Normalized data;G1;alpha-1
+187;Single fixed raters;0.653067;8.529599;18;54;0.0;[0.45 0.83];Normalized data;G1;alpha-2
+188;Single fixed raters;0.835449;21.308574;18;54;0.0;[0.71 0.92];Normalized data;G1;beta1
+189;Single fixed raters;0.78302;15.434856;18;54;0.0;[0.63 0.9 ];Normalized data;G1;beta2
+190;Single fixed raters;0.746482;12.777968;18;54;0.0;[0.57 0.88];Normalized data;G1;beta3
+191;Single fixed raters;0.547473;5.839251;18;54;0.0;[0.32 0.76];Normalized data;G1;gamma
+192;Single fixed raters;0.669231;9.093032;24;72;0.0;[0.5  0.82];Normalized data;G2;delta
+193;Single fixed raters;0.752887;13.186933;24;72;0.0;[0.61 0.87];Normalized data;G2;theta
+194;Single fixed raters;0.748445;12.901108;24;72;0.0;[0.6  0.86];Normalized data;G2;alpha-1
+195;Single fixed raters;0.809627;18.011358;24;72;0.0;[0.69 0.9 ];Normalized data;G2;alpha-2
+196;Single fixed raters;0.658517;8.713598;24;72;0.0;[0.48 0.81];Normalized data;G2;beta1
+197;Single fixed raters;0.703023;10.469071;24;72;0.0;[0.54 0.84];Normalized data;G2;beta2
+198;Single fixed raters;0.685161;9.704915;24;72;0.0;[0.52 0.83];Normalized data;G2;beta3
+199;Single fixed raters;0.266409;2.452628;24;72;0.001844;[0.08 0.5 ];Normalized data;G2;gamma
+200;Single fixed raters;0.669376;9.098335;24;72;0.0;[0.5  0.82];Normalized data;G2;delta
+201;Single fixed raters;0.811182;18.184467;24;72;0.0;[0.69 0.9 ];Normalized data;G2;theta
+202;Single fixed raters;0.750325;13.020811;24;72;0.0;[0.6  0.87];Normalized data;G2;alpha-1
+203;Single fixed raters;0.678441;9.439412;24;72;0.0;[0.51 0.82];Normalized data;G2;alpha-2
+204;Single fixed raters;0.805372;17.552071;24;72;0.0;[0.68 0.9 ];Normalized data;G2;beta1
+205;Single fixed raters;0.768432;14.273563;24;72;0.0;[0.63 0.88];Normalized data;G2;beta2
+206;Single fixed raters;0.719235;11.246776;24;72;0.0;[0.56 0.85];Normalized data;G2;beta3
+207;Single fixed raters;0.052204;1.220317;24;72;0.254902;[-0.09  0.27];Normalized data;G2;gamma
+208;Single fixed raters;0.712912;10.933005;24;72;0.0;[0.55 0.84];Normalized data;G2;delta
+209;Single fixed raters;0.712478;10.911981;24;72;0.0;[0.55 0.84];Normalized data;G2;theta
+210;Single fixed raters;0.759318;13.619472;24;72;0.0;[0.62 0.87];Normalized data;G2;alpha-1
+211;Single fixed raters;0.740551;12.417313;24;72;0.0;[0.59 0.86];Normalized data;G2;alpha-2
+212;Single fixed raters;0.697961;10.243318;24;72;0.0;[0.53 0.83];Normalized data;G2;beta1
+213;Single fixed raters;0.780892;15.255847;24;72;0.0;[0.65 0.88];Normalized data;G2;beta2
+214;Single fixed raters;0.76883;14.303256;24;72;0.0;[0.63 0.88];Normalized data;G2;beta3
+215;Single fixed raters;0.428639;4.000822;24;72;3e-06;[0.23 0.64];Normalized data;G2;gamma
+216;Single fixed raters;0.624094;7.640967;24;72;0.0;[0.44 0.79];Normalized data;G2;delta
+217;Single fixed raters;0.800343;17.034323;24;72;0.0;[0.67 0.89];Normalized data;G2;theta
+218;Single fixed raters;0.746622;12.786679;24;72;0.0;[0.6  0.86];Normalized data;G2;alpha-1
+219;Single fixed raters;0.733875;12.030504;24;72;0.0;[0.58 0.86];Normalized data;G2;alpha-2
+220;Single fixed raters;0.643365;8.21596;24;72;0.0;[0.46 0.8 ];Normalized data;G2;beta1
+221;Single fixed raters;0.710781;10.830367;24;72;0.0;[0.55 0.84];Normalized data;G2;beta2
+222;Single fixed raters;0.656112;8.631703;24;72;0.0;[0.48 0.81];Normalized data;G2;beta3
+223;Single fixed raters;0.502906;5.046762;24;72;0.0;[0.3 0.7];Normalized data;G2;gamma
+224;Single fixed raters;0.60393;7.09922;24;72;0.0;[0.42 0.77];Normalized data;G2;delta
+225;Single fixed raters;0.738619;12.303337;24;72;0.0;[0.59 0.86];Normalized data;G2;theta
+226;Single fixed raters;0.78391;15.51082;24;72;0.0;[0.65 0.89];Normalized data;G2;alpha-1
+227;Single fixed raters;0.755375;13.351536;24;72;0.0;[0.61 0.87];Normalized data;G2;alpha-2
+228;Single fixed raters;0.710231;10.804084;24;72;0.0;[0.55 0.84];Normalized data;G2;beta1
+229;Single fixed raters;0.80339;17.344807;24;72;0.0;[0.68 0.9 ];Normalized data;G2;beta2
+230;Single fixed raters;0.754774;13.311473;24;72;0.0;[0.61 0.87];Normalized data;G2;beta3
+231;Single fixed raters;0.509942;5.162304;24;72;0.0;[0.31 0.71];Normalized data;G2;gamma
+232;Single fixed raters;0.416298;3.852817;24;72;5e-06;[0.21 0.63];Normalized data;G2;delta
+233;Single fixed raters;0.732336;11.944083;24;72;0.0;[0.58 0.85];Normalized data;G2;theta
+234;Single fixed raters;0.599524;6.988113;24;72;0.0;[0.41 0.77];Normalized data;G2;alpha-1
+235;Single fixed raters;0.642431;8.18665;24;72;0.0;[0.46 0.8 ];Normalized data;G2;alpha-2
+236;Single fixed raters;0.608615;7.220105;24;72;0.0;[0.42 0.78];Normalized data;G2;beta1
+237;Single fixed raters;0.67658;9.367829;24;72;0.0;[0.51 0.82];Normalized data;G2;beta2
+238;Single fixed raters;0.511288;5.184773;24;72;0.0;[0.31 0.71];Normalized data;G2;beta3
+239;Single fixed raters;0.207651;2.048283;24;72;0.010487;[0.03 0.45];Normalized data;G2;gamma
+240;Single fixed raters;0.48823;4.816013;24;72;0.0;[0.29 0.69];Normalized data;G2;delta
+241;Single fixed raters;0.787832;15.852969;24;72;0.0;[0.66 0.89];Normalized data;G2;theta
+242;Single fixed raters;0.692124;9.992263;24;72;0.0;[0.53 0.83];Normalized data;G2;alpha-1
+243;Single fixed raters;0.674497;9.288666;24;72;0.0;[0.5  0.82];Normalized data;G2;alpha-2
+244;Single fixed raters;0.682797;9.610226;24;72;0.0;[0.51 0.82];Normalized data;G2;beta1
+245;Single fixed raters;0.762896;13.870226;24;72;0.0;[0.62 0.87];Normalized data;G2;beta2
+246;Single fixed raters;0.650252;8.436819;24;72;0.0;[0.47 0.8 ];Normalized data;G2;beta3
+247;Single fixed raters;0.210558;2.066868;24;72;0.009692;[0.03 0.45];Normalized data;G2;gamma
+248;Single fixed raters;0.422307;3.924096;24;72;4e-06;[0.22 0.64];Normalized data;G2;delta
+249;Single fixed raters;0.696144;10.16414;24;72;0.0;[0.53 0.83];Normalized data;G2;theta
+250;Single fixed raters;0.693543;10.052386;24;72;0.0;[0.53 0.83];Normalized data;G2;alpha-1
+251;Single fixed raters;0.720739;11.323516;24;72;0.0;[0.56 0.85];Normalized data;G2;alpha-2
+252;Single fixed raters;0.749215;12.949891;24;72;0.0;[0.6  0.87];Normalized data;G2;beta1
+253;Single fixed raters;0.846227;23.012327;24;72;0.0;[0.74 0.92];Normalized data;G2;beta2
+254;Single fixed raters;0.733776;12.024925;24;72;0.0;[0.58 0.86];Normalized data;G2;beta3
+255;Single fixed raters;0.270907;2.486272;24;72;0.001594;[0.08 0.51];Normalized data;G2;gamma

@@ -1,11 +1,12 @@
+from tokenize import group
 import numpy as np
 import pandas as pd 
 import collections
 import scipy.io
 import pingouin as pg
 
-datos1=pd.read_excel('longitudinal_data_powers_long_components.xlsx') 
-datos2=pd.read_excel('longitudinal_data_powers_long_components_norm.xlsx')
+datos1=pd.read_excel(r"E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\longitudinal_data_powers_long_components.xlsx") 
+datos2=pd.read_excel(r"E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\longitudinal_data_powers_long_components_norm.xlsx")
 datos=pd.concat((datos1,datos2))
 
 
@@ -52,42 +53,7 @@ visitas=['V0','V1','V2','V3','V4']
 bandas=datos['Bands'].unique()
 Stage=datos['Stage'].unique()
 
-# for st in Stage:
-#     d_stage=datos[datos['Stage']==st] 
-#     for g in G:
-#         d_group=d_stage[d_stage['Group']==g]
-#         dic={}
-#         for comp in components:
-#             d_comp=d_group[d_group['Components']==comp]
-#             visits=list(d_comp['Session'].unique())
-#             matrix_c=pd.DataFrame(columns=visits) #Se le asigna a un dataframe los datos d elas columnas
-#             subjects=d_comp['Subject'].unique() 
-#             for sub in subjects:
-#                 d_sub=d_comp[d_comp['Subject']==sub] 
-#                 matrix_s=pd.DataFrame(columns=visits)
-                
-#                 for vis in visits:
-#                     power=d_sub[d_sub['Session']==vis]['Powers'].tolist()
-#                     matrix_s[vis]=power
-#                 matrix_c=matrix_c.append(matrix_s, ignore_index = True)
-
-#             #matrix_c=matrix_c.to_numpy() #Mtriz a hacer ICC 
-#             print('Matriz componente '+g+' '+st+' ',comp)
-#             #icc = pg.intraclass_corr(data=matrix_c, targets=index, raters='Judge', ratings='Scores').round(3)
-#             #icc.set_index("Type")
-            
-#             # print('Tamaño de la matriz: ',matrix_c.shape)
-#             # print(matrix_c)
-
-#             dic[comp]=matrix_c
-        
-#         if st=='Normalized data':
-#             st='Normalized'
-#         elif st=='Preprocessed data':
-#             st='Preprocessed'
-#         scipy.io.savemat(g+'_'+st+'.mat', dic)
-
-
+icc_value = pd.DataFrame(columns=['Description','ICC','F','df1','df2','pval','CI95%'])
 for st in Stage:
     d_stage=datos[datos['Stage']==st] 
     for g in G:
@@ -110,7 +76,11 @@ for st in Stage:
                     n_vis=[vis]*len(power)
                     
                     matrix_s['Session']=n_vis
-                    matrix_s['Power']=power              
+                    matrix_s['Power']=power  
+                    group=d_sub[d_sub['Session']==vis]['Group'].tolist()
+                    bands=d_sub[d_sub['Session']==vis]['Bands'].tolist()
+                    stage=d_sub[d_sub['Session']==vis]['Stage'].tolist()
+                    matrix_c=matrix_c.append(matrix_s, ignore_index = True)            
                     matrix_c=matrix_c.append(matrix_s, ignore_index = True)
             index=list(np.arange(0,len(subjects)*8,1))*len(visits)
             matrix_c['index']=index
@@ -119,6 +89,39 @@ for st in Stage:
             print('\n Matriz componente '+g+' '+st+' ',comp)
             #print(matrix_c)
             print(matrix_c.shape)
-            icc = pg.intraclass_corr(data=matrix_c, targets='index', raters='Session', ratings='Power').round(3)
+            icc = pg.intraclass_corr(data=matrix_c, targets='index', raters='Session', ratings='Power').round(6)
             print(icc.set_index("Type"))
+            icc3 = icc[icc['Type']=='ICC3']
+            icc3 = icc3.set_index('Type')
+            icc_value = icc_value.append(icc3,ignore_index=True)
+icc_value.to_csv(r'E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\ICC\icc_values.csv',sep=';')
 
+
+'''for st in Stage:
+    d_stage=datos[datos['Stage']==st] 
+    for g in G:
+        d_group=d_stage[d_stage['Group']==g]
+        dic={}
+        for comp in components:
+            d_comp=d_group[d_group['Components']==comp]
+            visits=list(d_comp['Session'].unique())
+            matrix_c=pd.DataFrame(columns=['Index','Session', 'Power','Bands','Group','Stage']) #Se le asigna a un dataframe los datos d elas columnas           
+            for sub in subjects:
+                d_sub=d_comp[d_comp['Subject']==sub] 
+                matrix_s=pd.DataFrame(columns=['index','Session', 'Power'])
+                for vis in visits:
+                    power=d_sub[d_sub['Session']==vis]['Powers'].tolist()
+                    #matrix_s=pd.DataFrame(columns=['Index','Session', 'Power','Bands','Group','Stage'])
+                    matrix_c['Power']=power 
+                    n_vis=[vis]*len(power)
+                    matrix_c['Session']=n_vis
+                    matrix_c['Group']=d_sub[d_sub['Session']==vis]['Group'].tolist()
+                    matrix_c['Bands']=d_sub[d_sub['Session']==vis]['Bands'].tolist()
+                    matrix_c['Stage']=d_sub[d_sub['Session']==vis]['Stage'].tolist()
+                    matrix_c=matrix_c.append(matrix_s, ignore_index = True)
+
+            subjects=d_comp['Subject'].unique() 
+
+            index=list(np.arange(0,len(subjects)*len(bandas),1))*len(visits)
+            matrix_c['index']=index
+'''

@@ -128,13 +128,13 @@ def get_dataframe_powers(THE_DATASET,mode="channels",stage=None):
     dataPowers=pd.concat((dataframesPowers))
     path_derivatives=os.path.join(layout.root,'derivatives')
     if  mode== 'channels' and stage ==None:
-        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{mode}.feather'.format(mode=mode))
+        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{group_regex}_{mode}.feather'.format(mode=mode,group_regex=group_regex))
     if mode == 'components' and stage== None:
-        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{mode}.feather'.format(mode=mode))
+        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{group_regex}_{mode}.feather'.format(mode=mode,group_regex=group_regex))
     if mode == 'channels' and stage== 'norm':
-        dataPowers.reset_index().to_feather(path_derivatives+'\longitudinal_data_powers_long_{mode}_{stage}.feather'.format(mode=mode,stage=stage))
+        dataPowers.reset_index().to_feather(path_derivatives+'\longitudinal_data_powers_long_{group_regex}_{stage}_{mode}.feather'.format(mode=mode,stage=stage,group_regex=group_regex))
     if mode == 'components' and stage== 'norm':
-        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{mode}_{stage}.feather'.format(mode=mode,stage=stage))  
+        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{group_regex}_{stage}_{mode}.feather'.format(mode=mode,stage=stage,group_regex=group_regex))  
     return dataPowers
 
 def get_dataframe_reject(THE_DATASET):

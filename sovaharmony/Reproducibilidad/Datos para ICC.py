@@ -5,8 +5,8 @@ import collections
 import scipy.io
 import pingouin as pg
 
-datos1=pd.read_excel(r"sovaharmony\Reproducibilidad\longitudinal_data_powers_long_components.xlsx") 
-datos2=pd.read_excel(r"sovaharmony\Reproducibilidad\longitudinal_data_powers_long_components_norm.xlsx")
+datos1=pd.read_excel(r"paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\longitudinal_data_powers_long_components_norm.xlsx") 
+datos2=pd.read_excel(r"paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\longitudinal_data_powers_long_components.xlsx")
 datos=pd.concat((datos1,datos2))
 
 
@@ -86,7 +86,7 @@ for st in Stage:
                 fil_bands=matrix_c['Bands']==ban
                 filter=matrix_c[fil_bands]
                 icc=pg.intraclass_corr(data=filter, targets='index', raters='Session', ratings='Power').round(6)
-                icc3 = icc[icc['Type']=='ICC3']
+                icc3 = icc[icc['Type']=='ICC3k']
                 icc3 = icc3.set_index('Type')
                 print(filter['Stage'])
                 icc3['Stage']=filter['Stage'][i]
@@ -97,4 +97,4 @@ for st in Stage:
 
         icc_value.append(icc_value)
     icc_value.append(icc_value)
-icc_value.to_csv(r'sovaharmony\Reproducibilidad\\icc_values.csv',sep=';')
+icc_value.to_csv(r'paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\icc_values.csv',sep=';')

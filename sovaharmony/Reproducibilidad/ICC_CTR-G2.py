@@ -1,59 +1,61 @@
-from tokenize import group
+'''Codigo usado para filtrar los datos de biomarcadores de los grupos G2 y CTR.
+Quedan con la misma cantidad de visitas pero no corresponden a las mismas visitas
+Se calcula el ICC con estos datos  '''
+
 import numpy as np
 import pandas as pd 
 import collections
 import scipy.io
+from tokenize import group
 import pingouin as pg
 
-datos1=pd.read_excel(r"sovaharmony\Reproducibilidad\longitudinal_data_powers_long_components_norm.xlsx") 
-datos2=pd.read_excel(r"sovaharmony\Reproducibilidad\longitudinal_data_powers_long_components.xlsx")
+datos1=pd.read_excel('sovaharmony\Reproducibilidad\longitudinal_data_powers_long_components_norm.xlsx') 
+datos2=pd.read_excel('sovaharmony\Reproducibilidad\longitudinal_data_powers_long_components.xlsx')
 datos=pd.concat((datos1,datos2))
-
-
 datos=datos.drop(datos[datos['Session']=='V4P'].index)#Borrar datos
-components=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25']
+datos['Session']=datos['Session'].replace({'VO':'V0','V4P':'V4'})
+components=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25' ]
+groups=['CTR','G2']
 datos=datos[datos.Components.isin(components) ] #Solo los datos de las componentes seleccionadas
-
-sessions=datos['Session'].unique() #sesiones 
-print(sessions)
-Grupos=['G1','G2','CTR','DCL','DTA']
-G=['G1','G2']
-
-for i in G:
+datos=datos[datos.Group.isin(groups) ] #Solo los datos de CTR y G2
+visitas=['V0','V1','V2','V3']
+#Codigo para eliminar los sujetos sin 4 visitas
+for i in groups:
     g=datos[datos['Group']==i]
-    visitas=g['Session'].unique()
+    #visitas=g['Session'].unique()
     sujetos=g['Subject'].unique()
     print('Cantidad de sujetos de '+i+': ', len(sujetos))
     k=0
     for j in sujetos:
         s=g[g['Subject']==j]
-        if (collections.Counter(s['Session'].unique()) == collections.Counter(visitas)):
-            None
-        else:
+        if len(s['Session'].unique()) !=4:
             k=k+1
             datos=datos.drop(datos[datos['Subject']==j].index)
-            #print(j) #Sujeto sin todas 
-            #print(s['Session'].unique())
-    print('Sujetos a borrar:', k)
-    print('Sujetos a analizar con todas las visitas: ',len(sujetos)-k)
+        if len(s['Session'].unique()) ==4:
+            v=s['Session'].unique()
+            for vis in range(len(visitas)):
 
-#Verificación
-G=['G1','G2']
-for i in G:
+                datos.loc[(datos.Subject==j)&(datos.Session==v[vis]),'Session']=visitas[vis]
+
+                #datos[datos['Subject']==j]['Session'].replace({v[vis]:visitas[vis]})        
+    print('Sujetos a borrar:', k)
+    print('Sujetos a analizar con 4 visitas: ',len(sujetos)-k)
+
+for i in groups:
     g=datos[datos['Group']==i]
     print('Cantidad de sujetos al filtrar '+ i+': ',len(g['Subject'].unique()))
 
 
-#datos es el archivo filtrado de sujetos para g1 y g2
-#son 8 componentes
-#G1 #FILAS:152, #COLUMNAS: 4 
-#G2 #FILAS:200, #COLUMNAS: 4 
+print(datos['Session'].unique())
 
-visitas=['V0','V1','V2','V3','V4']
+
+
+visitas=['V0','V1','V2','V3']
 bandas=datos['Bands'].unique()
 Stage=datos['Stage'].unique()
-
+datos['Group']=datos['Group'].replace({'CTR':'Control','G2':'Control'})
 icc_value = pd.DataFrame(columns=['Description','ICC','F','df1','df2','pval','CI95%'])
+G=['Control']
 for st in Stage:
     d_stage=datos[datos['Stage']==st] 
     for g in G:
@@ -97,4 +99,5 @@ for st in Stage:
 
         icc_value.append(icc_value)
     icc_value.append(icc_value)
-icc_value.to_csv(r'paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\icc_values.csv',sep=';')
+icc_value.to_csv(r'sovaharmony\Reproducibilidad\icc_values_G2-CTR.csv',sep=';')
+

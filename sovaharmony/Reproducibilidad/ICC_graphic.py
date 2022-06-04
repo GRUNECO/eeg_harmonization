@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import seaborn as sns 
 
-icc_data=pd.read_csv(r'sovaharmony\Reproducibilidad\icc_values.csv',sep=';')
+icc_data=pd.read_csv(r'sovaharmony\Reproducibilidad\icc_values_G2-CTR.csv',sep=';')
 bands=icc_data['Bands'].unique()
 def barplot_icc(icc_data,group,plot=False,save=False):
     for band in bands:
@@ -22,12 +22,16 @@ def barplot_icc(icc_data,group,plot=False,save=False):
 def barplot_icc_nB_1G(icc_data,group,plot=False,save=False):
     fil=icc_data['Group']==group
     filter_band=icc_data[fil]
-    plt.figure(figsize=(8, 6))
     sns.set(font_scale = 0.9)
+    sns.set_theme(style="white")
     ax=sns.catplot(x='Components',y='ICC',data=filter_band,hue='Stage',palette='winter_r',kind='bar',col='Bands',col_wrap=4,legend=False)
-    ax.fig.suptitle('ICC3k for frequency bands' +' in components by '+group)
-    ax.add_legend(loc='upper center',bbox_to_anchor=(.5,0.98),ncol=2)
-
+    ax.fig.suptitle('ICC3k for frequency bands in neuronal components' )
+    ax.add_legend(loc='upper center',bbox_to_anchor=(.5,0.94),ncol=2)
+    ax.fig.subplots_adjust(top=0.829,bottom=0.133, right=0.936,left=0.062, hspace=0.143, wspace=0.11) # adjust the Figure in rp
+    ax.set(xlabel=None)
+    ax.set(ylabel=None)
+    ax.fig.text(0.5, 0.07, 'Neuronal components', ha='center', va='center')
+    ax.fig.text(0.03, 0.5,  'ICC', ha='center', va='center',rotation='vertical')
     # _, ylabels = plt.yticks()
     # _, xlabels = plt.xticks()
     # ax.set_yticklabels(ylabels, fontsize=18)
@@ -40,5 +44,6 @@ def barplot_icc_nB_1G(icc_data,group,plot=False,save=False):
         plt.close()
     if plot:
         plt.show()
-barplot_icc_nB_1G(icc_data,'G1',plot=True,save=True)
-barplot_icc_nB_1G(icc_data,'G2',plot=True,save=True)
+
+#barplot_icc_nB_1G(icc_data,'G1',plot=True,save=False)
+barplot_icc_nB_1G(icc_data,'Control',plot=True,save=False)

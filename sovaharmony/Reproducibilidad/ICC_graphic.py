@@ -24,7 +24,7 @@ def barplot_icc_nB_1G(icc_data,group,plot=False,save=False):
     filter_band=icc_data[fil]
     sns.set(font_scale = 0.9)
     sns.set_theme(style="white")
-    ax=sns.catplot(x='Components',y='ICC',data=filter_band,hue='Stage',palette='winter_r',kind='bar',col='Bands',col_wrap=4,legend=False)
+    ax=sns.catplot(x='Components',y='ICC',data=filter_band,hue='Stage',palette='winter_r',kind='bar',col='Bands',col_wrap=4,legend=False,estimator=np.mean)
     ax.fig.suptitle('ICC3k for frequency bands in neuronal components' )
     ax.add_legend(loc='upper center',bbox_to_anchor=(.5,0.94),ncol=2)
     ax.fig.subplots_adjust(top=0.829,bottom=0.133, right=0.936,left=0.062, hspace=0.143, wspace=0.11) # adjust the Figure in rp
@@ -45,5 +45,7 @@ def barplot_icc_nB_1G(icc_data,group,plot=False,save=False):
     if plot:
         plt.show()
 
+
 #barplot_icc_nB_1G(icc_data,'G1',plot=True,save=False)
 barplot_icc_nB_1G(icc_data,'Control',plot=True,save=False)
+

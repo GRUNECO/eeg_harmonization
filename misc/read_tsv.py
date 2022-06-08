@@ -14,16 +14,16 @@ G1_G2['age']=G1_G2['age'].mask(G1_G2['age'].eq('None'))
 
 min=G1_G2['age'].dropna().min()
 max=G1_G2['age'].dropna().max()
-print('Rango G1+G2: ',min,'-',max)
+#print('Rango G1+G2: ',min,'-',max)
 
 
 min=G1['age'].dropna().min()
 max=G1['age'].dropna().max()
-print('Rango G1: ',min,'-',max)
+#print('Rango G1: ',min,'-',max)
 
 
 min=G2['age'].dropna().min()
 max=G2['age'].dropna().max()
-print('Rango G2: ',min,'-',max)
+#print('Rango G2: ',min,'-',max)
 
 

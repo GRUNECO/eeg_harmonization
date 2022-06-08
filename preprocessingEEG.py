@@ -1,12 +1,12 @@
 from sovaharmony.processing import harmonize 
 from sovaharmony.getDataframes import get_dataframe_prep,get_dataframe_wica,get_dataframe_powers,get_dataframe_reject
-from datasets import SRM,BIOMARCADORES,CHBMP
+from datasets import BIOMARCADORES
 
 
-THE_DATASETS=[SRM,BIOMARCADORES,CHBMP]
-
+THE_DATASETS=[BIOMARCADORES]
+print(BIOMARCADORES)
 for dataset in THE_DATASETS:
-    #process=harmonize(dataset,fast_mode=False)
+    process=harmonize(dataset,fast_mode=False)
     get_dataframe_powers(dataset,mode="channels",stage=None)
     get_dataframe_powers(dataset,mode="channels",stage="norm")
     get_dataframe_powers(dataset,mode="components",stage=None)

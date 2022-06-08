@@ -19,7 +19,7 @@ def barplot_icc(icc_data,group,plot=False,save=False):
             plt.show()
     
 
-def barplot_icc_nB_1G(icc_data,group,plot=False,save=False):
+def barplot_icc_nB_1G(icc_data,x_value,group,plot=False,save=False):
     fil=icc_data['Group']==group
     filter_band=icc_data[fil]
     plt.figure(figsize=(8, 6))

@@ -33,19 +33,20 @@ for i,eeg_file in enumerate(eegs):
     reject_path = get_derivative_path(layout,eeg_file,'reject'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
     signal = mne.read_epochs(reject_path)
     signal2=signal.copy()
-    signal_hp = signal.filter(None,20,fir_design='firwin')
-    (e, c, t) = signal_hp._data.shape
-    da_eeg_cont = np.reshape(signal_hp,(c,e*t),order='F')
-    signal_ch = createRaw(da_eeg_cont,signal_hp.info['sfreq'],ch_names=signal_hp.info['ch_names'])
+    #signal_hp = signal.filter(None,20,fir_design='firwin')
+    (e, c, t) = signal._data.shape
+    da_eeg_cont = np.reshape(signal,(c,e*t),order='F')
+    signal_ch = createRaw(da_eeg_cont,signal.info['sfreq'],ch_names=signal.info['ch_names'])
     std_ch = []
     for ch in signal_ch._data:
         std_ch.append(mad_std(ch))
-    
+
     huber = sm.robust.scale.Huber()
     cont = 0
     try:
         k = huber(np.array(std_ch))[0]
     except:
+        # Revisar porque hicimos esto
         k = np.median(np.array(std_ch))
         cont+=1        
     

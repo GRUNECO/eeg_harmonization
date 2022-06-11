@@ -128,13 +128,13 @@ def get_dataframe_powers(THE_DATASET,mode="channels",stage=None):
     dataPowers=pd.concat((dataframesPowers))
     path_derivatives=os.path.join(layout.root,'derivatives')
     if  mode== 'channels' and stage ==None:
-        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{group_regex}_{mode}.feather'.format(mode=mode,group_regex=group_regex))
+        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{task}_{mode}.feather'.format(mode=mode,task=task))
     if mode == 'components' and stage== None:
-        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{group_regex}_{mode}.feather'.format(mode=mode,group_regex=group_regex))
+        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{task}_{mode}.feather'.format(mode=mode,task=task))
     if mode == 'channels' and stage== 'norm':
-        dataPowers.reset_index().to_feather(path_derivatives+'\longitudinal_data_powers_long_{group_regex}_{stage}_{mode}.feather'.format(mode=mode,stage=stage,group_regex=group_regex))
+        dataPowers.reset_index().to_feather(path_derivatives+'\longitudinal_data_powers_long_{task}_{stage}_{mode}.feather'.format(mode=mode,stage=stage,task=task))
     if mode == 'components' and stage== 'norm':
-        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{group_regex}_{stage}_{mode}.feather'.format(mode=mode,stage=stage,group_regex=group_regex))  
+        dataPowers.reset_index().to_feather(path_derivatives+r'\longitudinal_data_powers_long_{task}_{stage}_{mode}.feather'.format(mode=mode,stage=stage,task=task))  
     return dataPowers
 
 def get_dataframe_reject(THE_DATASET):
@@ -173,7 +173,7 @@ def get_dataframe_reject(THE_DATASET):
         
   dataReject=pd.concat((dataframesReject))
   path_derivatives=os.path.join(layout.root,'derivatives')
-  dataReject.reset_index().to_feather(path_derivatives+r'\data_reject.feather')
+  dataReject.reset_index().to_feather(path_derivatives+r'\data_{task}_reject.feather'.format(task=task))
   return dataReject       
 
 def get_dataframe_wica(THE_DATASET):
@@ -211,7 +211,7 @@ def get_dataframe_wica(THE_DATASET):
         
   dataWica=pd.concat((dataframesWica))
   path_derivatives=os.path.join(layout.root,'derivatives')
-  dataWica.reset_index().to_feather(path_derivatives+r'\data_wICA.feather')
+  dataWica.reset_index().to_feather(path_derivatives+r'\data_{task}_wICA.feather'.format(task=task))
   return dataWica 
 
 def get_dataframe_prep(THE_DATASET):
@@ -249,6 +249,6 @@ def get_dataframe_prep(THE_DATASET):
 
   data_Prep=pd.concat(dataframes)
   path_derivatives=os.path.join(layout.root,'derivatives')
-  data_Prep.reset_index().to_feather(path_derivatives+r'\data_PREP.feather')
+  data_Prep.reset_index().to_feather(path_derivatives+r'\data_{task}_PREP.feather'.format(task=task))
   return data_Prep 
 

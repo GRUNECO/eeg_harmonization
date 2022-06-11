@@ -25,8 +25,8 @@ def barplot_icc_nB_1G(icc_data,x_value,group,plot=False,save=False):
     if plot:
         plt.show()
 
-barplot_icc_nB_1G(icc_data_Roi,'Roi','Control',plot=True,save=True)
-barplot_icc_nB_1G(icc_data_Comp,'Components','Control',plot=True,save=True)
+barplot_icc_nB_1G(icc_data_Roi[icc_data_Roi['Stage']=='Preprocessed data'],'Roi','Control',plot=True,save=True)
+barplot_icc_nB_1G(icc_data_Comp[icc_data_Comp['Stage']=='Preprocessed data'],'Components','Control',plot=True,save=True)
 
 
 def icc_mean(data):
@@ -42,7 +42,7 @@ def icc_mean(data):
         print('\n')
 
 print('Promedios por bandas de ROIs\n')
-icc_mean(icc_data_Roi)
+icc_mean(icc_data_Roi[icc_data_Roi['Stage']=='Preprocessed data'])
 print('Promedios por bandas de Componentes\n')
-icc_mean(icc_data_Comp)
+icc_mean(icc_data_Comp[icc_data_Comp['Stage']=='Preprocessed data'])
 

@@ -93,15 +93,20 @@ def remove_data_visits(path,name,ext):
         for j in range(0,2):
             try:
                 print(i[j])
-                #os.remove(i[j])
+                os.remove(i[j])
             except:
                 continue
     
 
-path = r'D:\BASESDEDATOS\biomarcadoresprueba\derivatives\sovaharmony'
+path = r'D:\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaharmony'
 name = [']_eeg',']_stats','_powers','norm_eeg','powers_norm']
 ext = ['.fif','.json','.txt']
 
 
-remove_data_without_visits(path,name[4],ext[2])
-remove_data_visits(path,name[0],ext[0])
+#remove_data_without_visits(path,name[4],ext[2])
+remove_data_visits(path,name[3],ext[0])
+remove_data_visits(path,name[3],ext[1])
+remove_data_visits(path,name[3],ext[2])
+remove_data_visits(path,name[4],ext[0])
+remove_data_visits(path,name[4],ext[1])
+remove_data_visits(path,name[4],ext[2])

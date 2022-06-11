@@ -83,7 +83,7 @@ for i,eeg_file in enumerate(eegs):
 #        logger.info(f'{icpowers_norm_path}) already existed or no spatial filter given, skipping...')
 
 print(cont)
-reject=pd.Dataframe(lista)
+reject=pd.DataFrame(lista)
 reject.to_csv('Reject.csv')
 
     

@@ -3,10 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import seaborn as sns 
 
-icc_data_Roi=pd.read_csv(r'sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_ROIS_G2-CTR.csv',sep=';')
-icc_data_Comp=pd.read_csv(r'sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_Components_G2-CTR.csv',sep=';')
+icc_data_Roi=pd.read_csv(r'sovaharmony\Reproducibilidad\ICC_values_csv\all_icc_values_ROIS_G2-CTR.csv',sep=';')
+icc_data_Comp=pd.read_csv(r'sovaharmony\Reproducibilidad\ICC_values_csv\all_icc_values_Components_G2-CTR.csv',sep=';')
 
 def barplot_icc_nB_1G(icc_data,x_value,group,plot=False,save=False):
+    icc_data=icc_data[icc_data['Type']=='ICC3k']
     fil=icc_data['Group']==group
     filter_band=icc_data[fil]
     sns.set(font_scale = 0.9)
@@ -35,10 +36,10 @@ def icc_mean(data):
     for st in Stage:
         print(st+':')
         d_stage=data[data['Stage']==st]
-        print('Promedio general: '+str(d_stage['ICC'].mean())+' ± ' +str(d_stage['ICC'].std())+'\n')
+        print('Promedio general: '+str(d_stage[d_stage['Type']=='ICC3k']['ICC'].mean())+' ± ' +str(d_stage[d_stage['Type']=='ICC3k']['ICC'].std())+'\n')
         for band in bands:
             d_band=d_stage[d_stage['Bands']==band]
-            print('Promedio '+band+': '+str(d_band['ICC'].mean())+' ± ' +str(d_band['ICC'].std()))
+            print('Promedio '+band+': '+str(d_band[d_band['Type']=='ICC3k']['ICC'].mean())+' ± ' +str(d_band[d_band['Type']=='ICC3k']['ICC'].std()))
         print('\n')
 
 print('Promedios por bandas de ROIs\n')

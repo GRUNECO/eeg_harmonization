@@ -182,7 +182,8 @@ def harmonize(THE_DATASET,fast_mode=False):
             
             signal = mne.read_epochs(reject_path)
             signal2=signal.copy()
-            signal_hp = signal.filter(None,20,fir_design='firwin')
+            #signal_hp = signal.filter(None,20,fir_design='firwin')
+            signal_hp=signal
             (e, c, t) = signal_hp._data.shape
             da_eeg_cont = np.reshape(signal_hp,(c,e*t),order='F')
             signal_ch = createRaw(da_eeg_cont,signal_hp.info['sfreq'],ch_names=signal_hp.info['ch_names'])
@@ -192,13 +193,13 @@ def harmonize(THE_DATASET,fast_mode=False):
             
             huber = sm.robust.scale.Huber()
             cont = 0
-            try:
-                k = huber(np.array(std_ch))[0]
-            except:
-                k = np.median(np.array(std_ch))
-                cont+=1    
-
-            signal2._data=signal._data/k
+            # try:
+            #     k = huber(np.array(std_ch))[0]
+            # except:
+            #     k = np.median(np.array(std_ch))
+            #     cont+=1    
+            k = np.median(np.array(std_ch))
+            signal2._data=signal2._data/k
 
             if os.path.isfile(norm_path):
                 logger.info(f'{norm_path}) already existed, skipping...')

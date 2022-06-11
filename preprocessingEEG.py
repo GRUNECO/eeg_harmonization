@@ -4,7 +4,6 @@ from datasets import BIOMARCADORES
 
 
 THE_DATASETS=[BIOMARCADORES]
-print(BIOMARCADORES)
 for dataset in THE_DATASETS:
     process=harmonize(dataset,fast_mode=False)
     get_dataframe_powers(dataset,mode="channels",stage=None)

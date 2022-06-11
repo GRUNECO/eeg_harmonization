@@ -98,6 +98,7 @@ def remove_data_visits(path,name,ext):
                 continue
     
 
+<<<<<<< HEAD
 path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaharmony'
 name = ['norm_eeg',']_stats','_powers','norm_eeg','_powers_norm']
 ext = ['.fif','.json','.txt']
@@ -107,3 +108,27 @@ n = 4
 e = 2
 remove_data_without_visits(path,name[n],ext[e])
 remove_data_visits(path,name[n],ext[e])
+=======
+<<<<<<< HEAD
+path = r'D:\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaharmony'
+name = [']_eeg',']_stats','_powers','norm_eeg','powers_norm']
+ext = ['.fif','.json','.txt']
+
+
+#remove_data_without_visits(path,name[4],ext[2])
+remove_data_visits(path,name[3],ext[0])
+remove_data_visits(path,name[3],ext[1])
+remove_data_visits(path,name[3],ext[2])
+remove_data_visits(path,name[4],ext[0])
+remove_data_visits(path,name[4],ext[1])
+remove_data_visits(path,name[4],ext[2])
+=======
+path = r'F:\BIOMARCADORES\derivatives\sovaharmony'
+name = ['norm_eeg',']_stats','_powers','norm_eeg','_powers_norm']
+ext = ['.fif','.json','.txt']
+
+
+remove_data_without_visits(path,name[0],ext[1])
+remove_data_visits(path,name[0],ext[1])
+>>>>>>> e21913c08f1fd427924776e139d7c2666d8cdc42
+>>>>>>> d15ced0400717d1e46b4b9c8a7c726bc0c5a8dd3

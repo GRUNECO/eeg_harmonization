@@ -9,12 +9,8 @@ import scipy.io
 from tokenize import group
 import pingouin as pg
 
-
-#datos1=pd.read_excel(r"sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_components.xlsx")
-#datos2=pd.read_excel(r"sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_components_norm.xlsx") 
-
-datos1=pd.read_feather(r'F:\BIOMARCADORES\derivatives\longitudinal_data_powers_long_CE_components.feather')
-datos2=pd.read_feather(r'F:\BIOMARCADORES\derivatives\longitudinal_data_powers_long_CE_norm_components.feather')
+datos1=pd.read_feather(r"sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_CE_components.feather") 
+datos2=pd.read_feather(r"sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_CE_norm_components.feather")
 datos=pd.concat((datos1,datos2))#Original Data
 
 def pair_data(datos,components):

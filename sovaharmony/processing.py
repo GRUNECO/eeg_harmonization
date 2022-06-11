@@ -182,11 +182,10 @@ def harmonize(THE_DATASET,fast_mode=False):
             
             signal = mne.read_epochs(reject_path)
             signal2=signal.copy()
-            #signal_hp = signal.filter(None,20,fir_design='firwin')
-            signal_hp=signal
-            (e, c, t) = signal_hp._data.shape
-            da_eeg_cont = np.reshape(signal_hp,(c,e*t),order='F')
-            signal_ch = createRaw(da_eeg_cont,signal_hp.info['sfreq'],ch_names=signal_hp.info['ch_names'])
+            signal_lp = signal.filter(None,20,fir_design='firwin')
+            (e, c, t) = signal._data.shape
+            da_eeg_cont = np.reshape(signal_lp,(c,e*t),order='F')
+            signal_ch = createRaw(da_eeg_cont,signal_lp.info['sfreq'],ch_names=signal_lp.info['ch_names'])
             std_ch = []
             for ch in signal_ch._data:
                 std_ch.append(mad_std(ch))
@@ -194,13 +193,15 @@ def harmonize(THE_DATASET,fast_mode=False):
             huber = sm.robust.scale.Huber()
             cont = 0
             # try:
-            #     k = huber(np.array(std_ch))[0]
+            print('Archivo con mediana::::::::::::::::::::::::::::::',reject_path)
+            k = huber(np.array(std_ch))[0]
             # except:
             #     k = np.median(np.array(std_ch))
             #     cont+=1    
-            k = np.median(np.array(std_ch))
-            signal2._data=signal2._data/k
+            
 
+            signal2._data=signal2._data/k
+           
             if os.path.isfile(norm_path):
                 logger.info(f'{norm_path}) already existed, skipping...')
             else: 
@@ -229,7 +230,6 @@ def harmonize(THE_DATASET,fast_mode=False):
 
             else:
                 logger.info(f'{icpowers_path}) already existed or no spatial filter given, skipping...')
-
 
         except Exception as error:
             e+=1

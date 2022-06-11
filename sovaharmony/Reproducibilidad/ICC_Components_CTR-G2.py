@@ -49,7 +49,7 @@ datos=pair_data(datos,components) #Datos filtrados
 
 bandas=datos['Bands'].unique()
 Stage=datos['Stage'].unique()
-icc_value = pd.DataFrame(columns=['Description','ICC','F','df1','df2','pval','CI95%'])
+icc_value = pd.DataFrame(columns=['Type','Description','ICC','F','df1','df2','pval','CI95%'])
 G=['Control']
 for st in Stage:
     d_stage=datos[datos['Stage']==st] 
@@ -83,8 +83,9 @@ for st in Stage:
                 fil_bands=matrix_c['Bands']==ban
                 filter=matrix_c[fil_bands]
                 icc=pg.intraclass_corr(data=filter, targets='index', raters='Session', ratings='Power').round(6)
-                icc3 = icc[icc['Type']=='ICC3k']
-                icc3 = icc3.set_index('Type')
+                icc3=icc
+                #icc3 = icc[icc['Type']=='ICC2k']
+                #icc3 = icc3.set_index('Type')
                # print(filter['Stage'])
                 icc3['Stage']=st #filter['Stage'][i]
                 icc3['Group']=g #filter['Group'][i]
@@ -95,5 +96,5 @@ for st in Stage:
         icc_value.append(icc_value)
     icc_value.append(icc_value)
 #print(icc_value)
-icc_value.to_csv(r'sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_Components_G2-CTR.csv',sep=';')
+icc_value.to_csv(r'sovaharmony\Reproducibilidad\ICC_values_csv\all_icc_values_Components_G2-CTR.csv',sep=';')
 #matrix_c.to_csv(r'sovaharmony\Reproducibilidad\icc_values_G2-CTR_test.csv',sep=';') #

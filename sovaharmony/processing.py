@@ -191,15 +191,7 @@ def harmonize(THE_DATASET,fast_mode=False):
                 std_ch.append(mad_std(ch))
             
             huber = sm.robust.scale.Huber()
-            cont = 0
-            # try:
-            print('Archivo con mediana::::::::::::::::::::::::::::::',reject_path)
             k = huber(np.array(std_ch))[0]
-            # except:
-            #     k = np.median(np.array(std_ch))
-            #     cont+=1    
-            
-
             signal2._data=signal2._data/k
            
             if os.path.isfile(norm_path):

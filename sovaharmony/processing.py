@@ -185,7 +185,7 @@ def harmonize(THE_DATASET,fast_mode=False):
             signal_lp = signal.filter(None,20,fir_design='firwin')
             (e, c, t) = signal._data.shape
             da_eeg_cont = np.reshape(signal_lp,(c,e*t),order='F')
-            signal_ch = createRaw(da_eeg_cont,signal_lp.info['sfreq'],ch_names=signal_lp.info['ch_names'])
+            signal_ch = createRaw(da_eeg_cont,signal_lp.info['sfreq'],ch_names=channels)
             std_ch = []
             for ch in signal_ch._data:
                 std_ch.append(mad_std(ch))

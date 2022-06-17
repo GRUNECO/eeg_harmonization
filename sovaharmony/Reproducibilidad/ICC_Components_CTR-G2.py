@@ -9,9 +9,11 @@ import scipy.io
 from tokenize import group
 import pingouin as pg
 
-datos1=pd.read_feather(r"F:\BIOMARCADORES\derivatives\longitudinal_data_powers_long_CE_components.feather") 
-datos2=pd.read_feather(r"F:\BIOMARCADORES\derivatives\longitudinal_data_powers_long_CE_norm_components.feather")
+datos1=pd.read_feather(r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\longitudinal_data_powers_long_CE_components.feather") 
+datos2=pd.read_feather(r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\longitudinal_data_powers_long_CE_norm_components.feather")
 datos=pd.concat((datos1, datos2))#Original Data
+print(len(datos1))
+print(len(datos2))
 
 def pair_data(datos,components):
     #datos=datos.drop(datos[datos['Session']=='V4P'].index)#Borrar datos
@@ -44,7 +46,7 @@ def pair_data(datos,components):
     print('Visitas de los sujetos: ',datos['Session'].unique())
     return datos
 
-components=['', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25' ] #Neuronal components
+components=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25' ] #Neuronal components
 datos=pair_data(datos,components) #Datos filtrados
 
 bandas=datos['Bands'].unique()
@@ -59,6 +61,7 @@ for st in Stage:
         dic={}
         icc_comp=[]
         for comp in components:
+            print(comp)
             d_comp=d_group[d_group['Components']==comp]
             visits=list(d_comp['Session'].unique())
             matrix_c=pd.DataFrame(columns=['index','Session', 'Power','Bands','Group','Stage','Subject']) #Se le asigna a un dataframe los datos d elas columnas
@@ -97,5 +100,5 @@ for st in Stage:
         icc_value.append(icc_value)
     icc_value.append(icc_value)
 #print(icc_value)
-icc_value.to_csv(r'sovaharmony\Reproducibilidad\ICC_values_csv\all_icc_values_Components_G2-CTR.csv',sep=';')
+icc_value.to_csv(r'all_icc_values_Components_G2-CTR.csv',sep=';')
 #matrix_c.to_csv(r'sovaharmony\Reproducibilidad\icc_values_G2-CTR_test.csv',sep=';') #

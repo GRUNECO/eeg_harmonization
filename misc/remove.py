@@ -98,7 +98,7 @@ def remove_data_visits(path,name,ext):
                 continue
     
 
-# path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaharmony'
+path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaharmony'
 # name = ['norm_eeg',']_stats','_powers','norm_eeg','_powers_norm']
 # ext = ['.fif','.json','.txt']
 
@@ -107,7 +107,7 @@ def remove_data_visits(path,name,ext):
 # e = 2
 # remove_data_without_visits(path,name[n],ext[e])
 # remove_data_visits(path,name[n],ext[e])
-path = r'F:\BIOMARCADORES\derivatives\sovaharmony'
+#path = r'F:\BIOMARCADORES\derivatives\sovaharmony'
 name = [']_eeg',']_stats','_powers','norm_eeg','powers_norm']
 ext = ['.fif','.json','.txt']
 

@@ -1,9 +1,9 @@
 from sovaharmony.processing import harmonize 
 from sovaharmony.getDataframes import get_dataframe_prep,get_dataframe_wica,get_dataframe_powers,get_dataframe_reject
-from datasets import BIOMARCADORES
+from datasets import BIOMARCADORESMini
 
 
-THE_DATASETS=[BIOMARCADORES]
+THE_DATASETS=[BIOMARCADORESMini]
 for dataset in THE_DATASETS:
     process=harmonize(dataset,fast_mode=False)
     get_dataframe_powers(dataset,mode="channels",stage=None)

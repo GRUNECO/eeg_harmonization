@@ -60,6 +60,7 @@ for st in Stage:
         dic={}
         icc_comp=[]
         for comp in components:
+            print(comp)
             d_comp=d_group[d_group['Components']==comp]
             visits=list(d_comp['Session'].unique())
             matrix_c=pd.DataFrame(columns=['index','Session', 'Power','Bands','Group','Stage','Subject']) #Se le asigna a un dataframe los datos d elas columnas

@@ -28,6 +28,7 @@ channels = THE_DATASET.get('channels',default_channels)
 lista_signal=[]
 lista_signal2=[]
 path=[]
+lista =[]
 for i,eeg_file in enumerate(eegs):
     power_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'powers_norm','.txt',bids_root,derivatives_root)
     norm_path = get_derivative_path(layout,eeg_file,'norm','eeg','.fif',bids_root,derivatives_root)
@@ -46,14 +47,7 @@ for i,eeg_file in enumerate(eegs):
         std_ch.append(mad_std(ch))
 
     huber = sm.robust.scale.Huber()
-    #cont = 0
-    # try:
     k = huber(np.array(std_ch))[0]
-    # except:
-    #     lista.append(reject_path)
-    #     # Revisar porque hicimos esto
-    #     k = np.median(np.array(std_ch))
-    #     cont+=1   
              
     
     # derivatives_root = os.path.join(layout.root,'derivatives',pipeline)
@@ -89,12 +83,6 @@ for i,eeg_file in enumerate(eegs):
 #    else:
 #        logger.info(f'{icpowers_norm_path}) already existed or no spatial filter given, skipping...')
 
-# print(cont)
-reject=pd.Dataframe()
-reject['signal']=lista_signal
-reject['signal_2']=lista_signal2
-reject['path']=path
-reject.to_csv('Reject.csv')
 
     
 

@@ -1,7 +1,7 @@
 BIOMARCADORES = {
     'name':'BIOMARCADORES',
     #'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS',
-    'input_path':r'F:\BIOMARCADORES',
+    'input_path':r'D:\BASESDEDATOS\biomarcadoresprueba',
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',
@@ -12,12 +12,13 @@ BIOMARCADORES = {
 
 BIOMARCADORESMini = {
     'name':'BIOMARCADORES',
-    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\CodificadoBIDSMini',
+    'input_path':r'D:\BASESDEDATOS\BIOMARCADORES_DERIVATIVES_VERO',
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
-    'run-label':'restCE'
+    'run-label':'restCE',
+    'session':'V'
 }
 
 BIOMARCADORES_test = {

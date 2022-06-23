@@ -25,7 +25,7 @@ def barplot_icc_nB_1G(icc_data,x_value,group,plot=False,save=False):
         for c in axs.containers:
             labels = [f'{(v.get_height()):.3f}' for v in c]
             #axs.bar_label(c, labels=labels, label_type='center',size=7,rotation='vertical',color='w')
-            axs.bar_label(c, labels=labels, label_type='edge',size=5,rotation='vertical')
+            axs.bar_label(c, labels=labels, label_type='edge',size=10,rotation='vertical')
         #axs.margins(y=0.02)
     if save==True:
         plt.savefig(r'eeg_harmonization\sovaharmony\Reproducibilidad\ICC_Graphics\ICC_{name_group}_{tipo}.png'.format(name_group=group,tipo=x_value))
@@ -51,7 +51,7 @@ def barplot_icc_comp_nG(icc_data,x_value,plot=False,save=False):
         for c in axs.containers:
             labels = [f'{(v.get_height()):.3f}' for v in c]
             #axs.bar_label(c, labels=labels, label_type='center',size=7,rotation='vertical', color='w')
-            axs.bar_label(c, labels=labels, label_type='edge',size=5,rotation='vertical')
+            axs.bar_label(c, labels=labels, label_type='edge',size=10,rotation='vertical')
         #axs.margins(y=0.02)
     if save==True:
         plt.savefig(r'eeg_harmonization\sovaharmony\Reproducibilidad\ICC_Graphics\ICC_Comparacióngrupos_{tipo}.png'.format(tipo=x_value))
@@ -60,8 +60,8 @@ def barplot_icc_comp_nG(icc_data,x_value,plot=False,save=False):
         plt.show()
 
 
-pl = True
-sa = False    
+pl = False
+sa = True   
 
 barplot_icc_comp_nG(icc_data_Roi[icc_data_Roi['Stage']=='Normalized data'],'Roi',plot=pl,save=sa)
 barplot_icc_comp_nG(icc_data_Comp[icc_data_Comp['Stage']=='Normalized data'],'Components',plot=pl,save=sa)

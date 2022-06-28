@@ -33,9 +33,13 @@ def get_dataframe_columns(THE_DATASET):
         datos_1_sujeto = {}
         info_bids_sujeto = parse_file_entities(eegs_powers[i])
         datos_1_sujeto['subject'] = info_bids_sujeto['subject']
+        
         if group_regex:
             regex = re.search('(.+).{3}',info_bids_sujeto['subject'])
             datos_1_sujeto['group'] = regex.string[regex.regs[-1][0]:regex.regs[-1][1]]
+        else:
+            datos_1_sujeto['group'] = 'Control'
+
         try:
             datos_1_sujeto['visit'] = info_bids_sujeto['session']
         except:
@@ -50,5 +54,10 @@ def get_dataframe_columns(THE_DATASET):
     df = pd.DataFrame(list_subjects)
     df['Study']=[name]*len(list_subjects)
     df.to_feather(r'{input_path}\derivatives\data_powers_components_norm_{name}.feather'.format(name=name,input_path=input_path))
+    print('Done!')
+
+get_dataframe_columns(BIOMARCADORES)
 
 get_dataframe_columns(SRM)
+
+get_dataframe_columns(CHBMP)

@@ -8,6 +8,8 @@ import collections
 import scipy.io
 from tokenize import group
 import pingouin as pg
+from scipy import stats
+
 
 datos1=pd.read_feather(r"sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_CE_components.feather") 
 datos2=pd.read_feather(r"sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_CE_norm_components.feather")
@@ -49,6 +51,17 @@ def pair_data(datos,components):
 components=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25' ] #Neuronal components
 datos=pair_data(datos,components) #Datos filtrados
 
+# ANOVA mix
+print('Anova mix')
+aov = pg.mixed_anova(data = datos, dv = 'Powers', between = 'Group', within = 'Session',subject = 'Subject')
+pg.print_table(aov)
+
+#U test
+print('Test U')
+ap=pg.mwu(datos[datos['Group']=='CTR']['Powers'],datos[datos['Group']=='G2']['Powers'])
+pg.print_table(ap)
+
+
 bandas=datos['Bands'].unique()
 Stage=datos['Stage'].unique()
 icc_value = pd.DataFrame(columns=['ICC','F','df1','df2','pval','CI95%'])
@@ -60,7 +73,6 @@ for st in Stage:
         dic={}
         icc_comp=[]
         for comp in components:
-            print(comp)
             d_comp=d_group[d_group['Components']==comp]
             visits=list(d_comp['Session'].unique())
             matrix_c=pd.DataFrame(columns=['index','Session', 'Power','Bands','Group','Stage','Subject']) #Se le asigna a un dataframe los datos d elas columnas
@@ -69,7 +81,6 @@ for st in Stage:
                 matrix_s=pd.DataFrame(columns=['index','Session', 'Power','Bands','Group','Stage','Subject'])
                 power=d_comp[d_comp['Session']==vis]['Powers'].tolist()
                 n_vis=[vis]*len(power)
-                #print(len(n_vis))
                 matrix_s['Session']=n_vis
                 matrix_s['Power']=power  
                 matrix_s['Group']=d_comp[d_comp['Session']==vis]['Group'].tolist()
@@ -100,4 +111,4 @@ for st in Stage:
     icc_value.append(icc_value)
 #print(icc_value)
 icc_value.to_csv(r'sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_Components_G2-CTR.csv',sep=';')
-#matrix_c.to_csv(r'sovaharmony\Reproducibilidad\icc_values_G2-CTR_test.csv',sep=';') #
+#matrix_c.to_csv(r'sovaharmony\Reproducibilidad\icc_values_G2-CTR_test.csv',sep=';') 

@@ -43,7 +43,7 @@ def add_ROIS_filter_data(data,groups,rois,rois_labels):
     for i in groups:
         g=datos[datos['Group']==i]
         print('Cantidad de sujetos al filtrar '+ i+': ',len(g['Subject'].unique()))
-    datos['Group']=datos['Group'].replace({'CTR':'Control','G2':'Control'})
+    #datos['Group']=datos['Group'].replace({'CTR':'Control','G2':'Control'})
     print('Visitas de los sujetos: ',datos['Session'].unique())
     return datos
 
@@ -64,7 +64,7 @@ bandas=datos['Bands'].unique()
 Stage=datos['Stage'].unique()
 
 icc_value = pd.DataFrame(columns=['Description','ICC','F','df1','df2','pval','CI95%'])
-G=['Control']
+G=['G2','CTR']
 for st in Stage:
     d_stage=datos[datos['Stage']==st] 
     for g in G:
@@ -96,11 +96,9 @@ for st in Stage:
                 fil_bands=matrix_c['Bands']==ban
                 filter=matrix_c[fil_bands]
                 icc=pg.intraclass_corr(data=filter, targets='index', raters='Session', ratings='Power').round(6)
-                icc3=icc
-                #icc3 = icc[icc['Type']=='ICC3k']
-                
-                #icc3 = icc3.set_index('Type')
-               # print(filter['Stage'])
+                icc3 = icc[icc['Type']=='ICC3k']
+                icc3 = icc3.set_index('Type')
+
                 icc3['Stage']=st
                 icc3['Group']=g
                 icc3['Bands']=ban
@@ -110,5 +108,5 @@ for st in Stage:
         icc_value.append(icc_value)
     icc_value.append(icc_value)
 #print(icc_value)
-icc_value.to_csv(r'sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_ROIS_G2-CTR_w20.csv',sep=';')
+icc_value.to_csv(r'sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_ROIS_G2-CTR.csv',sep=';')
 

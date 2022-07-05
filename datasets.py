@@ -1,7 +1,11 @@
 BIOMARCADORES = {
     'name':'BIOMARCADORES',
     #'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS',
+<<<<<<< HEAD
     'input_path':r'C:\Users\Victoria\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\biomarcadoresprueba',
+=======
+    'input_path':r'D:\BASESDEDATOS\biomarcadoresprueba',
+>>>>>>> bb4ee773cccc66a695634c1199ec09abdc81bec4
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',
@@ -12,12 +16,13 @@ BIOMARCADORES = {
 
 BIOMARCADORESMini = {
     'name':'BIOMARCADORES',
-    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\CodificadoBIDSMini',
+    'input_path':r'D:\BASESDEDATOS\BIOMARCADORES_DERIVATIVES_VERO',
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
-    'run-label':'restCE'
+    'run-label':'restCE',
+    'session':'V'
 }
 
 BIOMARCADORES_test = {
@@ -32,7 +37,7 @@ BIOMARCADORES_test = {
 }
 CHBMP = {
     'name':'CHBMP',
-    'input_path':r'D:\BASESDEDATOS\CHBMP',
+    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\CHBMP',
     'layout':{'extension':'.edf', 'task':'protmap','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60],},
     'group_regex':None,
@@ -66,7 +71,7 @@ SRM_test = {
 
 SRM = {
     'name':'SRM',
-    'input_path':r'D:\BASESDEDATOS\SRM',
+    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\SRM',
     'layout':{'extension':'.edf', 'task':'resteyesc','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[50]},
     'group_regex':None,

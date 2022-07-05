@@ -29,7 +29,6 @@ channels = THE_DATASET.get('channels',default_channels)
 lista_signal=[]
 lista_signal2=[]
 path=[]
-
 for i,eeg_file in enumerate(eegs):
     power_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'powers_norm','.txt',bids_root,derivatives_root)
     norm_path = get_derivative_path(layout,eeg_file,'norm','eeg','.fif',bids_root,derivatives_root)

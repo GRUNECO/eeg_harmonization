@@ -9,8 +9,8 @@ import scipy.io
 from tokenize import group
 import pingouin as pg
 
-datos1=pd.read_feather(r"F:\BIOMARCADORES\derivatives\longitudinal_data_powers_long_CE_components.feather") 
-datos2=pd.read_feather(r"F:\BIOMARCADORES\derivatives\longitudinal_data_powers_long_CE_norm_components.feather")
+datos1=pd.read_feather(r"D:\TDG\filesSaved\BIOMARCADORES\derivatives\longitudinal_data_powers_long_CE_components.feather") 
+datos2=pd.read_feather(r"D:\TDG\filesSaved\BIOMARCADORES\derivatives\longitudinal_data_powers_long_CE_norm_components.feather")
 datos=pd.concat((datos1, datos2))#Original Data
 
 def pair_data(datos,components):
@@ -67,7 +67,6 @@ for st in Stage:
                 matrix_s=pd.DataFrame(columns=['index','Session', 'Power','Bands','Group','Stage','Subject'])
                 power=d_comp[d_comp['Session']==vis]['Powers'].tolist()
                 n_vis=[vis]*len(power)
-                print(len(n_vis),'::::::::::::::::::::::::::::::::',len(power))
                 matrix_s['Session']=n_vis
                 matrix_s['Power']=power  
                 matrix_s['Group']=d_comp[d_comp['Session']==vis]['Group'].tolist()

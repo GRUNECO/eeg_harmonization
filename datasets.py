@@ -1,7 +1,15 @@
 BIOMARCADORES = {
     'name':'BIOMARCADORES',
     #'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS',
+<<<<<<< HEAD
     'input_path':r'D:\TDG\filesSaved\BIOMARCADORES',
+=======
+<<<<<<< HEAD
+    'input_path':r'C:\Users\Victoria\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\biomarcadoresprueba',
+=======
+    'input_path':r'D:\BASESDEDATOS\biomarcadoresprueba',
+>>>>>>> bb4ee773cccc66a695634c1199ec09abdc81bec4
+>>>>>>> 7718cf73b47de93d922bab9a4ebd61e229a19aed
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',

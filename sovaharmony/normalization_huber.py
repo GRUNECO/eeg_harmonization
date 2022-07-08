@@ -25,10 +25,10 @@ def_spatial_filter='58x25'
 spatial_filter = get_spatial_filter(THE_DATASET.get('spatial_filter',def_spatial_filter))
 default_channels = ['FP1', 'FPZ', 'FP2', 'AF3', 'AF4', 'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8', 'FC5', 'FC3', 'FC1', 'FCZ', 'FC2', 'FC4', 'FC6', 'T7', 'C5', 'C3', 'C1', 'CZ', 'C2', 'C4', 'C6', 'T8', 'TP7', 'CP5', 'CP3', 'CP1', 'CPZ', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3', 'P1', 'PZ', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POZ', 'PO4', 'PO6', 'PO8', 'O1', 'OZ', 'O2']
 channels = THE_DATASET.get('channels',default_channels)
+
 lista_signal=[]
 lista_signal2=[]
 path=[]
-lista =[]
 for i,eeg_file in enumerate(eegs):
     power_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'powers_norm','.txt',bids_root,derivatives_root)
     norm_path = get_derivative_path(layout,eeg_file,'norm','eeg','.fif',bids_root,derivatives_root)
@@ -47,7 +47,15 @@ for i,eeg_file in enumerate(eegs):
         std_ch.append(mad_std(ch))
 
     huber = sm.robust.scale.Huber()
-    k = huber(np.array(std_ch))[0]
+    cont = 0
+    try:
+        k = huber(np.array(std_ch))[0]
+    except:
+        print(reject_path,':::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::')
+    #     lista.append(reject_path)
+    #     # Revisar porque hicimos esto
+    #     k = np.median(np.array(std_ch))
+        cont+=1   
              
     
     # derivatives_root = os.path.join(layout.root,'derivatives',pipeline)
@@ -83,6 +91,12 @@ for i,eeg_file in enumerate(eegs):
 #    else:
 #        logger.info(f'{icpowers_norm_path}) already existed or no spatial filter given, skipping...')
 
+print(cont,':::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::')
+reject=pd.DataFrame()
+reject['signal']=lista_signal
+reject['signal_2']=lista_signal2
+reject['path']=path
+reject.to_csv('Reject.csv')
 
     
 

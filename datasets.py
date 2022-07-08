@@ -1,7 +1,7 @@
 BIOMARCADORES = {
     'name':'BIOMARCADORES',
     #'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS',
-    'input_path':r'D:\BASESDEDATOS\biomarcadoresprueba',
+    'input_path':r'D:\TDG\filesSaved\BIOMARCADORES',
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',
@@ -33,7 +33,7 @@ BIOMARCADORES_test = {
 }
 CHBMP = {
     'name':'CHBMP',
-    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\CHBMP',
+    'input_path':r'D:\TDG\filesSaved\CHMP',
     'layout':{'extension':'.edf', 'task':'protmap','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60],},
     'group_regex':None,
@@ -67,7 +67,7 @@ SRM_test = {
 
 SRM = {
     'name':'SRM',
-    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\SRM',
+    'input_path':r'D:\TDG\filesSaved\SRM',
     'layout':{'extension':'.edf', 'task':'resteyesc','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[50]},
     'group_regex':None,

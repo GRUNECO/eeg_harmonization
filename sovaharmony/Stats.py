@@ -1,51 +1,20 @@
-import glob
-import os
-import pandas as pd
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-import statsmodels.api as sm
-from scipy import stats
+'''Code used to filter the BIOMARCADORES database by components of the G2 and CTR groups.
+They have the same number of visits but do not correspond to the same visits.
+The ICC is calculated with these data '''
+
 import numpy as np
 import pandas as pd 
 import collections
 import scipy.io
 from tokenize import group
 import pingouin as pg
-from scipy.stats import shapiro
-from scipy.stats import ttest_ind
-from scipy.stats import wilcoxon
-from scipy.stats import mannwhitneyu
-from scipy.stats import pearsonr
-from scipy.stats import spearmanr
+from scipy import stats
 
 datos1=pd.read_feather(r"eeg_harmonization\sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_CE_components.feather") 
 datos2=pd.read_feather(r"eeg_harmonization\sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_CE_norm_components.feather")
 datos=pd.concat((datos1, datos2))#Original Data
 print(len(datos1))
 print(len(datos2))
-
-# Description
-Description=datos.groupby(by='Group').describe()
-Description.to_csv('Description_Stats.csv', sep=';')
-
-# ANOVA mix
-#aov = pg.mixed_anova(data = datos, dv = 'Powers', between = 'Group', within = 'Session',subject = 'Subject')
-#pg.print_table(aov)
-
-# Comparaciones post hoc 
-#post_hoc  = pg.pairwise_ttests(data = datos, dv = 'Powers', between = 'group', subject = 'subject', within = 'visit', parametric = False, padjust = 'fdr_bh', effsize = 'hedges')
-#pg.print_table(post_hoc, floatfmt='.3f')
-
-####
-
-# Entre grupos (La diferencia las medias es estadísticamente significativa)
-stat,p=mannwhitneyu(datos[datos.Group == 'CTR']['Powers'],datos[datos.Group == 'G2']['Powers'])
-print('stat=%.3f, p=%.3f' % (stat, p))
-# Entre sesiones del mismo grupo
-statw, pw = wilcoxon(datos[datos.Session.isin(['V0']) & datos.Group.isin(['CTR'])][:4400],datos[datos.Session.isin(['V1']) & datos.Group.isin(['CTR'])])
-print('statw=%.3f, pw=%.3f' % (statw, pw))
-
 
 def pair_data(datos,components):
     #datos=datos.drop(datos[datos['Session']=='V4P'].index)#Borrar datos
@@ -81,44 +50,12 @@ def pair_data(datos,components):
 components=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25' ] #Neuronal components
 datos=pair_data(datos,components) #Datos filtrados
 
-bandas=datos['Bands'].unique()
-Stage=datos['Stage'].unique()
-icc_value = pd.DataFrame(columns=['ICC','F','df1','df2','pval','CI95%'])
-G=['CTR','G2']
-for st in Stage:
-    d_stage=datos[datos['Stage']==st] 
-    for g in G:
-        d_group=d_stage[d_stage['Group']==g]
-        dic={}
-        icc_comp=[]
-        for comp in components:
-            print(comp)
-            d_comp=d_group[d_group['Components']==comp]
-            visits=list(d_comp['Session'].unique())
-            matrix_c=pd.DataFrame(columns=['index','Session', 'Power','Bands','Group','Stage','Subject']) #Se le asigna a un dataframe los datos d elas columnas
-            subjects=d_comp['Subject'].unique() 
-            for vis in visits:
-                matrix_s=pd.DataFrame(columns=['index','Session', 'Power','Bands','Group','Stage','Subject'])
-                power=d_comp[d_comp['Session']==vis]['Powers'].tolist()
-                n_vis=[vis]*len(power)
-                #print(len(n_vis))
-                matrix_s['Session']=n_vis
-                matrix_s['Power']=power  
-                matrix_s['Group']=d_comp[d_comp['Session']==vis]['Group'].tolist()
-                matrix_s['Bands']=d_comp[d_comp['Session']==vis]['Bands'].tolist()
-                matrix_s['Stage']=d_comp[d_comp['Session']==vis]['Stage'].tolist()
-                matrix_s['Subject']=d_comp[d_comp['Session']==vis]['Subject'].tolist()
+# ANOVA mix
+# print('Anova mix')
+# aov = pg.mixed_anova(data = datos, dv = 'Powers', between = 'Group', within = 'Session',subject = 'Subject',correction=True)
+# pg.print_table(aov)
 
-                matrix_c=matrix_c.append(matrix_s, ignore_index = True)            
-            
-            index=list(np.arange(0,len(n_vis),1))*len(visits)
-            matrix_c['index']=index
-
-            for i,ban in enumerate(bandas):
-                fil_bands=matrix_c['Bands']==ban
-                filter=matrix_c[fil_bands]
-                data=filter
-                # Resumen descriptivo
-                #data.summary_cont(data.groupby(['Group', 'Session'])['ROI_F_aDelta'])
-                
-
+#U test
+print('Test U')
+ap=pg.mwu(datos[datos['Group']=='CTR']['Powers'],datos[datos['Group']=='G2']['Powers'])
+pg.print_table(ap)

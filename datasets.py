@@ -8,7 +8,7 @@ BIOMARCADORES_OE = {
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
-    'run-label':'restCE',
+    'run-label':'restOE',
     'session':'V'
 }
 

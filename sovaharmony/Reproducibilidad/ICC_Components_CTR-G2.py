@@ -10,14 +10,8 @@ from tokenize import group
 import pingouin as pg
 from scipy import stats
 
-<<<<<<< HEAD
 datos1=pd.read_feather(r"D:\TDG\filesSaved\BIOMARCADORES\derivatives\longitudinal_data_powers_long_CE_components.feather") 
 datos2=pd.read_feather(r"D:\TDG\filesSaved\BIOMARCADORES\derivatives\longitudinal_data_powers_long_CE_norm_components.feather")
-=======
-
-datos1=pd.read_feather(r"sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_CE_components.feather") 
-datos2=pd.read_feather(r"sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_CE_norm_components.feather")
->>>>>>> bb4ee773cccc66a695634c1199ec09abdc81bec4
 datos=pd.concat((datos1, datos2))#Original Data
 print(len(datos1))
 print(len(datos2))

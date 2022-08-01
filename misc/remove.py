@@ -82,7 +82,7 @@ def remove_data_visits(path,name,ext):
         icpowers_json_files: path to delete
     '''
     subjects = os.listdir(path)
-    json_remove=[]    
+    json_remove=[]  
     for sub in subjects:
         suffix = "sub"
         if sub.endswith(suffix,0,3) == True:
@@ -96,33 +96,58 @@ def remove_data_visits(path,name,ext):
                 os.remove(i[j])
             except:
                 continue
+
+def remove_condition(path,name,ext):
+    '''
+    function created to remove the paths to be deleted in databases with visits
+
+    Inputs:
+        path: path where all the files of all the subjects are processed 
+        name: ending of the desired file to be deleted
+        ext: file extension to be deleted
+    
+    Output:
+        icpowers_json_files: path to delete
+    '''
+    subjects = os.listdir(path)
+    json_remove=[]  
+    for sub in subjects:
+        suffix = "sub"
+        if sub.endswith(suffix,0,3) == True:
+            ses = os.listdir(path+'/'+sub)
+            for v in ses:
+                json_remove.append(path_to_remove_visits(path,sub,v,name,ext))
+    for l in range(len(json_remove)):
+        for n in range(len(json_remove[l])):
+            try:       
+                if type(json_remove[l][n].index('OE')) == int:
+                    #print(json_remove[l][n])
+                    os.remove(json_remove[l][n])
+                else:
+                    pass
+            except:
+                continue
     
 
 path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaharmony'
-# name = ['norm_eeg',']_stats','_powers','norm_eeg','_powers_norm']
-# ext = ['.fif','.json','.txt']
-
-# Orden para eliminar normalizadors (n,e): (1,0) (3,0) (4,1) (4,2) 
-# n = 4
-# e = 2
-# remove_data_without_visits(path,name[n],ext[e])
-# remove_data_visits(path,name[n],ext[e])
-path = r'D:\BASESDEDATOS\biomarcadoresprueba\derivatives\sovaharmony'
+#path = r'D:\BASESDEDATOS\biomarcadoresprueba\derivatives\sovaharmony'
 name = ['_eeg','_stats','_powers','norm_eeg','powers_norm']
 ext = ['.fif','.json','.txt']
 
+#remove_data_visits(path,name[1],ext[0])
+#remove_data_visits(path,name[1],ext[1])
+#remove_data_visits(path,name[1],ext[2])
+#remove_data_visits(path,name[0],ext[0])
+#remove_data_visits(path,name[0],ext[1])
+#remove_data_visits(path,name[0],ext[2])
+#remove_data_visits(path,name[2],ext[0])
+#remove_data_visits(path,name[2],ext[1])
+#remove_data_visits(path,name[2],ext[2])
 
-#remove_data_without_visits(path,name[4],ext[2])
-
-remove_data_visits(path,name[1],ext[0])
-remove_data_visits(path,name[1],ext[1])
-remove_data_visits(path,name[1],ext[2])
-remove_data_visits(path,name[0],ext[0])
-remove_data_visits(path,name[0],ext[1])
-remove_data_visits(path,name[0],ext[2])
-remove_data_visits(path,name[2],ext[0])
-remove_data_visits(path,name[2],ext[1])
-remove_data_visits(path,name[2],ext[2])
+remove_condition(path,name[1],ext[2])
+remove_condition(path,name[0],ext[0])
+remove_condition(path,name[0],ext[1])
+remove_condition(path,name[1],ext[1])
 
 
 

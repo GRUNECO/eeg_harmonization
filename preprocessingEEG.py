@@ -1,9 +1,9 @@
 from sovaharmony.processing import harmonize 
 from sovaharmony.getDataframes import get_dataframe_prep,get_dataframe_wica,get_dataframe_powers,get_dataframe_reject
-from datasets import CHBMP      
+from datasets import BIOMARCADORES     
 import time 
 
-THE_DATASETS=[CHBMP]
+THE_DATASETS=[BIOMARCADORES]
 for dataset in THE_DATASETS:
     start = time.perf_counter()
     process=harmonize(dataset,fast_mode=False)

@@ -7,6 +7,7 @@ import seaborn as sns
 import json
 import numpy as np
 from pandas.core.frame import DataFrame
+from openpyxl import Workbook
 import glob
 import pandas as pd 
 import itertools
@@ -28,6 +29,13 @@ def load_txt(file):
   with open(file, 'r') as f:
     data=json.load(f)
   return data
+
+def feather2xlsx(path,name_file):
+  file_feather=pd.read_feather(path+name_file+'.feather')
+  print(type(file_feather))
+  path_xlsx=path+name_file+'.xlsx'
+  file_feather.to_excel(path_xlsx)
+  return 
 
 def indicesPrep(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
   '''
@@ -395,3 +403,11 @@ def filter_nS_nG_1M(superdata,group_dict):
             list_df.append(auxfil)
     df=pd.concat((list_df))
     return df
+
+
+feather2xlsx('D:/TDG/filesSaved/BIOMARCADORES/derivatives/','data_OE_wICA')
+feather2xlsx('D:/TDG/filesSaved/BIOMARCADORES/derivatives/','data_OE_reject')
+feather2xlsx('D:/TDG/filesSaved/BIOMARCADORES/derivatives/','longitudinal_data_powers_long_OE_channels')
+feather2xlsx('D:/TDG/filesSaved/BIOMARCADORES/derivatives/','longitudinal_data_powers_long_OE_components')
+feather2xlsx('D:/TDG/filesSaved/BIOMARCADORES/derivatives/','longitudinal_data_powers_long_OE_norm_channels')
+feather2xlsx('D:/TDG/filesSaved/BIOMARCADORES/derivatives/','longitudinal_data_powers_long_OE_norm_components')

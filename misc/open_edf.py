@@ -26,5 +26,5 @@ raw = mne.read_epochs(filename + '.fif', verbose='error')
 #print(raw._data)
 #print(raw.ch_names)
 #print(raw.info)
-raw.plot_psd(fmax=99)
+raw.plot_psd(fmin=8,fmax=10)
 

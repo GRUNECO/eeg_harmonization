@@ -10,8 +10,8 @@ from tokenize import group
 import pingouin as pg
 from scipy import stats
 
-datos1=pd.read_feather(r"D:\TDG\filesSaved\BIOMARCADORES\derivatives\longitudinal_data_powers_long_CE_components.feather") 
-datos2=pd.read_feather(r"D:\TDG\filesSaved\BIOMARCADORES\derivatives\longitudinal_data_powers_long_CE_norm_components.feather")
+datos1=pd.read_feather(r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\longitudinal_data_powers_long_CE_components.feather") 
+datos2=pd.read_feather(r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\longitudinal_data_powers_long_CE_norm_components.feather")
 datos=pd.concat((datos1, datos2))#Original Data
 print(len(datos1))
 print(len(datos2))
@@ -49,17 +49,6 @@ def pair_data(datos,components):
 
 components=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25' ] #Neuronal components
 datos=pair_data(datos,components) #Datos filtrados
-
-# ANOVA mix
-print('Anova mix')
-aov = pg.mixed_anova(data = datos, dv = 'Powers', between = 'Group', within = 'Session',subject = 'Subject')
-pg.print_table(aov)
-
-#U test
-print('Test U')
-ap=pg.mwu(datos[datos['Group']=='CTR']['Powers'],datos[datos['Group']=='G2']['Powers'])
-pg.print_table(ap)
-
 
 bandas=datos['Bands'].unique()
 Stage=datos['Stage'].unique()

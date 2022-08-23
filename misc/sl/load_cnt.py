@@ -3,12 +3,17 @@
 
 """
 
-from mne.io import read_raw_cnt
+import mne 
+from sovaflow.utils import createRaw
+import numpy as np
 
 def load(path):
     try:
-        raw_data = read_raw_cnt(path, montage=None, stim_channel=False)
+        raw_data = mne.read_epochs(path + '.fif', verbose='error')
         data = raw_data.get_data()
-        return data, raw_data.info['sfreq']
+        (e, c, t) = data.shape
+        da_eeg_cont = np.reshape(data,(c,e*t),order='F')
+        signal = createRaw(da_eeg_cont,raw_data.info['sfreq'])
+        return signal._data, signal.info['sfreq']
     except:
         print("The file path: %s no found"%path)

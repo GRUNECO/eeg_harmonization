@@ -71,7 +71,7 @@ def get_sl(data, fs, time_delay=None, w1=None, w2=None, pref=None):
 
     if len(size) != 3 and len(size) == 2:
         data = segment_signal(data, fs)
-    elif len == 3:
+    elif len(size) == 3:
         pass
     else:
         print("The dimensions of the data vector are not supported.",

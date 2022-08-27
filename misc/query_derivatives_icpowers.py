@@ -4,7 +4,7 @@ import numpy as np
 import re
 import pandas as pd
 from bids.layout import parse_file_entities
-from datasets import CHBMP, BIOMARCADORES,SRM
+from datasets import BIOMARCADORES_OE as THE_DATASET
 
 
 def get_dataframe_columns(THE_DATASET):  

@@ -2,7 +2,7 @@ import mne
 import statsmodels.api as sm
 from sovaharmony.processing import get_derivative_path, write_json
 from bids import BIDSLayout
-from datasets import BIOMARCADORES
+from datasets import BIOMARCADORESMini
 import os
 import numpy as np
 import pandas as pd
@@ -11,7 +11,7 @@ from sovaflow.flow import  get_power_derivates,get_ics_power_derivatives
 from astropy.stats import mad_std
 from sovaflow.utils import cfg_logger,get_spatial_filter
 
-THE_DATASET=BIOMARCADORES
+THE_DATASET=BIOMARCADORESMini
 layout_dict = THE_DATASET.get('layout',None)
 input_path = THE_DATASET.get('input_path',None)
 layout = BIDSLayout(input_path)

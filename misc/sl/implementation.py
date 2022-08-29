@@ -46,3 +46,6 @@ plt.show()
 #show the execution time
 print("The execution time [seconds]:")
 print(time()-star_time)
+
+
+

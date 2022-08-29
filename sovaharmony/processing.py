@@ -14,6 +14,9 @@ import statsmodels.api as sm
 import pandas as pd
 from astropy.stats import mad_std
 import threading
+from lib2to3.pgen2.token import LSQB
+from matplotlib import pyplot as plt
+import numpy as np
 
 def get_derivative_path(layout,eeg_file,output_entity,suffix,output_extension,bids_root,derivatives_root):
     entities = layout.parse_file_entities(eeg_file)

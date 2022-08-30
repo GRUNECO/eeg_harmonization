@@ -192,7 +192,7 @@ def harmonize(THE_DATASET,fast_mode=False):
             for e in range(signal_data.shape[0]):
                 for c in range(signal_data.shape[1]):
                     assert np.all(signal_data[e,c,:] == da_eeg_cont[c,e*t:(e+1)*t])
-            signal_ch = createRaw(da_eeg_cont,signal_lp.info['sfreq'],ch_names=channels)
+            signal_ch = createRaw(da_eeg_cont,signal_lp.info['sfreq'],ch_names=signal_lp.info['ch_names']) #Fro SRM signal_lp.info['ch_names']
             std_ch = []
             for ch in signal_ch._data:
                 std_ch.append(mad_std(ch))

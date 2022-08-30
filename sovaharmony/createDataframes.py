@@ -405,10 +405,11 @@ def filter_nS_nG_1M(superdata,group_dict):
     return df
 
 #no_relative_path = 'D:/TDG/filesSaved/BIOMARCADORES/derivatives/'
+task_path = 'CE'
 no_relative_path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives/'
-feather2xlsx(no_relative_path,'data_OE_wICA')
-feather2xlsx(no_relative_path,'data_OE_reject')
-feather2xlsx(no_relative_path,'longitudinal_data_powers_long_OE_channels')
-feather2xlsx(no_relative_path,'longitudinal_data_powers_long_OE_components')
-feather2xlsx(no_relative_path,'longitudinal_data_powers_long_OE_norm_channels')
-feather2xlsx(no_relative_path,'longitudinal_data_powers_long_OE_norm_components')
+feather2xlsx(no_relative_path,'data_'+task_path+'_wICA')
+feather2xlsx(no_relative_path,'data_'+task_path+'_reject')
+feather2xlsx(no_relative_path,'longitudinal_data_powers_long_'+task_path+'_channels')
+feather2xlsx(no_relative_path,'longitudinal_data_powers_long_'+task_path+'_components')
+feather2xlsx(no_relative_path,'longitudinal_data_powers_long_'+task_path+'_norm_channels')
+feather2xlsx(no_relative_path,'longitudinal_data_powers_long_'+task_path+'_norm_components')

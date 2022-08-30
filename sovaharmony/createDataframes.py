@@ -404,10 +404,11 @@ def filter_nS_nG_1M(superdata,group_dict):
     df=pd.concat((list_df))
     return df
 
-
-feather2xlsx('D:/TDG/filesSaved/BIOMARCADORES/derivatives/','data_OE_wICA')
-feather2xlsx('D:/TDG/filesSaved/BIOMARCADORES/derivatives/','data_OE_reject')
-feather2xlsx('D:/TDG/filesSaved/BIOMARCADORES/derivatives/','longitudinal_data_powers_long_OE_channels')
-feather2xlsx('D:/TDG/filesSaved/BIOMARCADORES/derivatives/','longitudinal_data_powers_long_OE_components')
-feather2xlsx('D:/TDG/filesSaved/BIOMARCADORES/derivatives/','longitudinal_data_powers_long_OE_norm_channels')
-feather2xlsx('D:/TDG/filesSaved/BIOMARCADORES/derivatives/','longitudinal_data_powers_long_OE_norm_components')
+#no_relative_path = 'D:/TDG/filesSaved/BIOMARCADORES/derivatives/'
+no_relative_path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives/'
+feather2xlsx(no_relative_path,'data_OE_wICA')
+feather2xlsx(no_relative_path,'data_OE_reject')
+feather2xlsx(no_relative_path,'longitudinal_data_powers_long_OE_channels')
+feather2xlsx(no_relative_path,'longitudinal_data_powers_long_OE_components')
+feather2xlsx(no_relative_path,'longitudinal_data_powers_long_OE_norm_channels')
+feather2xlsx(no_relative_path,'longitudinal_data_powers_long_OE_norm_components')

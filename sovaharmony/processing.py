@@ -188,7 +188,7 @@ def harmonize(THE_DATASET,fast_mode=False):
             signal_lp = signal.filter(None,20,fir_design='firwin')
             (e, c, t) = signal._data.shape
             signal_data = signal.get_data()
-            da_eeg_cont = np.concatenate(signal_data[:],axis=-1)
+            da_eeg_cont = np.concatenate(signal_data,axis=-1)
             for e in range(signal_data.shape[0]):
                 for c in range(signal_data.shape[1]):
                     assert np.all(signal_data[e,c,:] == da_eeg_cont[c,e*t:(e+1)*t])

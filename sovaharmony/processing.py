@@ -93,8 +93,8 @@ def harmonize(THE_DATASET,fast_mode=False):
     layout_dict = THE_DATASET.get('layout',None)
     def_spatial_filter='58x25'
     # Inputs not dataset dependent
-    spatial_filter = get_spatial_filter(THE_DATASET.get('spatial_filter',def_spatial_filter))
-
+    if THE_DATASET.get('spatial_filter',def_spatial_filter):
+        spatial_filter = get_spatial_filter(THE_DATASET.get('spatial_filter',def_spatial_filter))
     # Static Params
     pipeline = 'sovaharmony'
     pipelabel = '['+THE_DATASET.get('run-label', '')+']'

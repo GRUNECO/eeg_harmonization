@@ -61,6 +61,8 @@ def harmonize(THE_DATASET,fast_mode=False):
     'run-label': str, label associated with the run of the algorithm so that the derivatives are not overwritten.
     'channels': list, channel labels to keep for analysis in the order wanted. Use standard 1005 names in UPPER CASE
     'spatial_filter': str, spatial filter to be used for component analysis. Should correspond to those in sovaflow. One of '53x53', '58x25', '62x19'
+    'L_FREQ' : high-pass frequency for detrending (def 1)
+    'H_FREQ' : low-pass frequency (def 50)
     }
     
     Example:
@@ -74,6 +76,7 @@ def harmonize(THE_DATASET,fast_mode=False):
     'run-label':'restEC'
     'channels':['FP1', 'FPZ', 'FP2', 'AF3', 'AF4', 'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8', 'FC5', 'FC3', 'FC1', 'FCZ', 'FC2', 'FC4', 'FC6', 'T7', 'C5', 'C3', 'C1', 'CZ', 'C2', 'C4', 'C6', 'T8', 'TP7', 'CP5', 'CP3', 'CP1', 'CPZ', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3', 'P1', 'PZ', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POZ', 'PO4', 'PO6', 'PO8', 'O1', 'OZ', 'O2']
     'spatial_filter':'58x25',
+    'H_FREQ' : 30
     }
 
     Output:

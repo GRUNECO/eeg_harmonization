@@ -129,12 +129,12 @@ def remove_condition(path,name,ext):
                 continue
     
 
-path = r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaharmony'
+path = r'D:\TDG\filesSaved\BIOMARCADORES\derivatives\sovaharmony'
 #path = r'D:\BASESDEDATOS\biomarcadoresprueba\derivatives\sovaharmony'
 name = ['_eeg','_stats','_powers','norm_eeg','powers_norm']
 ext = ['.fif','.json','.txt']
 
-#remove_data_visits(path,name[1],ext[0])
+remove_data_visits(path,name[4],ext[1])
 #remove_data_visits(path,name[1],ext[1])
 #remove_data_visits(path,name[1],ext[2])
 #remove_data_visits(path,name[0],ext[0])
@@ -144,10 +144,10 @@ ext = ['.fif','.json','.txt']
 #remove_data_visits(path,name[2],ext[1])
 #remove_data_visits(path,name[2],ext[2])
 
-remove_condition(path,name[1],ext[2])
-remove_condition(path,name[0],ext[0])
-remove_condition(path,name[0],ext[1])
-remove_condition(path,name[1],ext[1])
+remove_condition(path,name[2],ext[2])
+remove_condition(path,name[2],ext[0])
+remove_condition(path,name[2],ext[1])
+remove_condition(path,name[2],ext[1])
 
 
 

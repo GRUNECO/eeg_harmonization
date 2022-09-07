@@ -40,6 +40,7 @@ def get_sl(data, fs, time_delay=None, w1=None, w2=None, pref=None):
 
     :param data: numpy array, required.
         The data that will be processed for the  sl() function.
+        shape: channels,time,epochs
 
     :param fs: int, required.
         Sampling frequency with wich the dta was obtained.

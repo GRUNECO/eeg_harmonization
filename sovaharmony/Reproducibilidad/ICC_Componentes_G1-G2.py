@@ -9,8 +9,8 @@ import collections
 import scipy.io
 import pingouin as pg
 
-datos1=pd.read_excel(r"sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_components_norm.xlsx") 
-datos2=pd.read_excel(r"sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_components.xlsx")
+datos1=pd.read_feather(r"E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_CE_components.feather") 
+datos2=pd.read_feather(r"E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_CE_norm_components.feather")
 datos=pd.concat((datos1,datos2))#Original Data
 
 
@@ -101,4 +101,4 @@ for st in Stage:
 
         icc_value.append(icc_value)
     icc_value.append(icc_value)
-icc_value.to_csv(r'sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_Components_G1-G2.csv',sep=';')
+icc_value.to_csv(r'E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_Components_G1-G2.csv',sep=';')

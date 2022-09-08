@@ -8,8 +8,8 @@ import collections
 import scipy.io
 import pingouin as pg
 
-datos1=pd.read_feather(r"sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_CE_channels.feather") 
-datos2=pd.read_feather(r"sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_CE_norm_channels.feather")
+datos1=pd.read_feather(r"E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_CE_channels.feather") 
+datos2=pd.read_feather(r"E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\Data_csv_Powers_Componentes-Channels\longitudinal_data_powers_long_CE_norm_channels.feather")
 datos=pd.concat((datos1,datos2))
 
 def add_ROIS_filter_data(data,groups,rois,rois_labels):
@@ -108,5 +108,5 @@ for st in Stage:
         icc_value.append(icc_value)
     icc_value.append(icc_value)
 #print(icc_value)
-icc_value.to_csv(r'sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_ROIS_G2-CTR.csv',sep=';')
+icc_value.to_csv(r'E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_ROIS_G2-CTR.csv',sep=';')
 

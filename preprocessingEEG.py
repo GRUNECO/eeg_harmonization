@@ -4,7 +4,7 @@ from sovaharmony.getDataframes import get_dataframe_wica
 from sovaharmony.getDataframes import get_dataframe_powers
 from sovaharmony.getDataframes import get_dataframe_reject
 from sovaharmony.getDataframes import get_dataframe_powers
-from datasets import BIOMARCADORES_OE as DATA    
+from datasets import SRM as DATA    
 import time 
 
 THE_DATASETS=[DATA]

@@ -85,6 +85,7 @@ def get_dataframe_powers(THE_DATASET,mode="channels",stage=None):
         # Data with stage of normalized for channels
         eegs_powers= layout.get(extension='.txt', task=task,suffix='norm', return_type='filename')
         eegs_powers = [x for x in eegs_powers if f'desc-channel[{runlabel}]' in x]
+        eegs_powers = [x for x in eegs_powers if 'powers' in x]
 
     elif Stage== None and mode== "channels":
     # Data without stage of normalized for channels
@@ -95,6 +96,7 @@ def get_dataframe_powers(THE_DATASET,mode="channels",stage=None):
         # Data with stage of normalized for components 
         eegs_powers= layout.get(extension='.txt', task=task,suffix='norm', return_type='filename')
         eegs_powers = [x for x in eegs_powers if f'desc-component[{runlabel}]' in x]
+        eegs_powers = [x for x in eegs_powers if 'powers' in x]
 
     else: 
         eegs_powers= layout.get(extension='.txt', task=task,suffix='powers', return_type='filename')

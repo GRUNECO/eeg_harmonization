@@ -1,6 +1,6 @@
 BIOMARCADORES_OE = {
     'name':'BIOMARCADORES',
-    'input_path':r'D:\TDG\filesSaved\BIOMARCADORES',
+    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS',
     'layout':{'extension':'.vhdr', 'task':'OE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',
@@ -11,7 +11,7 @@ BIOMARCADORES_OE = {
 
 BIOMARCADORES_CE = {
     'name':'BIOMARCADORES',
-    'input_path':r'D:\TDG\filesSaved\BIOMARCADORES',
+    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS',
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',
@@ -22,8 +22,7 @@ BIOMARCADORES_CE = {
 
 BIOMARCADORESMini = {
     'name':'BIOMARCADORES',
-    #'input_path':r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\biomarcadoresprueba",
-    'input_path':r'C:\Users\Victoria\OneDrive - Universidad de Antioquia\Datos MsC Verónica\biomarcadoresprueba',
+    'input_path':r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\biomarcadoresprueba",
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',
@@ -32,19 +31,10 @@ BIOMARCADORESMini = {
     'session':'V'
 }
 
-BIOMARCADORES_test = {
-    'name':'BIOMARCADORES',
-    'input_path':r'D:\WEB\backend\filesSaved\BIOMARCADORES_TEST',
-    'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
-    'args':{'line_freqs':[60]},
-    'group_regex':'(.+).{3}',
-    'events_to_keep':None,
-    'run-label':'restCE',
-    'session':'V'
-}
+
 CHBMP = {
     'name':'CHBMP',
-    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\CHBMP',
+    'input_path':r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\CHBMP',
     'layout':{'extension':'.edf', 'task':'protmap','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60],},
     'group_regex':None,
@@ -65,20 +55,9 @@ LEMON = {
 }
 
 
-SRM_test = {
-    'name':'SRM',
-    'input_path':r'D:\WEB\backend\filesSaved\SRMPrueba',
-    'layout':{'extension':'.edf', 'task':'resteyesc','suffix':'eeg', 'return_type':'filename'},
-    'args':{'line_freqs':[50]},
-    'group_regex':None,
-    'events_to_keep':None,
-    'run-label':'restCE',
-    'session':'V'
-}
-
 SRM = {
     'name':'SRM',
-    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\SRM',
+    'input_path':r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\SRM',
     'layout':{'extension':'.edf', 'task':'resteyesc','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[50]},
     'group_regex':None,
@@ -87,3 +66,13 @@ SRM = {
     'session':'V'
 }
 
+DUQUE = {
+    'name':'DUQUE',
+    'input_path':r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\DUQUE',
+    'layout':{'extension':'.vhdr', 'task':'resting','suffix':'eeg', 'return_type':'filename'},
+    'args':{'line_freqs':[60]},
+    'group_regex':None,
+    'events_to_keep':None,
+    'run-label':'restCE',
+    'session':None
+}

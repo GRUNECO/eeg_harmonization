@@ -22,7 +22,7 @@ from lib2to3.pgen2.token import LSQB
 from matplotlib import pyplot as plt
 import numpy as np
 #from sovaConectivity_Reactivity.sl import get_sl
-from sovaharmony.sl import get_sl
+from sovaharmony.sl import get_sl, get_sl_band
 
 def get_derivative_path(layout,eeg_file,output_entity,suffix,output_extension,bids_root,derivatives_root):
     entities = layout.parse_file_entities(eeg_file)
@@ -136,7 +136,7 @@ def harmonize(THE_DATASET,fast_mode=False):
             norm_path = get_derivative_path(layout,eeg_file,'norm','eeg','.fif',bids_root,derivatives_root)
             reject_path = get_derivative_path(layout,eeg_file,'reject'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
             sl_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'sl_norm','.txt',bids_root,derivatives_root)
-
+            sl_band_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'sl_band_norm','.txt',bids_root,derivatives_root)
             os.makedirs(os.path.split(power_path)[0], exist_ok=True)
 
             json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
@@ -258,6 +258,15 @@ def harmonize(THE_DATASET,fast_mode=False):
                 write_json(json_dict,sl_norm_path.replace('.txt','.json'))
             else:
                 logger.info(f'{sl_norm_path}) already existed, skipping...')
+
+            if not os.path.isfile(sl_band_norm_path):
+                raw_data = mne.read_epochs(norm_path)
+                sl_band_dict = get_sl_band(raw_data)
+                write_json(sl_band_dict,sl_band_norm_path)
+                write_json(json_dict,sl_band_norm_path.replace('.txt','.json'))
+            else:
+                logger.info(f'{sl_norm_path}) already existed, skipping...')
+                
 
         except Exception as error:
             e+=1

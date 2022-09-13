@@ -1,9 +1,12 @@
 import pandas as pd 
 import numpy as np
 import matplotlib.pyplot as plt 
-import seaborn as sns 
-icc_data_Roi=pd.read_csv(r'eeg_harmonization\sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_ROIS_G2-CTR.csv',sep=';')
-icc_data_Comp=pd.read_csv(r'eeg_harmonization\sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_Components_G2-CTR.csv',sep=';')
+import seaborn as sns
+import os
+
+os.path.isfile(r'E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_Components_G1-G2.csv')
+icc_data_Roi=pd.read_csv(r'E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_ROIS_G2-CTR.csv',sep=';')
+icc_data_Comp=pd.read_csv(r'E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_Components_G1-G2.csv',sep=';')
 
 
 def barplot_icc_nB_1G(icc_data,x_value,group,plot=False,save=False):
@@ -68,7 +71,7 @@ barplot_icc_comp_nG(icc_data_Comp[icc_data_Comp['Stage']=='Normalized data'],'Co
 barplot_icc_nB_1G(icc_data_Roi,'Roi','G2',plot=pl,save=sa)
 barplot_icc_nB_1G(icc_data_Roi,'Roi','CTR',plot=pl,save=sa)
 barplot_icc_nB_1G(icc_data_Comp,'Components','G2',plot=pl,save=sa)
-barplot_icc_nB_1G(icc_data_Comp,'Components','CTR',plot=pl,save=sa)
+barplot_icc_nB_1G(icc_data_Comp,'Components','G1',plot=pl,save=sa)
 
 def icc_mean(data):
     Stage=data['Stage'].unique()

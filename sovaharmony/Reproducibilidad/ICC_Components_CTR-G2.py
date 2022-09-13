@@ -9,6 +9,7 @@ import scipy.io
 from tokenize import group
 import pingouin as pg
 from scipy import stats
+import os
 
 datos1=pd.read_feather(r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\longitudinal_data_powers_long_CE_components.feather") 
 datos2=pd.read_feather(r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\longitudinal_data_powers_long_CE_norm_components.feather")
@@ -98,5 +99,5 @@ for st in Stage:
         icc_value.append(icc_value)
     icc_value.append(icc_value)
 #print(icc_value)
-icc_value.to_csv(r'sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_Components_G2-CTR.csv',sep=';')
+icc_value.to_csv(r'E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\icc_values_Components_G2-CTR.csv',sep=';')
 #matrix_c.to_csv(r'sovaharmony\Reproducibilidad\icc_values_G2-CTR_test.csv',sep=';') 

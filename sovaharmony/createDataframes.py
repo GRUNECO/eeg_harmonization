@@ -3,15 +3,9 @@
 """
 
 from requests import session
-import seaborn as sns
 import json
 import numpy as np
-from pandas.core.frame import DataFrame
-from openpyxl import Workbook
-import glob
 import pandas as pd 
-import itertools
-import os
 
 def load_txt(file):
   '''
@@ -153,7 +147,7 @@ def channelsPowers(data,name_study="None",subject="None",group="None",session="N
 
   df_powers={}
   df_powers['Powers']=[]
-  df_powers['Bands']=[]
+  df_powers['bands']=[]
   df_powers['Channels']=[]
   df_powers['Study']=[]
   df_powers['Session']=[]
@@ -167,9 +161,10 @@ def channelsPowers(data,name_study="None",subject="None",group="None",session="N
     df_powers['Group']+=[group]*len(data['channels'])
     df_powers['Session']+=[session]*len(data['channels'])
     df_powers['Powers']+=data['channel_power'][i]
-    df_powers['Bands']+=[key]*len(data['channels'])
+    df_powers['bands']+=[key]*len(data['channels'])
     df_powers['Channels']+=data['channels']
     df_powers['Stage']+=[stage]*len(data['channels'])
+  
   powers=pd.DataFrame(df_powers)
   return powers 
 

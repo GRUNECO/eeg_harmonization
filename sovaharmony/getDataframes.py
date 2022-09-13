@@ -8,7 +8,11 @@ import pandas as pd
 from bids import BIDSLayout
 from bids.layout import parse_file_entities
 from pydantic import NoneBytes
-from .createDataframes import PowersChannels,rejectGraphic,indicesWica,indicesPrep,PowersComponents
+from .createDataframes import PowersChannels
+from .createDataframes import rejectGraphic
+from .createDataframes import indicesWica
+from .createDataframes import indicesPrep
+from .createDataframes import PowersComponents
 import pandas as pd
 import os
 import csv
@@ -105,17 +109,19 @@ def get_dataframe_powers(THE_DATASET,mode="channels",stage=None):
     list_studies=[name]*len(eegs_powers)
     list_info=[parse_file_entities(eegs_powers[i]) for i in range(len(eegs_powers))]
     list_subjects=[info['subject'] for info in list_info]
+
     # Grupos
     if group_regex:
         list_groups=[re.search('(.+).{3}',group).string[re.search('(.+).{3}',group).regs[-1][0]:re.search('(.+).{3}',group).regs[-1][1]] for group in list_subjects]
     else:
         list_groups=list_studies
+        
     # Visita 
     if session_set == None:
         list_sessions=list_studies
     else:
         list_sessions=[info['session'] for info in list_info]
-
+    
     list_stage=["Normalized data"]*len(list_info)
     if  Stage == 'norm':
         if mode=='channels':

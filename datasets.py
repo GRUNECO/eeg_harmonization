@@ -22,7 +22,8 @@ BIOMARCADORES_CE = {
 
 BIOMARCADORESMini = {
     'name':'BIOMARCADORES',
-    'input_path':r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\biomarcadoresprueba",
+    #'input_path':r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\biomarcadoresprueba",
+    'input_path':r'C:\Users\Victoria\OneDrive - Universidad de Antioquia\Datos MsC Verónica\biomarcadoresprueba',
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',

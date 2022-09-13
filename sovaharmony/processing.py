@@ -1,5 +1,10 @@
-from sovaflow.flow import preflow,get_ics_power_derivatives,get_power_derivates,crop_raw_data,run_reject
-from sovaflow.utils import cfg_logger,get_spatial_filter,createRaw
+from sovaflow.flow import preflow
+from sovaflow.flow import get_ics_power_derivatives
+from sovaflow.flow import get_power_derivates
+from sovaflow.flow import crop_raw_data,run_reject
+from sovaflow.utils import cfg_logger
+from sovaflow.utils import get_spatial_filter
+from sovaflow.utils import createRaw
 from sovaViolin.functions_postprocessing_channels import compare_nD_power
 import mne
 import json

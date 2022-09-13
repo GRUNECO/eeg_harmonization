@@ -4,17 +4,17 @@ from sovaharmony.getDataframes import get_dataframe_wica
 from sovaharmony.getDataframes import get_dataframe_powers
 from sovaharmony.getDataframes import get_dataframe_reject
 from sovaharmony.getDataframes import get_dataframe_powers
-from datasets import BIOMARCADORES_OE as DATA    
+from datasets import BIOMARCADORES_CE as DATA    
 import time 
 
 THE_DATASETS=[DATA]
 for dataset in THE_DATASETS:
     start = time.perf_counter()
-    process=harmonize(dataset,fast_mode=False)
-    final = time.perf_counter()
-    print('TIME PREPROCESSING:::::::::::::::::::', final-start)
-    start = time.perf_counter()
-    get_dataframe_powers(dataset,mode="channels",stage=None)
+    # process=harmonize(dataset,fast_mode=False)
+    # final = time.perf_counter()
+    # print('TIME PREPROCESSING:::::::::::::::::::', final-start)
+    # start = time.perf_counter()
+    # get_dataframe_powers(dataset,mode="channels",stage=None)
     get_dataframe_powers(dataset,mode="channels",stage="norm")
     get_dataframe_powers(dataset,mode="components",stage=None)
     get_dataframe_powers(dataset,mode="components",stage="norm")

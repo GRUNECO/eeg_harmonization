@@ -23,6 +23,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 #from sovaConectivity_Reactivity.sl import get_sl
 from sovaharmony.sl import get_sl, get_sl_band
+from sovaharmony.coh import get_coherence_band
 from scipy.signal import coherence
 
 def get_derivative_path(layout,eeg_file,output_entity,suffix,output_extension,bids_root,derivatives_root):
@@ -139,6 +140,7 @@ def harmonize(THE_DATASET,fast_mode=False):
             sl_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'sl_norm','.txt',bids_root,derivatives_root)
             sl_band_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'sl_band_norm','.txt',bids_root,derivatives_root)
             coherence_norm_path  = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'coherence_norm','.txt',bids_root,derivatives_root)
+            coherence_band_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'coherence_band_norm','.txt',bids_root,derivatives_root)
             os.makedirs(os.path.split(power_path)[0], exist_ok=True)
 
             json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
@@ -283,6 +285,14 @@ def harmonize(THE_DATASET,fast_mode=False):
                 coherence_dict = {'fc' : fc,'Cxyc' : Cxyc ,'channels':raw_data.info['ch_names']}
                 write_json(coherence_dict,coherence_norm_path)
                 write_json(json_dict,coherence_norm_path.replace('.txt','.json'))
+            else:
+                logger.info(f'{coherence_norm_path}) already existed, skipping...')
+
+            if not os.path.isfile(coherence_band_norm_path):
+                raw_data = mne.read_epochs(norm_path)
+                coherence_band_dict = get_coherence_band(raw_data)
+                write_json(coherence_band_dict,coherence_band_norm_path)
+                write_json(json_dict,coherence_band_norm_path.replace('.txt','.json'))
             else:
                 logger.info(f'{coherence_norm_path}) already existed, skipping...')
                 

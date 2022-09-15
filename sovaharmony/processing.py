@@ -274,14 +274,15 @@ def harmonize(THE_DATASET,fast_mode=False):
             if not os.path.isfile(coherence_norm_path):
                 raw_data = mne.read_epochs(norm_path)
                 data = raw_data.get_data()
-                new_data = np.transpose(data.copy(),(1,2,0))
-                for e in range(data.shape[0]):
-                    for c in range(data.shape[1]):
-                        assert np.all(data[e,c,:] == new_data[c,:,e])
+                (e, c, t) = data.shape
+                new_data = np.concatenate(signal_data,axis=-1)
+                for e in range(signal_data.shape[0]):
+                    for c in range(signal_data.shape[1]):
+                        assert np.all(signal_data[e,c,:] == new_data[c,e*t:(e+1)*t])
                 for a in range(len(raw_data.info['ch_names'])):
                     for b in range(a,len(raw_data.info['ch_names'])):
                         if a != b:
-                            fc, Cxyc = coherence(new_data[a,:], new_data[b,:], raw_data.info['sfreq'], 'hanning', nperseg = 25)
+                            fc, Cxyc = coherence(new_data[a,:], new_data[b,:], raw_data.info['sfreq'], 'hanning', nperseg = 1000)
                 coherence_dict = {'fc' : fc,'Cxyc' : Cxyc ,'channels':raw_data.info['ch_names']}
                 write_json(coherence_dict,coherence_norm_path)
                 write_json(json_dict,coherence_norm_path.replace('.txt','.json'))

@@ -2,16 +2,16 @@ from scipy.signal import coherence
 import numpy as np
 
 def get_coherence_freq(signal,fmin,fmax):
-    new_signal =signal.filter(fmin,fmax)
-    data = new_signal.get_data()
-    new_data = np.transpose(data.copy(),(1,2,0))
+    data = signal.get_data()
+    (e, c, t) = data.shape
+    new_data = np.concatenate(data,axis=-1)
     for e in range(data.shape[0]):
         for c in range(data.shape[1]):
-            assert np.all(data[e,c,:] == new_data[c,:,e])
+            assert np.all(data[e,c,:] == new_data[c,e*t:(e+1)*t])
     for a in range(len(signal.info['ch_names'])):
         for b in range(a,len(signal.info['ch_names'])):
             if a != b:
-                fc, Cxyc = coherence(new_data[a,:], new_data[b,:], signal.info['sfreq'], 'hanning', nperseg = 25)
+                fc, Cxyc = coherence(new_data[a,:], new_data[b,:], signal.info['sfreq'], 'hanning', nperseg = 1000)
     return fc, Cxyc
 
 def get_coherence_band(signal):

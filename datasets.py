@@ -68,11 +68,11 @@ SRM = {
 
 DUQUE = {
     'name':'DUQUE',
-    'input_path':r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\DUQUE',
+    'input_path':r'C:\Users\valec\OneDrive - Universidad de Antioquia\Datos MsC Verónica\DUQUE',
     'layout':{'extension':'.vhdr', 'task':'resting','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':None,
     'events_to_keep':None,
     'run-label':'restCE',
-    'session':None
+    'session':'V'
 }

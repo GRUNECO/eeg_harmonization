@@ -11,13 +11,12 @@ BIOMARCADORES_OE = {
 
 BIOMARCADORES_CE = {
     'name':'BIOMARCADORES',
-    #'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS',
     'input_path':r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES',
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
-    'run-label':'restOE',
+    'run-label':'restCE',
     'session':'V'
 }
 

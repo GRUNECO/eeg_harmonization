@@ -4,10 +4,12 @@ import numpy as np
 import re
 import pandas as pd
 from bids.layout import parse_file_entities
-from datasets import BIOMARCADORES_OE as THE_DATASET
+from datasets import DUQUE
 
 
-def get_dataframe_columns(THE_DATASET):  
+
+def get_dataframe_columnsIC(THE_DATASET):  
+    '''Obtain data frames with powers of Components in different columns'''
     input_path = THE_DATASET.get('input_path',None)
     task = THE_DATASET.get('layout',None).get('task',None)
     group_regex = THE_DATASET.get('group_regex',None)
@@ -56,7 +58,7 @@ def get_dataframe_columns(THE_DATASET):
     df.to_feather(r'{input_path}\derivatives\data_powers_components_norm_{name}.feather'.format(name=name,input_path=input_path))
     print('Done!')
 
-get_dataframe_columns(BIOMARCADORES)
+get_dataframe_columnsIC(DUQUE)
 
 get_dataframe_columns(SRM)
 

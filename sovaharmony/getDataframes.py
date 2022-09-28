@@ -8,14 +8,14 @@ import pandas as pd
 from bids import BIDSLayout
 from bids.layout import parse_file_entities
 from pydantic import NoneBytes
-from .createDataframes import PowersChannels
-from .createDataframes import rejectGraphic
-from .createDataframes import indicesWica
-from .createDataframes import indicesPrep
-from .createDataframes import PowersComponents
+from .createDataframes import get_metrics_prep
+from .createDataframes import get_metrics_wica
+from .createDataframes import get_metrics_reject
+from .createDataframes import get_powers_components
+from .createDataframes import get_powers_channels
+from .createDataframes import get_data_sl
 import pandas as pd
 import os
-import csv
 
 def get_information_data(THE_DATASET):
   '''
@@ -125,14 +125,14 @@ def get_dataframe_powers(THE_DATASET,mode="channels",stage=None):
     list_stage=["Normalized data"]*len(list_info)
     if  Stage == 'norm':
         if mode=='channels':
-            dataframesPowers.append(PowersChannels(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=list_stage))
+            dataframesPowers.append(get_powers_channels(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=list_stage))
         else: 
-            dataframesPowers.append(PowersComponents(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=list_stage))
+            dataframesPowers.append(get_powers_components(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=list_stage))
     else:
         if mode=='channels':
-            dataframesPowers.append(PowersChannels(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=None))
+            dataframesPowers.append(get_powers_channels(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=None))
         else:
-            dataframesPowers.append(PowersComponents(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=None))       
+            dataframesPowers.append(get_powers_components(eegs_powers,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_stage=None))       
     dataPowers=pd.concat((dataframesPowers))
     path_derivatives=os.path.join(layout.root,'derivatives')
     if  mode== 'channels' and stage ==None:
@@ -177,7 +177,7 @@ def get_dataframe_reject(THE_DATASET):
   else:
     list_sessions=[info['session'] for info in list_info]
     
-  dataframesReject.append(rejectGraphic(stats_reject,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
+  dataframesReject.append(get_metrics_reject(stats_reject,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
         
   dataReject=pd.concat((dataframesReject))
   path_derivatives=os.path.join(layout.root,'derivatives')
@@ -215,7 +215,7 @@ def get_dataframe_wica(THE_DATASET):
   else:
     list_sessions=[info['session'] for info in list_info]
     
-  dataframesWica.append(indicesWica(stats_wica,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
+  dataframesWica.append(get_metrics_wica(stats_wica,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
         
   dataWica=pd.concat((dataframesWica))
   path_derivatives=os.path.join(layout.root,'derivatives')
@@ -252,7 +252,7 @@ def get_dataframe_prep(THE_DATASET):
     list_sessions=list_studies
   else:
     list_sessions=[info['session'] for info in list_info]
-  data_Prep=indicesPrep(stats_prep,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions)
+  data_Prep=get_metrics_prep(stats_prep,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions)
   dataframes.append(data_Prep)
 
   data_Prep=pd.concat(dataframes)
@@ -260,3 +260,28 @@ def get_dataframe_prep(THE_DATASET):
   data_Prep.reset_index().to_feather(path_derivatives+r'\data_{task}_PREP.feather'.format(task=task))
   return data_Prep 
 
+def get_dataframe_sl(THE_DATASET):
+  dataframes_sl=[]
+  #for THE_DATASET in Studies:
+  layout,task,runlabel,name,group_regex,session_set=get_information_data(THE_DATASET)
+  files= layout.get(extension='.txt', task=task,suffix='norm', return_type='filename')
+  files_sl = [x for x in files if f'desc-channel[{runlabel}]' in x]
+  files_sl = [x for x in files_sl if 'sl_band' in x]
+
+  list_studies=[name]*len(files_sl)
+  list_info=[parse_file_entities(files_sl[i]) for i in range(len(files_sl))]
+  list_subjects=[info['subject'] for info in list_info]
+  if group_regex:
+    list_groups=[re.search('(.+).{3}',group).string[re.search('(.+).{3}',group).regs[-1][0]:re.search('(.+).{3}',group).regs[-1][1]] for group in list_subjects]
+  else:
+    list_groups=list_studies
+  if session_set == None:
+    list_sessions=list_studies
+  else:
+    list_sessions=[info['session'] for info in list_info]
+  
+  dataframes_sl.append(get_data_sl(files_sl,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
+  dataSl=pd.concat((dataframes_sl))
+  path_derivatives=os.path.join(layout.root,'derivatives')
+  dataSl.reset_index().to_feather(path_derivatives+r'\data_{task}_sl.feather'.format(task=task))
+  return dataSl

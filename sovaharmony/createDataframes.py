@@ -6,6 +6,7 @@ from requests import session
 import json
 import numpy as np
 import pandas as pd 
+import itertools
 
 def load_txt(file):
   '''
@@ -31,7 +32,7 @@ def feather2xlsx(path,name_file):
   file_feather.to_excel(path_xlsx)
   return 
 
-def indicesPrep(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
+def get_metrics_prep(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
   '''
 
   Parameters
@@ -88,7 +89,7 @@ def indicesPrep(files,list_studies=None,list_subjects=None,list_groups=None,list
   df=pd.DataFrame((df_prep))
   return df
 
-def indicesWica(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
+def get_metrics_wica(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
   '''
   Parameters
   ----------
@@ -168,7 +169,7 @@ def channelsPowers(data,name_study="None",subject="None",group="None",session="N
   powers=pd.DataFrame(df_powers)
   return powers 
 
-def PowersChannels(powersFiles,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None,list_stage=None):
+def get_powers_channels(powersFiles,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None,list_stage=None):
   '''
 
   Parameters
@@ -275,7 +276,7 @@ def reject_thresholds_format_long(data,name_study="None",subject="None",group="N
   df['Metric_Value']=metrics_value
   return df 
 
-def rejectGraphic(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
+def get_metrics_reject(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
   '''
   
   Parameters
@@ -346,7 +347,7 @@ def component_power(data,name_study="None",subject="None",group="None",session="
   powers=pd.DataFrame(df_powers)
   return powers 
 
-def PowersComponents(powersFiles,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None,list_stage=None):
+def get_powers_components(powersFiles,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None,list_stage=None):
   '''
 
   Parameters
@@ -380,6 +381,53 @@ def PowersComponents(powersFiles,list_studies=None,list_subjects=None,list_group
   datosPowers=pd.concat((dataframesPowers))
   return datosPowers 
 
+def get_data_sl(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
+  '''
+  Parameters
+  ----------
+    file: extend .txt 
+    list_studies: None
+    list_subjects: None
+    list_groups: None
+    list_sessions: None
+
+  Returns
+  -------
+    df: dataframe
+      Contains the information that was stored in the txt file in format dataframe
+  '''
+
+  if list_studies is None:
+    list_studies=["None"]*len(files)
+  if list_subjects is None:
+    list_subjects=["None"]*len(files) 
+  if list_groups is None:
+    list_groups=["None"]*len(files)
+  if list_sessions is None:
+    list_sessions=["None"]*len(files)
+
+  df_sl={}
+  df_sl['Study']=[]
+  df_sl['Subject']=[]
+  df_sl['Group']=[]
+  df_sl['Session']=[]
+  df_sl['bands']=[]
+  df_sl['sl_values']=[]
+  df_sl['channel']=[]
+  
+  for f,file in enumerate(files):
+    dataFile=load_txt(file)
+    for i,key in enumerate(dataFile['bands']):
+      df_sl['Study']+=[list_studies[f]]*len(dataFile['sl'][key])*len(dataFile['channels'])
+      df_sl['Subject']+=[list_subjects[f]]*len(dataFile['sl'][key])*len(dataFile['channels'])
+      df_sl['Group']+=[list_groups[f]]*len(dataFile['sl'][key])*len(dataFile['channels'])
+      df_sl['Session']+=[list_sessions[f]]*len(dataFile['sl'][key])*len(dataFile['channels'])
+      df_sl['channel']+=list(itertools.chain(*[[f'{y}:{x}' for y in dataFile['channels'] for x in dataFile['channels']]]))
+      df_sl['bands']+=[key]*len(dataFile['sl'][key])*len(dataFile['channels'])
+      df_sl['sl_values']+=itertools.chain(*dataFile['sl'][key])
+
+  df=pd.DataFrame(df_sl)
+  return df
 
 # FILTROS
 def filter_nS_nG_1M(superdata,group_dict):

@@ -1,6 +1,6 @@
 """
-@autor:Luisa María Zapata Saldarriaga, Universidad de Antioquia, luisazapatasaldarriaga@gmail.com
-
+@autor: Luisa María Zapata Saldarriaga, Universidad de Antioquia, luisazapatasaldarriaga@gmail.com
+@autor: Yorguin José Mantilla Ramos, Universidad de Antioquia, yjmantilla@gmail.com
 """
 
 import re

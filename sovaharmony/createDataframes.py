@@ -1,5 +1,6 @@
 """
-@autor:Luisa María Zapata Saldarriaga, Universidad de Antioquia, luisazapatasaldarriaga@gmail.com
+@autor: Luisa María Zapata Saldarriaga, Universidad de Antioquia, luisazapatasaldarriaga@gmail.com
+@autor: Yorguin José Mantilla Ramos, Universidad de Antioquia, yjmantilla@gmail.com
 """
 
 from requests import session
@@ -428,6 +429,9 @@ def get_data_sl(files,list_studies=None,list_subjects=None,list_groups=None,list
 
   df=pd.DataFrame(df_sl)
   return df
+
+def get_data_coherence():
+  return
 
 # FILTROS
 def filter_nS_nG_1M(superdata,group_dict):

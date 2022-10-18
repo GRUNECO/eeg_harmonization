@@ -1,7 +1,8 @@
-#from sovaConectivity_Reactivity.sl import get_sl
-from sovaharmony.sl import get_sl, get_sl_band
-from sovaharmony.coh import get_coherence_band
-from scipy.signal import coherence
+from sovaharmony.get_conectivity import get_conectivity_band
+from sovaharmony.sl import get_sl_freq
+from sovaharmony.coh import get_coherence_freq
+from sovaharmony.p_entropy import get_entropy_freq
+#from sovaharmony.pme import get_pme_freq
 from sovaflow.utils import cfg_logger
 from sovaharmony.processing import get_derivative_path
 from sovaharmony.processing import write_json
@@ -50,6 +51,10 @@ def features(THE_DATASET):
             sl_band_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'sl_band_norm','.txt',bids_root,derivatives_root)
             coherence_norm_path  = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'coherence_norm','.txt',bids_root,derivatives_root)
             coherence_band_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'coherence_band_norm','.txt',bids_root,derivatives_root)
+            entropy_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'entropy_norm','.txt',bids_root,derivatives_root)
+            entropy_band_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'entropy_band_norm','.txt',bids_root,derivatives_root)
+            cross_frequency_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'cross_frequency_norm','.txt',bids_root,derivatives_root)
+            cross_frequency_band_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'cross_frequency_band_norm','.txt',bids_root,derivatives_root)
             os.makedirs(os.path.split(power_path)[0], exist_ok=True)
 
             json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
@@ -90,12 +95,7 @@ def features(THE_DATASET):
 
             if not os.path.isfile(sl_norm_path):
                 raw_data = mne.read_epochs(norm_path)
-                data = raw_data.get_data()
-                new_data = np.transpose(data.copy(),(1,2,0))
-                for e in range(data.shape[0]):
-                    for c in range(data.shape[1]):
-                        assert np.all(data[e,c,:] == new_data[c,:,e])
-                sl = get_sl(new_data, raw_data.info['sfreq'])
+                sl = get_sl_freq(raw_data)
                 sl_dict = {'sl' : sl,'channels':raw_data.info['ch_names']}
                 write_json(sl_dict,sl_norm_path)
                 write_json(json_dict,sl_norm_path.replace('.txt','.json'))
@@ -104,7 +104,7 @@ def features(THE_DATASET):
 
             if not os.path.isfile(sl_band_norm_path):
                 raw_data = mne.read_epochs(norm_path)
-                sl_band_dict = get_sl_band(raw_data)
+                sl_band_dict = get_conectivity_band(raw_data,mode='sl')
                 write_json(sl_band_dict,sl_band_norm_path)
                 write_json(json_dict,sl_band_norm_path.replace('.txt','.json'))
             else:
@@ -112,16 +112,7 @@ def features(THE_DATASET):
 
             if not os.path.isfile(coherence_norm_path):
                 raw_data = mne.read_epochs(norm_path)
-                data = raw_data.get_data()
-                (e, c, t) = data.shape
-                new_data = np.concatenate(data,axis=-1)
-                for e in range(data.shape[0]):
-                    for c in range(data.shape[1]):
-                        assert np.all(data[e,c,:] == new_data[c,e*t:(e+1)*t])
-                for a in range(len(raw_data.info['ch_names'])):
-                    for b in range(a,len(raw_data.info['ch_names'])):
-                        if a != b:
-                            fc, Cxyc = coherence(new_data[a,:], new_data[b,:], raw_data.info['sfreq'], 'hanning', nperseg = 1000)
+                fc,Cxyc = get_coherence_freq(raw_data)
                 coherence_dict = {'fc' : fc,'Cxyc' : Cxyc ,'channels':raw_data.info['ch_names']}
                 write_json(coherence_dict,coherence_norm_path)
                 write_json(json_dict,coherence_norm_path.replace('.txt','.json'))
@@ -130,11 +121,55 @@ def features(THE_DATASET):
 
             if not os.path.isfile(coherence_band_norm_path):
                 raw_data = mne.read_epochs(norm_path)
-                coherence_band_dict = get_coherence_band(raw_data)
+                coherence_band_dict = get_conectivity_band(raw_data,mode='coherence')
                 write_json(coherence_band_dict,coherence_band_norm_path)
                 write_json(json_dict,coherence_band_norm_path.replace('.txt','.json'))
             else:
                 logger.info(f'{coherence_norm_path}) already existed, skipping...')
+
+            if not os.path.isfile(entropy_norm_path):
+                raw_data = mne.read_epochs(norm_path)
+                mean_entropy = get_entropy_freq(raw_data) 
+                entropy_dict = {'mean_entropy' : mean_entropy,'channels':raw_data.info['ch_names']}
+                write_json(entropy_dict,entropy_norm_path)
+                write_json(json_dict,entropy_norm_path.replace('.txt','.json'))
+            else:
+                logger.info(f'{entropy_norm_path}) already existed, skipping...')
+
+            if not os.path.isfile(entropy_band_norm_path):
+                raw_data = mne.read_epochs(norm_path)
+                entropy_band_dict = get_conectivity_band(raw_data,mode='entropy')
+                write_json(entropy_band_dict,entropy_band_norm_path)
+                write_json(json_dict,entropy_band_norm_path.replace('.txt','.json'))
+            else:
+                logger.info(f'{entropy_norm_path}) already existed, skipping...')
+
+            '''if not os.path.isfile(cross_frequency_norm_path):
+                raw_data = mne.read_epochs(norm_path)
+                data = raw_data.get_data()
+                (e, c, t) = data.shape
+                new_data = np.concatenate(data,axis=-1)
+                for e in range(data.shape[0]):
+                    for c in range(data.shape[1]):
+                        assert np.all(data[e,c,:] == new_data[c,e*t:(e+1)*t])
+                for a in range(len(raw_data.info['ch_names'])):
+                    # Por segmento
+                    pme = Algorithm_Amplitude_Modulation_Analysis(signal,new_sampling_frequency, Bands=bands, Method=method)
+                    # Por canal
+                    entropy = ''
+                cross_frequency_dict = {'cross_frequency' : entropy,'channels':raw_data.info['ch_names']}
+                write_json(cross_frequency_dict,cross_frequency_norm_path)
+                write_json(json_dict,cross_frequency_norm_path.replace('.txt','.json'))
+            else:
+                logger.info(f'{entropy_norm_path}) already existed, skipping...')
+
+            if not os.path.isfile(cross_frequency_band_norm_path):
+                raw_data = mne.read_epochs(norm_path)
+                cross_frequency_band_dict = Modulation_Bands_Decomposition(raw_data)
+                write_json(cross_frequency_band_dict,cross_frequency_band_norm_path)
+                write_json(json_dict,cross_frequency_band_norm_path.replace('.txt','.json'))
+            else:
+                logger.info(f'{cross_frequency_norm_path}) already existed, skipping...')'''
         
         except Exception as error:
             e+=1

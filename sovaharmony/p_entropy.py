@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.distance import euclidean
 from sovaharmony.sl import segment_signal
+from sovaharmony.entropy import Entropia_Permutacion
 
 def s_entropy(freq_list):
     import math
@@ -101,7 +102,7 @@ def get_entropy_freq(new_signal,fmin=None,fmax=None,passband=False):
         segment = []
         for epoch in range(data.shape[0]):
             # Por segmento
-            entropy_segment = p_entropy(new_data[channel,:,epoch])
+            entropy_segment = Entropia_Permutacion(new_data[channel,:,epoch],D=3)
             segment.append(entropy_segment)
             # Por canal
         mean_channels.append(np.mean(segment))

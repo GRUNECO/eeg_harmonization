@@ -9,9 +9,11 @@ import scipy.io as sio
 import numpy as np
 import pandas as pd
 import os
+from sovaflow.utils import createRaw
 
 ####################### Internal libraries ####################################
 import sovaharmony.linear_FIR_filter_v2 as lfir
+import mne
 
 ########################## My exception classes ###############################
 class Error(Exception):
@@ -121,20 +123,23 @@ def SubBands_Decomposition(Signal, Fs, Bands=[[1.5,6],[6,8.5],[8.5,10.5],[10.5,1
         Num_Bands = len(Bands)
         if (Filt  == 'FIR_filter'):
             if (Signal.ndim == 2):
+                Signal_raw = createRaw(Signal,Fs)
                 Num_Signals, Values = Signal.shape
                 SubBand_Signal = np.zeros((Num_Signals, Num_Bands, Values))
                 for j, Band in enumerate(Bands):
-                    SubBand_Signal[:,j,:] = lfir.eegfiltnew(Fs, Band[0] , Band[1], 0, filter_signal=True, signal=Signal)[1]
-            elif (Signal.ndim == 1):  
+                    SubBand_Signal[:,j,:] = mne.filter.filter_data(Signal, Fs, Band[0],Band[1])
+            elif (Signal.ndim == 1): 
+                 
                 SubBand_Signal = np.zeros((Num_Bands, Signal.shape[0]))
                 for i, Band in enumerate(Bands):
-                    SubBand_Signal[i] = lfir.eegfiltnew(Fs, Band[0] , Band[1], 0, filter_signal=True, signal=Signal)[1]
+                    SubBand_Signal[i] = mne.filter.filter_data(Signal, Fs, Band[0],Band[1])
             elif (Signal.ndim == 3):
+                
                 Num_Signals, Values, Epochs = Signal.shape
                 Temp_Signal = np.reshape(Signal, (Num_Signals,Values*Epochs), order='F')
                 SubBand_Signal = np.zeros((Num_Signals, Num_Bands, Values, Epochs))
                 for j, Band in enumerate(Bands):
-                    SubBand_Signal[:,j,:,:] = np.reshape(lfir.eegfiltnew(Fs, Band[0] , Band[1], 0, filter_signal=True, signal=Temp_Signal)[1],
+                    SubBand_Signal[:,j,:,:] = np.reshape(mne.filter.filter_data(Temp_Signal, Fs, Band[0],Band[1]),
                                            (Num_Signals, Values, Epochs), order='F')
             else:
                 raise DoingError('The signal variable can only have 1, 2 or 3 dimensions!!')
@@ -254,20 +259,20 @@ def Modulation_Bands_Decomposition(SubBand_Signal, Fs, M_Bands = [[1.5,6],[6,8.5
                 MBand_Signal = np.zeros((Num_M_Bands, Num_Bands, Values))
                 for i, M_Band in enumerate(M_Bands):
                     for j in range(0,i+1):
-                        MBand_Signal[i,j,:] = lfir.eegfiltnew(Fs, M_Band[0] , M_Band[1], 0, filter_signal=True, signal=SubBand_Signal[j])[1]
+                        MBand_Signal[i,j,:] = mne.filter.filter_data(SubBand_Signal[j], Fs, M_Band[0],M_Band[1])
             elif (SubBand_Signal.ndim == 3):
                 Num_Signals, Num_Bands, Values = SubBand_Signal.shape
                 MBand_Signal = np.zeros((Num_Signals, Num_M_Bands, Num_Bands, Values))
                 for i, M_Band in enumerate(M_Bands):
                     for j in range(0,i+1):
-                        MBand_Signal[:,i,j,:] = lfir.eegfiltnew(Fs, M_Band[0] , M_Band[1], 0, filter_signal=True, signal=SubBand_Signal[:,j,:])[1]
+                        MBand_Signal[:,i,j,:] = mne.filter.filter_data(SubBand_Signal[:,j,:], Fs, M_Band[0],M_Band[1])
             elif (SubBand_Signal.ndim == 4):
                 Num_Signals, Num_Bands, Values, Epochs = SubBand_Signal.shape
                 Temp_Signal = np.reshape(SubBand_Signal, (Num_Signals, Num_Bands, Values*Epochs), order='F')
                 MBand_Signal = np.zeros((Num_Signals, Num_M_Bands, Num_Bands, Values, Epochs))
                 for i, M_Band in enumerate(M_Bands):
                     for j in range(0,i+1):
-                        MBand_Signal[:,i,j,:,:] = np.reshape(lfir.eegfiltnew(Fs, M_Band[0] , M_Band[1], 0, filter_signal=True, signal=Temp_Signal[:,j,:])[1], 
+                        MBand_Signal[:,i,j,:,:] = np.reshape(mne.filter.filter_data(Temp_Signal[:,j,:], Fs, M_Band[0],M_Band[1]), 
                                     (Num_Signals, Values, Epochs), order='F')
             else:
                 raise DoingError('The signal variable can only have 2, 3 or 4 dimensions!!')
@@ -988,4 +993,6 @@ def Load_Table_PME(Path_Files, Name_Channels, Name_Files=True, Name_Bands=['Delt
                 num_errors += 1
                 print('\nError with: '+Path+Name_Signal+"_Channel_"+Name_Channel+'.csv\n')
     print('\nTotal Errores: '+str(num_errors)+'\n')
-    return Table_pme, Signals_List                
+    return Table_pme, Signals_List   
+
+             

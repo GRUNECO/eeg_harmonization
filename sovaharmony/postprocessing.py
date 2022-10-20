@@ -14,6 +14,7 @@ from sovaflow.flow import get_ics_power_derivatives
 from sovaflow.flow import get_power_derivates
 from sovaflow.utils import get_spatial_filter
 import numpy as np
+from sovaharmony.pme import Amplitude_Modulation_Analysis
 
 def features(THE_DATASET):
     # Inputs not dataset dependent
@@ -46,7 +47,7 @@ def features(THE_DATASET):
             icpowers_path = get_derivative_path(layout,eeg_file,'component'+pipelabel,'powers','.txt',bids_root,derivatives_root)
             power_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'powers_norm','.txt',bids_root,derivatives_root)
             icpowers_norm_path = get_derivative_path(layout,eeg_file,'component'+pipelabel,'powers_norm','.txt',bids_root,derivatives_root)
-            norm_path = get_derivative_path(layout,eeg_file,'norm','eeg','.fif',bids_root,derivatives_root)
+            norm_path = get_derivative_path(layout,eeg_file,'norm'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
             sl_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'sl_norm','.txt',bids_root,derivatives_root)
             sl_band_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'sl_band_norm','.txt',bids_root,derivatives_root)
             coherence_norm_path  = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'coherence_norm','.txt',bids_root,derivatives_root)
@@ -54,7 +55,6 @@ def features(THE_DATASET):
             entropy_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'entropy_norm','.txt',bids_root,derivatives_root)
             entropy_band_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'entropy_band_norm','.txt',bids_root,derivatives_root)
             cross_frequency_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'cross_frequency_norm','.txt',bids_root,derivatives_root)
-            cross_frequency_band_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'cross_frequency_band_norm','.txt',bids_root,derivatives_root)
             os.makedirs(os.path.split(power_path)[0], exist_ok=True)
 
             json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
@@ -144,33 +144,15 @@ def features(THE_DATASET):
             else:
                 logger.info(f'{entropy_norm_path}) already existed, skipping...')
 
-            '''if not os.path.isfile(cross_frequency_norm_path):
+            if not os.path.isfile(cross_frequency_norm_path):
                 raw_data = mne.read_epochs(norm_path)
-                data = raw_data.get_data()
-                (e, c, t) = data.shape
-                new_data = np.concatenate(data,axis=-1)
-                for e in range(data.shape[0]):
-                    for c in range(data.shape[1]):
-                        assert np.all(data[e,c,:] == new_data[c,e*t:(e+1)*t])
-                for a in range(len(raw_data.info['ch_names'])):
-                    # Por segmento
-                    pme = Algorithm_Amplitude_Modulation_Analysis(signal,new_sampling_frequency, Bands=bands, Method=method)
-                    # Por canal
-                    entropy = ''
-                cross_frequency_dict = {'cross_frequency' : entropy,'channels':raw_data.info['ch_names']}
+                cross_frequency = get_conectivity_band(raw_data,mode='entropy')
+                cross_frequency_dict = {'cross_frequency' : cross_frequency,'channels':raw_data.info['ch_names']}
                 write_json(cross_frequency_dict,cross_frequency_norm_path)
                 write_json(json_dict,cross_frequency_norm_path.replace('.txt','.json'))
             else:
                 logger.info(f'{entropy_norm_path}) already existed, skipping...')
-
-            if not os.path.isfile(cross_frequency_band_norm_path):
-                raw_data = mne.read_epochs(norm_path)
-                cross_frequency_band_dict = Modulation_Bands_Decomposition(raw_data)
-                write_json(cross_frequency_band_dict,cross_frequency_band_norm_path)
-                write_json(json_dict,cross_frequency_band_norm_path.replace('.txt','.json'))
-            else:
-                logger.info(f'{cross_frequency_norm_path}) already existed, skipping...')'''
-        
+       
         except Exception as error:
             e+=1
             logger.exception(f'Error for {eeg_file}')

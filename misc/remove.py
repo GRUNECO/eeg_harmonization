@@ -131,11 +131,15 @@ def remove_condition(path,name,ext):
 
 #path = r'D:\TDG\filesSaved\BIOMARCADORES\derivatives\sovaharmony'
 path = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony'
-name = ['_eeg','_stats','_powers','norm_eeg','powers_norm','sl_norm','band_norm','coherence_norm','entropy_norm']
+name = ['_eeg','_stats','_powers','norm[restCE]_eeg','powers_norm','sl_norm','band_norm','coherence_norm','entropy_norm','entropy_band_norm']
 ext = ['.fif','.json','.txt']
 
-remove_data_visits(path,name[8],ext[1])
-remove_data_visits(path,name[8],ext[2])
+remove_data_visits(path,name[3],ext[0])
+remove_data_visits(path,name[3],ext[1])
+remove_data_visits(path,name[3],ext[2])
+remove_data_visits(path,name[4],ext[0])
+remove_data_visits(path,name[4],ext[1])
+remove_data_visits(path,name[4],ext[2])
 #remove_data_visits(path,name[5],ext[2])
 #remove_data_visits(path,name[6],ext[2])
 #

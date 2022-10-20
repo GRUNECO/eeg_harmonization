@@ -1,5 +1,6 @@
 import numpy as np
 import itertools #Usado para ver las posibles permutaciones
+import mne
 
 def Entropia_Permutacion(senal,D):
   """
@@ -74,7 +75,7 @@ def Entropia_Permutacion(senal,D):
   Pis=np.delete(Pis, np.where(Pis==0))
   PE = np.dot(np.log2(Pis),-Pis) 
 
-  return float(PE)
+  return float(PE/np.log2(np.math.factorial(3))) #Normalizada
 
 def get_entropy_freq(new_signal,fmin=None,fmax=None,passband=False):
     if passband:
@@ -98,34 +99,34 @@ def get_entropy_freq(new_signal,fmin=None,fmax=None,passband=False):
 
 
 #### PRUEBA DOS ENTROPIAS
-import mne
-from sovaharmony.p_entropy import p_entropy
-
-fnameCE=r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaharmony\sub-CTR001\ses-V0\eeg\sub-CTR001_ses-V0_task-CE_desc-norm_eeg"
-raw_data=mne.read_epochs(fnameCE + '.fif', verbose='error')
-data = raw_data.get_data()
-(e, c, t) = data.shape
-new_data = np.transpose(data.copy(),(1,2,0))
-for e in range(data.shape[0]):
-    for c in range(data.shape[1]):
-        assert np.all(data[e,c,:] == new_data[c,:,e])
-mean_channels = []
-mean_channels_vale = []
-for channel in range(data.shape[1]):
-    segment = []
-    segment_vale = []
-    for epoch in range(data.shape[0]):
-        # Por segmento
-        entropy_segment = p_entropy(new_data[channel,:,epoch])
-        entropy_vale = Entropia_Permutacion(new_data[channel,:,epoch],D=3)
-        segment.append(entropy_segment)
-        segment_vale.append(entropy_vale)
-        # Por canal
-    mean_channels.append(np.mean(segment))
-    mean_channels_vale.append(np.mean(segment_vale))
-print(len(segment))
-print(len(segment_vale))
-print(len(mean_channels))
-print(len(mean_channels_vale))
-print(segment[0])
-print(segment_vale[0])
+#import mne
+#from sovaharmony.p_entropy import p_entropy
+#
+#fnameCE=r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaharmony\sub-CTR001\ses-V0\eeg\sub-CTR001_ses-V0_task-CE_desc-norm_eeg"
+#raw_data=mne.read_epochs(fnameCE + '.fif', verbose='error')
+#data = raw_data.get_data()
+#(e, c, t) = data.shape
+#new_data = np.transpose(data.copy(),(1,2,0))
+#for e in range(data.shape[0]):
+#    for c in range(data.shape[1]):
+#        assert np.all(data[e,c,:] == new_data[c,:,e])
+#mean_channels = []
+#mean_channels_vale = []
+#for channel in range(data.shape[1]):
+#    segment = []
+#    segment_vale = []
+#    for epoch in range(data.shape[0]):
+#        # Por segmento
+#        #entropy_segment = p_entropy(new_data[channel,:,epoch])
+#        entropy_vale = Entropia_Permutacion(new_data[channel,:,epoch],D=3)
+#        #segment.append(entropy_segment)
+#        segment_vale.append(entropy_vale)
+#        # Por canal
+#    #mean_channels.append(np.mean(segment))
+#    mean_channels_vale.append(np.mean(segment_vale))
+##print(len(segment))
+#print(len(segment_vale))
+#print(len(mean_channels))
+#print(len(mean_channels_vale))
+##print(segment[0])
+#print(segment_vale)

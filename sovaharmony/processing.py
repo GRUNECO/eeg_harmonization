@@ -19,6 +19,7 @@ from lib2to3.pgen2.token import LSQB
 from matplotlib import pyplot as plt
 import numpy as np
 from sovaflow.utils import createRaw
+from scipy import stats as st
 
 
 def get_derivative_path(layout,eeg_file,output_entity,suffix,output_extension,bids_root,derivatives_root):
@@ -129,7 +130,9 @@ def harmonize(THE_DATASET,fast_mode=False):
             prep_path = get_derivative_path(layout,eeg_file,'prep','eeg','.fif',bids_root,derivatives_root)
             stats_path = get_derivative_path(layout,eeg_file,'label','stats','.txt',bids_root,derivatives_root)
             power_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'powers','.txt',bids_root,derivatives_root)
-            norm_path = get_derivative_path(layout,eeg_file,'norm','eeg','.fif',bids_root,derivatives_root)
+            huber_path = get_derivative_path(layout,eeg_file,'huber'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
+            trim_path = get_derivative_path(layout,eeg_file,'trim'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
+            trim_nolp_path = get_derivative_path(layout,eeg_file,'trim_nolp'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
             reject_path = get_derivative_path(layout,eeg_file,'reject'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
             os.makedirs(os.path.split(power_path)[0], exist_ok=True)
 
@@ -181,14 +184,14 @@ def harmonize(THE_DATASET,fast_mode=False):
                 write_json(json_dict,stats_path.replace('label','reject'+pipelabel).replace('.txt','.json'))
                 write_json(reject_info,stats_path.replace('label','reject'+pipelabel))    
             
-            if os.path.isfile(norm_path):
-                logger.info(f'{norm_path}) already existed, skipping...')
+            if os.path.isfile(huber_path):
+                logger.info(f'{huber_path}) already existed, skipping...')
             else: 
                 signal = mne.read_epochs(reject_path)
                 signal2=signal.copy()
                 signal_lp = signal.filter(None,20,fir_design='firwin')
                 (e, c, t) = signal._data.shape
-                signal_data = signal.get_data()
+                signal_data = signal_lp.get_data()
                 da_eeg_cont = np.concatenate(signal_data,axis=-1)
                 for e in range(signal_data.shape[0]):
                     for c in range(signal_data.shape[1]):
@@ -202,8 +205,53 @@ def harmonize(THE_DATASET,fast_mode=False):
                 k = huber(np.array(std_ch))[0]
                 signal2._data=signal2._data/k
                
-                signal2.save(norm_path ,split_naming='bids', overwrite=True)
-                write_json(json_dict,norm_path.replace('.fif','.json'))
+                signal2.save(huber_path ,split_naming='bids', overwrite=True)
+                write_json(json_dict,huber_path.replace('.fif','.json'))
+        
+            if os.path.isfile(trim_path):
+                logger.info(f'{trim_path}) already existed, skipping...')
+            else: 
+                signal = mne.read_epochs(reject_path)
+                signal2=signal.copy()
+                signal_lp = signal.filter(None,20,fir_design='firwin')
+                (e, c, t) = signal._data.shape
+                signal_data = signal_lp.get_data()
+                da_eeg_cont = np.concatenate(signal_data,axis=-1)
+                for e in range(signal_data.shape[0]):
+                    for c in range(signal_data.shape[1]):
+                        assert np.all(signal_data[e,c,:] == da_eeg_cont[c,e*t:(e+1)*t])
+                signal_ch = createRaw(da_eeg_cont,signal_lp.info['sfreq'],ch_names=signal_lp.info['ch_names']) #Fro SRM signal_lp.info['ch_names']
+                std_ch = []
+                for ch in signal_ch._data:
+                    std_ch.append(mad_std(ch))
+                
+                k = st.trim_mean(std_ch,0.1)
+                signal2._data=signal2._data/k
+               
+                signal2.save(trim_path ,split_naming='bids', overwrite=True)
+                write_json(json_dict,trim_path.replace('.fif','.json'))
+            
+            if os.path.isfile(trim_nolp_path):
+                logger.info(f'{trim_nolp_path}) already existed, skipping...')
+            else: 
+                signal = mne.read_epochs(reject_path)
+                signal2=signal.copy()
+                (e, c, t) = signal._data.shape
+                signal_data = signal.get_data()
+                da_eeg_cont = np.concatenate(signal_data,axis=-1)
+                for e in range(signal_data.shape[0]):
+                    for c in range(signal_data.shape[1]):
+                        assert np.all(signal_data[e,c,:] == da_eeg_cont[c,e*t:(e+1)*t])
+                signal_ch = createRaw(da_eeg_cont,signal.info['sfreq'],ch_names=signal.info['ch_names']) #Fro SRM signal_lp.info['ch_names']
+                std_ch = []
+                for ch in signal_ch._data:
+                    std_ch.append(mad_std(ch))
+                
+                k = st.trim_mean(std_ch,0.1)
+                signal2._data=signal2._data/k
+               
+                signal2.save(trim_nolp_path ,split_naming='bids', overwrite=True)
+                write_json(json_dict,trim_nolp_path.replace('.fif','.json'))
         
         except Exception as error:
             e+=1

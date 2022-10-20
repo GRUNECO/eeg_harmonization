@@ -10,24 +10,32 @@ import time
 
 THE_DATASETS=[DATA]
 for dataset in THE_DATASETS:
+    # Preprocessing pipeline
     start = time.perf_counter()
     process=harmonize(dataset,fast_mode=False)
     final = time.perf_counter()
     print('TIME PREPROCESSING:::::::::::::::::::', final-start)
+
+    # Postprocessing pipeline (extraction of features)
     start = time.perf_counter()
     postprocess=features(dataset)
     final = time.perf_counter()
     print('TIME POSTPROCESSING:::::::::::::::::::', final-start)
+
     start = time.perf_counter()
+    # Preprocessing 
     get_dataframe_prep(dataset)
     get_dataframe_wica(dataset)
     get_dataframe_reject(dataset)
+    # Extraction of features 
     get_dataframe_powers(dataset,mode="channels",stage=None)
     get_dataframe_powers(dataset,mode="channels",stage="norm")
     get_dataframe_powers(dataset,mode="components",stage=None)
     get_dataframe_powers(dataset,mode="components",stage="norm")
+    get_dataframe_sl(dataset)
     final = time.perf_counter()
     print('TIME CREATE FEATHERS:::::::::::::::::::', final-start)
+    
 
 
 

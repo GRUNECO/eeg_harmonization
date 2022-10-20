@@ -1,6 +1,8 @@
 """
 @autor: Luisa María Zapata Saldarriaga, Universidad de Antioquia, luisazapatasaldarriaga@gmail.com
 @autor: Yorguin José Mantilla Ramos, Universidad de Antioquia, yjmantilla@gmail.com
+@autor: Verónica Henao Isaza, Universidad de Antioquia, 
+@autor: Valeria Cadavid Castro, Universidad de Antioquia, 
 """
 
 import re
@@ -13,7 +15,8 @@ from .createDataframes import get_metrics_wica
 from .createDataframes import get_metrics_reject
 from .createDataframes import get_powers_components
 from .createDataframes import get_powers_channels
-from .createDataframes import get_data_sl
+from .createDataframes import get_data_sl_format_long
+from .createDataframes import get_data_mean_roi_sl_format_long
 import pandas as pd
 import os
 
@@ -260,8 +263,12 @@ def get_dataframe_prep(THE_DATASET):
   data_Prep.reset_index().to_feather(path_derivatives+r'\data_{task}_PREP.feather'.format(task=task))
   return data_Prep 
 
-def get_dataframe_sl(THE_DATASET):
+def get_dataframe_sl(THE_DATASET,mode=None,ROIs=None):
+  '''
+  Create dataframe with all values 
+  '''
   dataframes_sl=[]
+  dataframes_mean_sl=[]
   #for THE_DATASET in Studies:
   layout,task,runlabel,name,group_regex,session_set=get_information_data(THE_DATASET)
   files= layout.get(extension='.txt', task=task,suffix='norm', return_type='filename')
@@ -280,8 +287,21 @@ def get_dataframe_sl(THE_DATASET):
   else:
     list_sessions=[info['session'] for info in list_info]
   
-  dataframes_sl.append(get_data_sl(files_sl,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
-  dataSl=pd.concat((dataframes_sl))
-  path_derivatives=os.path.join(layout.root,'derivatives')
-  dataSl.reset_index().to_feather(path_derivatives+r'\data_{task}_sl.feather'.format(task=task))
-  return dataSl
+  if mode=='ROIs':
+    dataframes_mean_sl.append(get_data_mean_roi_sl_format_long(files_sl,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,ROIs=ROIs))
+    data_mean_Sl=pd.concat((dataframes_mean_sl))
+    path_derivatives=os.path.join(layout.root,'derivatives')
+    data_mean_Sl.reset_index().to_feather(path_derivatives+r'\data_{task}_ROI_sl_format_long.feather'.format(task=task))
+    return data_mean_Sl
+  
+  else:
+    dataframes_sl.append(get_data_sl_format_long(files_sl,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
+    dataSl=pd.concat((dataframes_sl))
+    path_derivatives=os.path.join(layout.root,'derivatives')
+    dataSl.reset_index().to_feather(path_derivatives+r'\data_{task}_sl_format_long.feather'.format(task=task))
+    return dataSl
+
+
+
+  
+  

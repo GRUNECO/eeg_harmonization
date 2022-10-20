@@ -1,6 +1,9 @@
 """
 @autor: Luisa María Zapata Saldarriaga, Universidad de Antioquia, luisazapatasaldarriaga@gmail.com
 @autor: Yorguin José Mantilla Ramos, Universidad de Antioquia, yjmantilla@gmail.com
+@autor: Verónica Henao Isaza, Universidad de Antioquia, 
+@autor: Valeria Cadavid Castro, Universidad de Antioquia, 
+
 """
 
 from requests import session
@@ -382,7 +385,7 @@ def get_powers_components(powersFiles,list_studies=None,list_subjects=None,list_
   datosPowers=pd.concat((dataframesPowers))
   return datosPowers 
 
-def get_data_sl(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
+def get_data_sl_format_long(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
   '''
   Parameters
   ----------
@@ -415,7 +418,6 @@ def get_data_sl(files,list_studies=None,list_subjects=None,list_groups=None,list
   df_sl['bands']=[]
   df_sl['sl_values']=[]
   df_sl['channel']=[]
-  
   for f,file in enumerate(files):
     dataFile=load_txt(file)
     for i,key in enumerate(dataFile['bands']):
@@ -426,9 +428,58 @@ def get_data_sl(files,list_studies=None,list_subjects=None,list_groups=None,list
       df_sl['channel']+=list(itertools.chain(*[[f'{y}:{x}' for y in dataFile['channels'] for x in dataFile['channels']]]))
       df_sl['bands']+=[key]*len(dataFile['sl'][key])*len(dataFile['channels'])
       df_sl['sl_values']+=itertools.chain(*dataFile['sl'][key])
+  df=pd.DataFrame(df_sl)
+  return df
+
+def get_data_mean_roi_sl_format_long(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None,ROIs=None):
+  if list_studies is None:
+    list_studies=["None"]*len(files)
+  if list_subjects is None:
+    list_subjects=["None"]*len(files) 
+  if list_groups is None:
+    list_groups=["None"]*len(files)
+  if list_sessions is None:
+    list_sessions=["None"]*len(files)
+  if ROIs is None:
+    F = ['FP1', 'FPZ', 'FP2', 'AF3', 'AF4', 'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8'] 
+    T = ['FT7', 'FC5', 'FC6', 'FT8', 'T7', 'C5', 'C6', 'T8', 'TP7', 'CP5', 'CP6', 'TP8']
+    C = ['FC3', 'FC1', 'FCZ', 'FC2', 'FC4', 'C3', 'C1', 'CZ', 'C2', 'C4', 'CP3', 'CP1', 'CPZ', 'CP2', 'CP4'] 
+    PO = ['P7', 'P5', 'P3', 'P1', 'PZ', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POZ', 'PO4', 'PO6', 'PO8', 'CB1', 'O1', 'OZ', 'O2', 'CB2']
+    ROIs = [F,C,PO,T]
+      
+
+  df_sl={}
+  df_sl['sl_values']=[]
+  df_sl['Study']=[]
+  df_sl['Subject']=[]
+  df_sl['Group']=[]
+  df_sl['Session']=[]
+  df_sl['bands']=[]
+  df_sl['ROI']=[]
+  
+  roi_labels = ['F','C','PO','T']
+  
+  for f,file in enumerate(files):
+    dataFile=load_txt(file)
+    df_sl['Study']+=[list_studies[f]]*len(roi_labels)*len(dataFile['bands'])
+    df_sl['Group']+=[list_groups[f]]*len(roi_labels)*len(dataFile['bands'])
+    df_sl['Session']+=[list_sessions[f]]*len(roi_labels)*len(dataFile['bands'])
+    df_sl['Subject']+=[list_subjects[f]]*len(roi_labels)*len(dataFile['bands'])
+    new_rois = []
+    for roi in ROIs:
+      channels = set(dataFile['channels']).intersection(roi)
+      new_roi=[dataFile['channels'].index(channel) for channel in channels]
+      new_rois.append(new_roi)
+
+    for i,key in enumerate(dataFile['bands']):
+      for r,roi in enumerate(new_rois):
+        df_sl['bands']+=[key]
+        df_sl['ROI']+=[roi_labels[r]]
+        df_sl['sl_values']+=[np.average(np.array(dataFile['sl'][key])[roi])]
 
   df=pd.DataFrame(df_sl)
   return df
+    
 
 def get_data_coherence():
   return

@@ -11,6 +11,7 @@ import time
 
 THE_DATASETS=[DATA]
 for dataset in THE_DATASETS:
+    '''
     # Preprocessing pipeline
     start = time.perf_counter()
     process=harmonize(dataset,fast_mode=False)
@@ -33,9 +34,13 @@ for dataset in THE_DATASETS:
     get_dataframe_powers(dataset,mode="channels",stage="norm")
     get_dataframe_powers(dataset,mode="components",stage=None)
     get_dataframe_powers(dataset,mode="components",stage="norm")
-    get_dataframe_sl(dataset)
+    
     final = time.perf_counter()
     print('TIME CREATE FEATHERS:::::::::::::::::::', final-start)
+    '''
+    get_dataframe_sl(dataset,mode='ROIs',ROIs=dataset['ROIs'])
+    #get_dataframe_mean_sl(dataset)
+    
     
 
 

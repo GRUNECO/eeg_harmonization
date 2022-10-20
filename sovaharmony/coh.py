@@ -1,11 +1,29 @@
+'''
+@autor: Verónica Henao Isaza, Universidad de Antioquia, 
+'''
+
 from scipy.signal import coherence
 import numpy as np
 
 def get_coherence_freq(new_signal,fmin=None,fmax=None,passband=False):
+    '''
+    Parameters
+    ----------
+        new_signal:
+        fmin: None
+        fmax: None
+        passband: False
+
+    Returns
+    -------
+        fc:
+        Cxyc:
+    '''
     if passband:
         new_signal =new_signal.filter(fmin,fmax)
+
     data = new_signal.get_data()
-    (e, c, t) = data.shape
+    (e, c, t) = data.shape()
     new_data = np.concatenate(data,axis=-1)
     for e in range(data.shape[0]):
         for c in range(data.shape[1]):

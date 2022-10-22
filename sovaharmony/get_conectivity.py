@@ -43,7 +43,7 @@ def get_conectivity_band(signal,mode):
             for e in range(data.shape[0]):
                 for c in range(data.shape[1]):
                     assert np.all(data[e,c,:] == new_data[c,:,e])
-            pme_ = Amplitude_Modulation_Analysis(new_data,signal.info['sfreq'],Bandas=bands)
+            pme_ = Amplitude_Modulation_Analysis(new_data,signal.info['sfreq'],Bands=bands)
             output_channels['pme'][label] = pme_
         
         

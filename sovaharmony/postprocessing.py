@@ -146,7 +146,7 @@ def features(THE_DATASET):
 
             if not os.path.isfile(cross_frequency_norm_path):
                 raw_data = mne.read_epochs(norm_path)
-                cross_frequency = get_conectivity_band(raw_data,mode='entropy')
+                cross_frequency = get_conectivity_band(raw_data,mode='pme')
                 cross_frequency_dict = {'cross_frequency' : cross_frequency,'channels':raw_data.info['ch_names']}
                 write_json(cross_frequency_dict,cross_frequency_norm_path)
                 write_json(json_dict,cross_frequency_norm_path.replace('.txt','.json'))

@@ -17,8 +17,8 @@ for comp in range(len(A)):
     A_ = np.expand_dims(A[:,comp],axis=-1)
     W_ = np.expand_dims(W[comp,:],axis=0)
     figSingle = us.topomap(A_,W_,ch_names,cmap='seismic',show=False,colorbar=True)
-    plt.show()
-    #plt.savefig(r'eeg_harmonization\misc\Topo'+r'/'+'C'+str(comp+1)+r'.png')
+    #plt.show()
+    plt.savefig(r'eeg_harmonization\misc\Topo'+r'/'+'C'+str(comp+1)+r'.png')
 #%% Otra forma
 #fig3 = us.single_topomap(A[:,comp],ch_names,show=True,label='1',show_names=False)
 #plt.show()

@@ -47,7 +47,7 @@ def features(THE_DATASET):
             icpowers_path = get_derivative_path(layout,eeg_file,'component'+pipelabel,'powers','.txt',bids_root,derivatives_root)
             power_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'powers_norm','.txt',bids_root,derivatives_root)
             icpowers_norm_path = get_derivative_path(layout,eeg_file,'component'+pipelabel,'powers_norm','.txt',bids_root,derivatives_root)
-            norm_path = get_derivative_path(layout,eeg_file,'norm'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
+            norm_path = get_derivative_path(layout,eeg_file,'huber'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
             sl_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'sl_norm','.txt',bids_root,derivatives_root)
             sl_band_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'sl_band_norm','.txt',bids_root,derivatives_root)
             coherence_norm_path  = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'coherence_norm','.txt',bids_root,derivatives_root)

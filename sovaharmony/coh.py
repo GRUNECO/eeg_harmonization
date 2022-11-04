@@ -1,5 +1,5 @@
 '''
-@autor: Verónica Henao Isaza, Universidad de Antioquia, 
+@autor: Verónica Henao Isaza, Universidad de Antioquia, 2022
 '''
 
 from scipy.signal import coherence

@@ -5,7 +5,7 @@ from sovaharmony.getDataframes import get_dataframe_wica
 from sovaharmony.getDataframes import get_dataframe_powers
 from sovaharmony.getDataframes import get_dataframe_reject
 from sovaharmony.getDataframes import get_dataframe_powers
-from sovaharmony.datasets import BIOMARCADORES_CE as DATA    
+from sovaharmony.datasets import DUQUE as DATA    
 import time 
 
 THE_DATASETS=[DATA]
@@ -37,7 +37,8 @@ for dataset in THE_DATASETS:
     print('TIME CREATE FEATHERS:::::::::::::::::::', final-start)
     #get_dataframe_sl(dataset,mode='ROIs',ROIs=dataset['ROIs'])
     #get_dataframe_mean_sl(dataset)
-    
+
+
     
 
 

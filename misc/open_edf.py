@@ -1,4 +1,3 @@
-from mne.io import read_raw
 import mne 
 import glob
 import pandas as pd
@@ -15,14 +14,14 @@ import matplotlib.pyplot as plt
 #filename1 = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-CTR009\ses-V4\eeg\sub-CTR009_ses-V4_task-CE_desc-reject[restCE]_eeg.fif"
 #filename2 = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-CTR017\ses-V4\eeg\sub-CTR017_ses-V4_task-CE_desc-reject[restCE]_eeg.fif"
 #filename3 = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-CTR018\ses-V3\eeg\sub-CTR018_ses-V3_task-CE_desc-reject[restCE]_eeg.fif"
-#filename4 = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-G2018\ses-V3\eeg\sub-G2018_ses-V3_task-CE_desc-reject[restCE]_eeg.fif"
-filename = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-CTR002\ses-V0\eeg\sub-CTR002_ses-V0_task-CE_desc-wica_eeg.fif"
-raw = read_raw(filename,preload=True )
+filename = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-G2018\ses-V3\eeg\sub-G2018_ses-V3_task-CE_desc-reject[restCE]_eeg.fif"
+#filename = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-CTR002\ses-V0\eeg\sub-CTR002_ses-V0_task-CE_desc-wica_eeg.fif"
+#raw = read_raw(filename,preload=True )
 #raw1 = read_raw(filename1,preload=True )
 #raw2 = read_raw(filename2,preload=True )
 #raw3 = read_raw(filename3,preload=True )
 #raw4 = read_raw(filename4,preload=True )
-#raw1 = mne.read_epochs(filename1, verbose='error')
+raw = mne.read_epochs(filename, verbose='error')
 #raw2 = mne.read_epochs(filename2, verbose='error')
 #raw3 = mne.read_epochs(filename3, verbose='error')
 #raw4 = mne.read_epochs(filename4, verbose='error')

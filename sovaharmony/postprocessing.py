@@ -64,10 +64,10 @@ def features(THE_DATASET):
                 logger.info(f'{power_path}) already existed, skipping...')
             else:
                 signal = mne.read_epochs(reject_path)
-                start = time.perf_counter()
+                startpower = time.perf_counter()
                 power_dict = get_power_derivates(signal)
-                final = time.perf_counter()
-                print('TIME POWER:::::::::::::::::::', final-start)
+                finalpower = time.perf_counter()
+                print('TIME POWER:::::::::::::::::::', finalpower-startpower)
                 write_json(power_dict,power_path)
                 write_json(json_dict,power_path.replace('.txt','.json'))
             
@@ -75,19 +75,19 @@ def features(THE_DATASET):
                 logger.info(f'{power_norm_path}) already existed, skipping...')             
             else:
                 signal_normas = mne.read_epochs(norm_path)
-                start = time.perf_counter()
+                startpowernorm = time.perf_counter()
                 power_norm = get_power_derivates(signal_normas)
-                final = time.perf_counter()
-                print('TIME POWER NORM:::::::::::::::::::', final-start)
+                finalpowernorm = time.perf_counter()
+                print('TIME POWER NORM:::::::::::::::::::', finalpowernorm-startpowernorm)
                 write_json(power_norm,power_norm_path)
                 write_json(json_dict,power_norm_path.replace('.txt','.json'))
             
             if not os.path.isfile(icpowers_norm_path) and spatial_filter is not None:
                 signal_normas = mne.read_epochs(norm_path)
-                start = time.perf_counter()
+                starticpowernorm = time.perf_counter()
                 ic_powers_dict_norm = get_ics_power_derivatives(signal_normas,spatial_filter)
-                final = time.perf_counter()
-                print('TIME IC POWER NORM:::::::::::::::::::', final-start)
+                finalicpowernorm = time.perf_counter()
+                print('TIME IC POWER NORM:::::::::::::::::::', finalicpowernorm-starticpowernorm)
                 write_json(ic_powers_dict_norm,icpowers_norm_path)
                 write_json(json_dict,icpowers_norm_path.replace('.txt','.json'))
             else:
@@ -95,10 +95,10 @@ def features(THE_DATASET):
   
             if not os.path.isfile(icpowers_path) and spatial_filter is not None:
                 signal = mne.read_epochs(reject_path)
-                start = time.perf_counter()
+                starticpower = time.perf_counter()
                 ic_powers_dict = get_ics_power_derivatives(signal,spatial_filter)
-                final = time.perf_counter()
-                print('TIME IC POWER:::::::::::::::::::', final-start)
+                finalicpower = time.perf_counter()
+                print('TIME IC POWER:::::::::::::::::::', finalicpower-starticpower)
                 write_json(ic_powers_dict,icpowers_path)
                 write_json(json_dict,icpowers_path.replace('.txt','.json'))
 
@@ -107,10 +107,10 @@ def features(THE_DATASET):
 
             if not os.path.isfile(sl_norm_path):
                 raw_data = mne.read_epochs(norm_path)
-                start = time.perf_counter()
+                startsl = time.perf_counter()
                 sl = get_sl_freq(raw_data)
-                final = time.perf_counter()
-                print('TIME SL:::::::::::::::::::', final-start)
+                finalsl = time.perf_counter()
+                print('TIME SL:::::::::::::::::::', finalsl-startsl)
                 sl_dict = {'sl' : sl,'channels':raw_data.info['ch_names']}
                 write_json(sl_dict,sl_norm_path)
                 write_json(json_dict,sl_norm_path.replace('.txt','.json'))
@@ -119,10 +119,10 @@ def features(THE_DATASET):
 
             if not os.path.isfile(sl_band_norm_path):
                 raw_data = mne.read_epochs(norm_path)
-                start = time.perf_counter()
+                startbandsl = time.perf_counter()
                 sl_band_dict = get_conectivity_band(raw_data,mode='sl')
-                final = time.perf_counter()
-                print('TIME BANDS SL:::::::::::::::::::', final-start)
+                finalbandsl = time.perf_counter()
+                print('TIME BANDS SL:::::::::::::::::::', finalbandsl-startbandsl)
                 write_json(sl_band_dict,sl_band_norm_path)
                 write_json(json_dict,sl_band_norm_path.replace('.txt','.json'))
             else:
@@ -130,10 +130,10 @@ def features(THE_DATASET):
 
             if not os.path.isfile(coherence_norm_path):
                 raw_data = mne.read_epochs(norm_path)
-                start = time.perf_counter()
+                startcoherence = time.perf_counter()
                 fc,Cxyc = get_coherence_freq(raw_data)
-                final = time.perf_counter()
-                print('TIME COHERENCE:::::::::::::::::::', final-start)
+                finalcoherence = time.perf_counter()
+                print('TIME COHERENCE:::::::::::::::::::', finalcoherence-startcoherence)
                 coherence_dict = {'fc' : fc,'Cxyc' : Cxyc ,'channels':raw_data.info['ch_names']}
                 write_json(coherence_dict,coherence_norm_path)
                 write_json(json_dict,coherence_norm_path.replace('.txt','.json'))
@@ -142,10 +142,10 @@ def features(THE_DATASET):
 
             if not os.path.isfile(coherence_band_norm_path):
                 raw_data = mne.read_epochs(norm_path)
-                start = time.perf_counter()
+                startbandscoherence = time.perf_counter()
                 coherence_band_dict = get_conectivity_band(raw_data,mode='coherence')
-                final = time.perf_counter()
-                print('TIME BANDS COHERENCE:::::::::::::::::::', final-start)
+                finalbandscoherence = time.perf_counter()
+                print('TIME BANDS COHERENCE:::::::::::::::::::', finalbandscoherence-startbandscoherence)
                 write_json(coherence_band_dict,coherence_band_norm_path)
                 write_json(json_dict,coherence_band_norm_path.replace('.txt','.json'))
             else:
@@ -153,10 +153,10 @@ def features(THE_DATASET):
 
             if not os.path.isfile(entropy_norm_path):
                 raw_data = mne.read_epochs(norm_path)
-                start = time.perf_counter()
+                startentropy = time.perf_counter()
                 mean_entropy = get_entropy_freq(raw_data) 
-                final = time.perf_counter()
-                print('TIME ENTROPY:::::::::::::::::::', final-start)
+                finalentropy = time.perf_counter()
+                print('TIME ENTROPY:::::::::::::::::::', finalentropy-startentropy)
                 entropy_dict = {'mean_entropy' : mean_entropy,'channels':raw_data.info['ch_names']}
                 write_json(entropy_dict,entropy_norm_path)
                 write_json(json_dict,entropy_norm_path.replace('.txt','.json'))
@@ -165,10 +165,10 @@ def features(THE_DATASET):
 
             if not os.path.isfile(entropy_band_norm_path):
                 raw_data = mne.read_epochs(norm_path)
-                start = time.perf_counter()
+                startbandsentropy = time.perf_counter()
                 entropy_band_dict = get_conectivity_band(raw_data,mode='entropy')
-                final = time.perf_counter()
-                print('TIME BANDS ENTROPY:::::::::::::::::::', final-start)
+                finalbandsentropy = time.perf_counter()
+                print('TIME BANDS ENTROPY:::::::::::::::::::', finalbandsentropy-startbandsentropy)
                 write_json(entropy_band_dict,entropy_band_norm_path)
                 write_json(json_dict,entropy_band_norm_path.replace('.txt','.json'))
             else:
@@ -176,10 +176,10 @@ def features(THE_DATASET):
 
             if not os.path.isfile(cross_frequency_norm_path):
                 raw_data = mne.read_epochs(norm_path)
-                start = time.perf_counter()
+                startcross = time.perf_counter()
                 cross_frequency = get_conectivity_band(raw_data,mode='pme')
-                final = time.perf_counter()
-                print('TIME CROSS FREQUENCY:::::::::::::::::::', final-start)
+                finalcross = time.perf_counter()
+                print('TIME CROSS FREQUENCY:::::::::::::::::::', finalcross-startcross)
                 cross_frequency_dict = {'cross_frequency' : cross_frequency,'channels':raw_data.info['ch_names']}
                 write_json(cross_frequency_dict,cross_frequency_norm_path)
                 write_json(json_dict,cross_frequency_norm_path.replace('.txt','.json'))
@@ -192,5 +192,15 @@ def features(THE_DATASET):
             archivosconerror.append(eeg_file)
             print(error)
             pass
-    
+    print('TIME POWER:::::::::::::::::::', finalpower-startpower)
+    print('TIME POWER NORM:::::::::::::::::::', finalpowernorm-startpowernorm)
+    print('TIME IC POWER NORM:::::::::::::::::::', finalicpowernorm-starticpowernorm)
+    print('TIME IC POWER:::::::::::::::::::', finalicpower-starticpower)
+    print('TIME SL:::::::::::::::::::', finalsl-startsl)
+    print('TIME BANDS SL:::::::::::::::::::', finalbandsl-startbandsl)
+    print('TIME COHERENCE:::::::::::::::::::', finalcoherence-startcoherence)
+    print('TIME BANDS COHERENCE:::::::::::::::::::', finalbandscoherence-startbandscoherence)
+    print('TIME ENTROPY:::::::::::::::::::', finalentropy-startentropy)
+    print('TIME BANDS ENTROPY:::::::::::::::::::', finalbandsentropy-startbandsentropy)
+    print('TIME CROSS FREQUENCY:::::::::::::::::::', finalcross-startcross)
     return

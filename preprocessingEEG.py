@@ -5,6 +5,7 @@ from sovaharmony.getDataframes import get_dataframe_wica
 from sovaharmony.getDataframes import get_dataframe_powers
 from sovaharmony.getDataframes import get_dataframe_reject
 from sovaharmony.getDataframes import get_dataframe_powers
+from sovaharmony.getDataframes import get_dataframe_sl
 from sovaharmony.datasets import BIOMARCADORES_CE as DATA    
 import time 
 
@@ -32,10 +33,11 @@ for dataset in THE_DATASETS:
     get_dataframe_powers(dataset,mode="channels",stage="norm")
     get_dataframe_powers(dataset,mode="components",stage=None)
     get_dataframe_powers(dataset,mode="components",stage="norm")
-    
+    get_dataframe_sl(dataset,mode='ROIs',ROIs=dataset['ROIs'])
     final = time.perf_counter()
     print('TIME CREATE FEATHERS:::::::::::::::::::', final-start)
-    #get_dataframe_sl(dataset,mode='ROIs',ROIs=dataset['ROIs'])
+    '''
+    
     #get_dataframe_mean_sl(dataset)
 
 

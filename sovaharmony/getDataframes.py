@@ -263,7 +263,7 @@ def get_dataframe_prep(THE_DATASET):
   data_Prep.reset_index().to_feather(path_derivatives+r'\data_{task}_PREP.feather'.format(task=task))
   return data_Prep 
 
-def get_dataframe_sl(THE_DATASET,mode=None,ROIs=None):
+def get_dataframe_sl(THE_DATASET,mode=None,ROIs=None,format=None):
   '''
   Create dataframe with all values 
   '''
@@ -287,18 +287,19 @@ def get_dataframe_sl(THE_DATASET,mode=None,ROIs=None):
   else:
     list_sessions=[info['session'] for info in list_info]
   
-  if mode=='ROIs':
-    dataframes_mean_sl.append(get_data_mean_roi_sl_format_long(files_sl,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,ROIs=ROIs))
-    data_mean_Sl=pd.concat((dataframes_mean_sl))
-    path_derivatives=os.path.join(layout.root,'derivatives')
-    data_mean_Sl.reset_index().to_feather(path_derivatives+r'\data_{task}_ROI_sl_format_long.feather'.format(task=task))
-    return data_mean_Sl
-  
-  else:
-    dataframes_sl.append(get_data_sl_format_long(files_sl,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
-    dataSl=pd.concat((dataframes_sl))
-    path_derivatives=os.path.join(layout.root,'derivatives')
-    dataSl.reset_index().to_feather(path_derivatives+r'\data_{task}_sl_format_long.feather'.format(task=task))
+  if format=='long':
+    if mode=='ROIs':
+      dataframes_mean_sl.append(get_data_mean_roi_sl_format_long(files_sl,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,ROIs=ROIs))
+      data_mean_Sl=pd.concat((dataframes_mean_sl))
+      path_derivatives=os.path.join(layout.root,'derivatives')
+      data_mean_Sl.reset_index().to_feather(path_derivatives+r'\data_{task}_ROI_sl_format_long.feather'.format(task=task))
+      return data_mean_Sl
+    
+    else:
+      dataframes_sl.append(get_data_sl_format_long(files_sl,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
+      dataSl=pd.concat((dataframes_sl))
+      path_derivatives=os.path.join(layout.root,'derivatives')
+      dataSl.reset_index().to_feather(path_derivatives+r'\data_{task}_sl_format_long.feather'.format(task=task))
     return dataSl
 
 

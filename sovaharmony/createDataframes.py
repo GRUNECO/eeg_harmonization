@@ -480,6 +480,28 @@ def get_data_mean_roi_sl_format_long(files,list_studies=None,list_subjects=None,
   df=pd.DataFrame(df_sl)
   return df
     
+def get_data_columns_ROI_sl(ROIs): 
+  '''Obtain data frames with SL of ROIs in different columns''' 
+  for f,file in enumerate(files):
+    dataFile=load_txt(file)
+    total_channels=np.array(dataFile['channels'])
+    bandas = dataFile['bands']
+    new_rois = []
+    potencias_roi_banda=[]
+
+    for roi in ROIs:
+        channels = set(dataFile['channels']).intersection(roi)
+        new_roi=[dataFile['channels'].index(channel) for channel in channels]
+        new_rois.append(new_roi)
+
+    for b,band in enumerate(bandas):
+      for r,roi in enumerate(new_rois):
+          datos_1_sujeto[f'SL_ROI_{roi_labels[r]}_{band.title()}']=np.average(np.array(dataFile['sl'][band])[roi])
+    list_subjects.append(datos_1_sujeto)
+  df = pd.DataFrame(list_subjects)
+  return df
+
+
 
 def get_data_coherence():
   return

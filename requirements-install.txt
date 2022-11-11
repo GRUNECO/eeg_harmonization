@@ -4,6 +4,8 @@ git+https://gitfront.io/r/yjmantilla/5c5817890b14af2e5ae8ae9ba3f14522c337522e/so
 git+https://gitfront.io/r/GRUNECO/xiGpXFpQvM2T/sovaflow.git
 git+https://gitfront.io/r/GRUNECO/Vyo9MVr7QNTZ/violinplot.git
 pybids
+seaborn
+statsmodels
 https://api.github.com/repos/mne-tools/mne-bids/zipball/main
 versioneer
 -e .

@@ -1,5 +1,5 @@
 '''
-@autor: Verónica Henao Isaza, Universidad de Antioquia, 
+@autor: Verónica Henao Isaza, Universidad de Antioquia, 2022
 '''
 
 from scipy.signal import coherence
@@ -23,7 +23,7 @@ def get_coherence_freq(new_signal,fmin=None,fmax=None,passband=False):
         new_signal =new_signal.filter(fmin,fmax)
 
     data = new_signal.get_data()
-    (e, c, t) = data.shape()
+    (e, c, t) = data.shape
     new_data = np.concatenate(data,axis=-1)
     for e in range(data.shape[0]):
         for c in range(data.shape[1]):
@@ -31,6 +31,6 @@ def get_coherence_freq(new_signal,fmin=None,fmax=None,passband=False):
     for a in range(len(new_signal.info['ch_names'])):
         for b in range(a,len(new_signal.info['ch_names'])):
             if a != b:
-                fc, Cxyc = coherence(new_data[a,:], new_data[b,:], new_signal.info['sfreq'], 'hanning', nperseg = 1000)
+                fc, Cxyc = coherence(new_data[a,:], new_data[b,:], new_signal.info['sfreq'], 'hann', nperseg = 1000)
     return fc, Cxyc
 

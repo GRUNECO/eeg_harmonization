@@ -108,8 +108,8 @@ def BIDS_pds(THE_DATASET_):
     all_mean_wica = []
     all_mean_preprocessing = []
     all_mean_huber = []
-    all_mean_trim = []
-    all_mean_trim_nolp = []
+    #all_mean_trim = []
+    #all_mean_trim_nolp = []
     for THE_DATASET in THE_DATASET_:
         input_path = THE_DATASET.get('input_path',None)
         layout_dict = THE_DATASET.get('layout',None)
@@ -124,53 +124,67 @@ def BIDS_pds(THE_DATASET_):
         derivatives_root = os.path.join(layout.root,'derivatives',pipeline)
         log_path = os.path.join(derivatives_root,'code')
         os.makedirs(log_path, exist_ok=True)
+        files_error_huber = []
+        #files_error_trim = []
+        #files_error_trim_nolp = []
         for i,eeg_file in enumerate(eegs):
             file_raw = eeg_file
-            file_prep = get_derivative_path(layout,eeg_file,'prep','eeg','.fif',bids_root,derivatives_root)
-            file_wica = get_derivative_path(layout,eeg_file,'wica','eeg','.fif',bids_root,derivatives_root)
+            #file_prep = get_derivative_path(layout,eeg_file,'prep','eeg','.fif',bids_root,derivatives_root)
+            #file_wica = get_derivative_path(layout,eeg_file,'wica','eeg','.fif',bids_root,derivatives_root)
             file_preprocessing = get_derivative_path(layout,eeg_file,'reject'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
             file_huber = get_derivative_path(layout,eeg_file,'huber'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
-            file_trim = get_derivative_path(layout,eeg_file,'trim'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
-            file_trim_nolp = get_derivative_path(layout,eeg_file,'trim_nolp'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
-
+            #file_trim = get_derivative_path(layout,eeg_file,'trim'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
+            #file_trim_nolp = get_derivative_path(layout,eeg_file,'trim_nolp'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
+            if not os.path.exists(file_huber):
+                files_error_huber.append(file_huber)
+            #elif not os.path.exists(file_trim): 
+            #    files_error_trim.append(file_trim)
+            #elif not os.path.exists(file_trim_nolp):
+            #    files_error_trim_nolp.append(file_trim_nolp)
+            else:
+                pass
             raw = mne.io.read_raw(file_raw,preload=True)
-            prep = mne.io.read_raw(file_prep, preload=True)
-            wica = mne.io.read_raw(file_wica, preload=True)
+            #prep = mne.io.read_raw(file_prep, preload=True)
+            #wica = mne.io.read_raw(file_wica, preload=True)
             preprocessing = mne.read_epochs(file_preprocessing, verbose='error')
             huber = mne.read_epochs(file_huber, verbose='error')
-            trim = mne.read_epochs(file_trim, verbose='error')
-            trim_nolp = mne.read_epochs(file_trim_nolp, verbose='error')
+            #trim = mne.read_epochs(file_trim, verbose='error')
+            #trim_nolp = mne.read_epochs(file_trim_nolp, verbose='error')
             ch = ['P2','P4','P1','POZ','PO3','PO6','PO7','P7','PO5','O1','P3','P8','OZ','PZ','O2','PO4','PO8','P6','P5']
+#return files_error_huber,files_error_trim,files_error_trim_nolp
 
+#files_error_huber,files_error_trim,files_error_trim_nolp = BIDS_pds(THE_DATASET_)
+#print(len(files_error_huber),len(files_error_trim),len(files_error_trim_nolp))
+#print(files_error_huber)
             ff_raw, Pxx_raw,ff_comp_raw,Pxx_comp_raw = welch_pds(raw,ch,continuo=False)
-            ff_prep, Pxx_prep, ff_comp_prep, Pxx_comp_prep = welch_pds(prep,ch,continuo=False)
-            ff_wica, Pxx_wica, ff_comp_wica, Pxx_comp_wica = welch_pds(wica,ch,continuo=False)
+            #ff_prep, Pxx_prep, ff_comp_prep, Pxx_comp_prep = welch_pds(prep,ch,continuo=False)
+            #ff_wica, Pxx_wica, ff_comp_wica, Pxx_comp_wica = welch_pds(wica,ch,continuo=False)
             ff_preprocessing, Pxx_preprocessing, ff_comp_preprocessing, Pxx_comp_preprocessing = welch_pds(preprocessing,ch)
             ff_huber, Pxx_huber,ff_comp_huber, Pxx_comp_huber = welch_pds(huber,ch)
-            ff_trim, Pxx_trim,ff_comp_trim, Pxx_comp_trim = welch_pds(trim,ch)
-            ff_trim_nolp, Pxx_trim_nolp,ff_comp_trim_nolp, Pxx_comp_trim_nolp = welch_pds(trim_nolp,ch)
+            #ff_trim, Pxx_trim,ff_comp_trim, Pxx_comp_trim = welch_pds(trim,ch)
+            #ff_trim_nolp, Pxx_trim_nolp,ff_comp_trim_nolp, Pxx_comp_trim_nolp = welch_pds(trim_nolp,ch)
             mean_raw = mean_Pxx_ff(ff_raw, Pxx_raw)
-            mean_prep = mean_Pxx_ff(ff_prep, Pxx_prep)
-            mean_wica = mean_Pxx_ff(ff_wica, Pxx_wica)
+            #mean_prep = mean_Pxx_ff(ff_prep, Pxx_prep)
+            #mean_wica = mean_Pxx_ff(ff_wica, Pxx_wica)
             mean_preprocessing = mean_Pxx_ff(ff_preprocessing, Pxx_preprocessing)
             mean_huber = mean_Pxx_ff(ff_huber, Pxx_huber)
-            mean_trim = mean_Pxx_ff(ff_trim, Pxx_trim)
-            mean_trim_nolp = mean_Pxx_ff(ff_trim_nolp, Pxx_trim_nolp)
+            #mean_trim = mean_Pxx_ff(ff_trim, Pxx_trim)
+            #mean_trim_nolp = mean_Pxx_ff(ff_trim_nolp, Pxx_trim_nolp)
         
             all_mean_raw.append(mean_raw)
-            all_mean_prep.append(mean_prep)
-            all_mean_wica.append(mean_wica)
+            #all_mean_prep.append(mean_prep)
+            #all_mean_wica.append(mean_wica)
             all_mean_preprocessing.append(mean_preprocessing)
             all_mean_huber.append(mean_huber)
-            all_mean_trim.append(mean_trim)
-            all_mean_trim_nolp.append(mean_trim_nolp)
+            #all_mean_trim.append(mean_trim)
+            #all_mean_trim_nolp.append(mean_trim_nolp)
         sbj_raw=mean_sbj(all_mean_raw)
-        sbj_prep=mean_sbj(all_mean_prep)
-        sbj_wica=mean_sbj(all_mean_wica)
+        #sbj_prep=mean_sbj(all_mean_prep)
+        #sbj_wica=mean_sbj(all_mean_wica)
         sbj_preprocessing=mean_sbj(all_mean_preprocessing)
         sbj_huber=mean_sbj(all_mean_huber)
-        sbj_trim=mean_sbj(all_mean_trim)
-        sbj_trim_nolp=mean_sbj(all_mean_trim_nolp)
+        #sbj_trim=mean_sbj(all_mean_trim)
+        #sbj_trim_nolp=mean_sbj(all_mean_trim_nolp)
         #ff_raw,sbj_raw,Pxx_comp_raw
         #ff_prep,sbj_prep,Pxx_comp_prep
         #ff_wica,sbj_wica,Pxx_comp_wica
@@ -178,25 +192,25 @@ def BIDS_pds(THE_DATASET_):
         #ff_huber,sbj_huber,Pxx_comp_huber
         #ff_trim,sbj_trim,Pxx_comp_trim
         #ff_trim_nolp,sbj_trim_nolp,Pxx_comp_trim_nolp
-    return ff_raw,sbj_raw,Pxx_comp_raw,ff_prep,sbj_prep,Pxx_comp_prep,ff_wica,sbj_wica,Pxx_comp_wica,ff_preprocessing,sbj_preprocessing,Pxx_comp_preprocessing,ff_trim,sbj_trim,Pxx_comp_trim,ff_trim_nolp,sbj_trim_nolp,Pxx_comp_trim_nolp,ff_huber,sbj_huber,Pxx_comp_huber  
+    return ff_raw,sbj_raw,Pxx_comp_raw,ff_preprocessing,sbj_preprocessing,Pxx_comp_preprocessing,ff_huber,sbj_huber,Pxx_comp_huber  
     
-ff_raw,sbj_raw,Pxx_comp_raw,ff_prep,sbj_prep,Pxx_comp_prep,ff_wica,sbj_wica,Pxx_comp_wica,ff_preprocessing,sbj_preprocessing,Pxx_comp_preprocessing,ff_trim,sbj_trim,Pxx_comp_trim,ff_trim_nolp,sbj_trim_nolp,Pxx_comp_trim_nolp,ff_huber,sbj_huber,Pxx_comp_huber = BIDS_pds(THE_DATASET_)  
+ff_raw,sbj_raw,Pxx_comp_raw,ff_preprocessing,sbj_preprocessing,Pxx_comp_preprocessing,ff_huber,sbj_huber,Pxx_comp_huber = BIDS_pds(THE_DATASET_)  
 
-f, (ax1,ax2,ax3,ax4,ax5,ax6,ax7) = plt.subplots(5, 1,sharex=True, sharey=False)
+f, (ax1,ax4,ax6) = plt.subplots(3, 1,sharex=True, sharey=False)
 ax1.set_title('Original')
 ax1.plot(ff_raw,sbj_raw,color='k')
-ax2.set_title('Preprocessing')
-ax2.plot(ff_prep,sbj_prep,color='k')
-ax3.set_title('Wica')
-ax3.plot(ff_wica,sbj_wica,color='k')
-ax4.set_title('Processing')
+#ax2.set_title('Preprocessing')
+#ax2.plot(ff_prep,sbj_prep,color='k')
+#ax3.set_title('Wica')
+#ax3.plot(ff_wica,sbj_wica,color='k')
+ax4.set_title('Processed signal')
 ax4.plot(ff_preprocessing,sbj_preprocessing,color='k')
-ax5.set_title('Normalized Trim Mean')
-ax5.plot(ff_trim,sbj_trim,color='k')
+#ax5.set_title('Normalized Trim Mean')
+#ax5.plot(ff_trim,sbj_trim,color='k')
 ax6.set_title('Normalized Huber')
 ax6.plot(ff_huber,sbj_huber,color='k')
-ax7.set_title('Normalized Trim Mean no lp')
-ax7.plot(ff_trim_nolp,sbj_trim_nolp,color='k')
+#ax7.set_title('Normalized Trim Mean no lp')
+#ax7.plot(ff_trim_nolp,sbj_trim_nolp,color='k')
 #plt.legend([ax1, ax2, ax3],["Original", "Preprocessing", "Normalizate"])
 #plt.yscale('log')
 #plt.ylim((pow(10,-18),pow(10,-4)) )
@@ -206,21 +220,21 @@ plt.xlabel('Frequency [Hz]')
 #plt.ylabel('Absolute power')
 plt.show()
 
-f, (ax1,ax2,ax3,ax4,ax5,ax6,ax7) = plt.subplots(5, 1,sharex=True, sharey=False)
+f, (ax1,ax4,ax6) = plt.subplots(3, 1,sharex=True, sharey=False)
 ax1.set_title('Original')
 ax1.plot(ff_raw,Pxx_comp_raw,color='k')
-ax2.set_title('Preprocessing')
-ax2.plot(ff_prep,Pxx_comp_prep,color='k')
-ax3.set_title('Wica')
-ax3.plot(ff_wica,Pxx_comp_wica,color='k')
-ax4.set_title('Processing')
+#ax2.set_title('Preprocessing')
+#ax2.plot(ff_prep,Pxx_comp_prep,color='k')
+#ax3.set_title('Wica')
+#ax3.plot(ff_wica,Pxx_comp_wica,color='k')
+ax4.set_title('Processed signal')
 ax4.plot(ff_preprocessing,Pxx_comp_preprocessing,color='k')
-ax5.set_title('Normalized Trim Mean')
-ax5.plot(ff_trim,Pxx_comp_trim,color='k')
+#ax5.set_title('Normalized Trim Mean')
+#ax5.plot(ff_trim,Pxx_comp_trim,color='k')
 ax6.set_title('Normalized Huber')
 ax6.plot(ff_huber,Pxx_comp_huber,color='k')
-ax7.set_title('Normalized Trim Mean no lp')
-ax7.plot(ff_trim_nolp,Pxx_comp_trim_nolp,color='k')
+#ax7.set_title('Normalized Trim Mean no lp')
+#ax7.plot(ff_trim_nolp,Pxx_comp_trim_nolp,color='k')
 #plt.legend([ax1, ax2, ax3],["Original", "Preprocessing", "Normalizate"])
 #plt.yscale('log')
 #plt.ylim((pow(10,-18),pow(10,-4)) )

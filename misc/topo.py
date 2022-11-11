@@ -16,7 +16,7 @@ A,W,ch_names = us.get_spatial_filter('58x25')
 for comp in range(len(A)):
     A_ = np.expand_dims(A[:,comp],axis=-1)
     W_ = np.expand_dims(W[comp,:],axis=0)
-    figSingle = us.topomap(A_,W_,ch_names,cmap='seismic',show=False)
+    figSingle = us.topomap(A_,W_,ch_names,cmap='seismic',show=False,colorbar=True)
     #plt.show()
     plt.savefig(r'eeg_harmonization\misc\Topo'+r'/'+'C'+str(comp+1)+r'.png')
 #%% Otra forma
@@ -24,5 +24,5 @@ for comp in range(len(A)):
 #plt.show()
 
 #%% Todas las componentes
-#figMany = us.topomap(A,W,ch_names,cmap='seismic',show=False)
+#figMany = us.topomap(A,W,ch_names,cmap='seismic',show=False,colorbar=True)
 #plt.show()

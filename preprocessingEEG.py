@@ -5,7 +5,7 @@ from sovaharmony.getDataframes import get_dataframe_wica
 from sovaharmony.getDataframes import get_dataframe_powers
 from sovaharmony.getDataframes import get_dataframe_reject
 from sovaharmony.getDataframes import get_dataframe_powers
-from sovaharmony.datasets import DUQUE as DATA    
+from sovaharmony.datasets import BIOMARCADORES_CE as DATA    
 import time 
 
 THE_DATASETS=[DATA]

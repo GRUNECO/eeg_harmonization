@@ -186,21 +186,22 @@ def features(THE_DATASET):
             else:
                 logger.info(f'{entropy_norm_path}) already existed, skipping...')
        
+            print('TIME POWER:::::::::::::::::::', finalpower-startpower)
+            print('TIME POWER NORM:::::::::::::::::::', finalpowernorm-startpowernorm)
+            print('TIME IC POWER NORM:::::::::::::::::::', finalicpowernorm-starticpowernorm)
+            print('TIME IC POWER:::::::::::::::::::', finalicpower-starticpower)
+            print('TIME SL:::::::::::::::::::', finalsl-startsl)
+            print('TIME BANDS SL:::::::::::::::::::', finalbandsl-startbandsl)
+            print('TIME COHERENCE:::::::::::::::::::', finalcoherence-startcoherence)
+            print('TIME BANDS COHERENCE:::::::::::::::::::', finalbandscoherence-startbandscoherence)
+            print('TIME ENTROPY:::::::::::::::::::', finalentropy-startentropy)
+            print('TIME BANDS ENTROPY:::::::::::::::::::', finalbandsentropy-startbandsentropy)
+            print('TIME CROSS FREQUENCY:::::::::::::::::::', finalcross-startcross)
         except Exception as error:
             e+=1
             logger.exception(f'Error for {eeg_file}')
             archivosconerror.append(eeg_file)
             print(error)
             pass
-    print('TIME POWER:::::::::::::::::::', finalpower-startpower)
-    print('TIME POWER NORM:::::::::::::::::::', finalpowernorm-startpowernorm)
-    print('TIME IC POWER NORM:::::::::::::::::::', finalicpowernorm-starticpowernorm)
-    print('TIME IC POWER:::::::::::::::::::', finalicpower-starticpower)
-    print('TIME SL:::::::::::::::::::', finalsl-startsl)
-    print('TIME BANDS SL:::::::::::::::::::', finalbandsl-startbandsl)
-    print('TIME COHERENCE:::::::::::::::::::', finalcoherence-startcoherence)
-    print('TIME BANDS COHERENCE:::::::::::::::::::', finalbandscoherence-startbandscoherence)
-    print('TIME ENTROPY:::::::::::::::::::', finalentropy-startentropy)
-    print('TIME BANDS ENTROPY:::::::::::::::::::', finalbandsentropy-startbandsentropy)
-    print('TIME CROSS FREQUENCY:::::::::::::::::::', finalcross-startcross)
+    
     return

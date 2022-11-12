@@ -190,27 +190,42 @@ def features(THE_DATASET):
                 print('TIME POWER:::::::::::::::::::', finalpower-startpower)
             except:
                 pass
+            try:
                 print('TIME POWER NORM:::::::::::::::::::', finalpowernorm-startpowernorm)
+            except:
+                pass
             try:
                 print('TIME IC POWER NORM:::::::::::::::::::', finalicpowernorm-starticpowernorm)
             except:
                 pass
+            try:    
                 print('TIME IC POWER:::::::::::::::::::', finalicpower-starticpower)
+            except:
+                pass
             try:
                 print('TIME SL:::::::::::::::::::', finalsl-startsl)
             except:
                 pass
+            try:
                 print('TIME BANDS SL:::::::::::::::::::', finalbandsl-startbandsl)
+            except:
+                pass
             try:
                 print('TIME COHERENCE:::::::::::::::::::', finalcoherence-startcoherence)
             except:
                 pass
+            try:
                 print('TIME BANDS COHERENCE:::::::::::::::::::', finalbandscoherence-startbandscoherence)
+            except:
+                pass
             try:
                 print('TIME ENTROPY:::::::::::::::::::', finalentropy-startentropy)
             except:
                 pass
+            try:
                 print('TIME BANDS ENTROPY:::::::::::::::::::', finalbandsentropy-startbandsentropy)
+            except:
+                pass
             try:
                 print('TIME CROSS FREQUENCY:::::::::::::::::::', finalcross-startcross)
             except:

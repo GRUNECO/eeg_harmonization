@@ -186,17 +186,35 @@ def features(THE_DATASET):
             else:
                 logger.info(f'{entropy_norm_path}) already existed, skipping...')
        
-            print('TIME POWER:::::::::::::::::::', finalpower-startpower)
-            print('TIME POWER NORM:::::::::::::::::::', finalpowernorm-startpowernorm)
-            print('TIME IC POWER NORM:::::::::::::::::::', finalicpowernorm-starticpowernorm)
-            print('TIME IC POWER:::::::::::::::::::', finalicpower-starticpower)
-            print('TIME SL:::::::::::::::::::', finalsl-startsl)
-            print('TIME BANDS SL:::::::::::::::::::', finalbandsl-startbandsl)
-            print('TIME COHERENCE:::::::::::::::::::', finalcoherence-startcoherence)
-            print('TIME BANDS COHERENCE:::::::::::::::::::', finalbandscoherence-startbandscoherence)
-            print('TIME ENTROPY:::::::::::::::::::', finalentropy-startentropy)
-            print('TIME BANDS ENTROPY:::::::::::::::::::', finalbandsentropy-startbandsentropy)
-            print('TIME CROSS FREQUENCY:::::::::::::::::::', finalcross-startcross)
+            try:
+                print('TIME POWER:::::::::::::::::::', finalpower-startpower)
+            except:
+                pass
+                print('TIME POWER NORM:::::::::::::::::::', finalpowernorm-startpowernorm)
+            try:
+                print('TIME IC POWER NORM:::::::::::::::::::', finalicpowernorm-starticpowernorm)
+            except:
+                pass
+                print('TIME IC POWER:::::::::::::::::::', finalicpower-starticpower)
+            try:
+                print('TIME SL:::::::::::::::::::', finalsl-startsl)
+            except:
+                pass
+                print('TIME BANDS SL:::::::::::::::::::', finalbandsl-startbandsl)
+            try:
+                print('TIME COHERENCE:::::::::::::::::::', finalcoherence-startcoherence)
+            except:
+                pass
+                print('TIME BANDS COHERENCE:::::::::::::::::::', finalbandscoherence-startbandscoherence)
+            try:
+                print('TIME ENTROPY:::::::::::::::::::', finalentropy-startentropy)
+            except:
+                pass
+                print('TIME BANDS ENTROPY:::::::::::::::::::', finalbandsentropy-startbandsentropy)
+            try:
+                print('TIME CROSS FREQUENCY:::::::::::::::::::', finalcross-startcross)
+            except:
+                pass
         except Exception as error:
             e+=1
             logger.exception(f'Error for {eeg_file}')

@@ -127,7 +127,7 @@ def BIDS_pds(THE_DATASET_):
         files_error_huber = []
         #files_error_trim = []
         #files_error_trim_nolp = []
-        for i,eeg_file in enumerate(eegs):
+        for i,eeg_file in enumerate(eegs[0:104]):
             file_raw = eeg_file
             #file_prep = get_derivative_path(layout,eeg_file,'prep','eeg','.fif',bids_root,derivatives_root)
             #file_wica = get_derivative_path(layout,eeg_file,'wica','eeg','.fif',bids_root,derivatives_root)
@@ -213,7 +213,7 @@ ax6.plot(ff_huber,sbj_huber,color='k')
 #ax7.plot(ff_trim_nolp,sbj_trim_nolp,color='k')
 #plt.legend([ax1, ax2, ax3],["Original", "Preprocessing", "Normalizate"])
 #plt.yscale('log')
-#plt.ylim((pow(10,-18),pow(10,-4)) )
+#plt.setp((ax1,ax4,ax6),ylim=(10**-1,10**-16))
 #plt.yticks(color='w') 
 ax1.set_xlim(0,60)
 plt.xlabel('Frequency [Hz]')
@@ -237,7 +237,7 @@ ax6.plot(ff_huber,Pxx_comp_huber,color='k')
 #ax7.plot(ff_trim_nolp,Pxx_comp_trim_nolp,color='k')
 #plt.legend([ax1, ax2, ax3],["Original", "Preprocessing", "Normalizate"])
 #plt.yscale('log')
-#plt.ylim((pow(10,-18),pow(10,-4)) )
+#plt.setp((ax1,ax4,ax6),ylim=(10**-1,10**-16))
 #plt.yticks(color='w') 
 ax1.set_xlim(0,60)
 plt.xlabel('Frequency [Hz]')

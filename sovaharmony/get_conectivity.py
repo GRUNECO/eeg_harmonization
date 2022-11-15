@@ -22,31 +22,27 @@ def get_conectivity_band(signal,mode):
               'channels':signal.info['ch_names'],
               'bands':bands_labels}
 
-    if mode == 'pme':    
-        data = signal.get_data()
-        (e, c, t) = data.shape
-        new_data = np.transpose(data.copy(),(1,2,0))
-        for e in range(data.shape[0]):
-            for c in range(data.shape[1]):
-                assert np.all(data[e,c,:] == new_data[c,:,e])
-        pme_ = Amplitude_Modulation_Analysis(new_data,signal.info['sfreq'],Bands=bands)
-        output_channels['pme'] = pme_
-    else:
-        for limits,label in zip(bands,bands_labels):
-            fmin = limits[0]
-            fmax = limits[1]
-            
-            if mode == 'coherence':
-                coherence_ = get_coherence_freq(signal,fmin=fmin,fmax=fmax,passband=True)
-                output_channels['coherence'][label] = coherence_
-            elif mode == 'sl':
-                sl_ = get_sl_freq(signal,fmin=fmin,fmax=fmax,passband=True)
-                output_channels['sl'][label] = sl_
-            elif mode == 'entropy':
-                entropy_ = get_entropy_freq(signal,fmin=fmin,fmax=fmax,passband=True)
-                output_channels['entropy'][label] = entropy_
+    for limits,label in zip(bands,bands_labels):
+        fmin = limits[0]
+        fmax = limits[1]
         
-
-        
-        
+        if mode == 'coherence':
+            coherence_ = get_coherence_freq(signal,fmin=fmin,fmax=fmax,passband=True)
+            output_channels['coherence'][label] = coherence_
+        elif mode == 'sl':
+            sl_ = get_sl_freq(signal,fmin=fmin,fmax=fmax,passband=True)
+            output_channels['sl'][label] = sl_
+        elif mode == 'entropy':
+            entropy_ = get_entropy_freq(signal,fmin=fmin,fmax=fmax,passband=True)
+            output_channels['entropy'][label] = entropy_
+        elif mode == 'pme':    
+            data = signal.get_data()
+            (e, c, t) = data.shape
+            new_data = np.transpose(data.copy(),(1,2,0))
+            for e in range(data.shape[0]):
+                for c in range(data.shape[1]):
+                    assert np.all(data[e,c,:] == new_data[c,:,e])
+            pme_ = Amplitude_Modulation_Analysis(new_data,signal.info['sfreq'],Bands=bands)
+            output_channels['pme'][label] = pme_
+      
     return output_channels

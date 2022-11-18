@@ -1,4 +1,4 @@
-from sovaharmony.get_conectivity import get_conectivity_band
+from sovaharmony.get_conectivity import get_sl_derivates, get_ics_sl_derivatives
 from sovaharmony.sl import get_sl_freq
 from sovaharmony.coh import get_coherence_freq
 from sovaharmony.p_entropy import get_entropy_freq
@@ -50,12 +50,13 @@ def features(THE_DATASET):
             icpowers_norm_path = get_derivative_path(layout,eeg_file,'component'+pipelabel,'powers_norm','.txt',bids_root,derivatives_root)
             norm_path = get_derivative_path(layout,eeg_file,'huber'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
             sl_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'sl_norm','.txt',bids_root,derivatives_root)
-            sl_band_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'sl_band_norm','.txt',bids_root,derivatives_root)
+            icsl_norm_path = get_derivative_path(layout,eeg_file,'component'+pipelabel,'sl_norm','.txt',bids_root,derivatives_root)
             coherence_norm_path  = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'coherence_norm','.txt',bids_root,derivatives_root)
-            coherence_band_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'coherence_band_norm','.txt',bids_root,derivatives_root)
+            iccoherence_norm_path = get_derivative_path(layout,eeg_file,'component'+pipelabel,'coherence_band_norm','.txt',bids_root,derivatives_root)
             entropy_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'entropy_norm','.txt',bids_root,derivatives_root)
-            entropy_band_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'entropy_band_norm','.txt',bids_root,derivatives_root)
+            icentropy_norm_path = get_derivative_path(layout,eeg_file,'component'+pipelabel,'entropy_norm','.txt',bids_root,derivatives_root)
             cross_frequency_norm_path = get_derivative_path(layout,eeg_file,'channel'+pipelabel,'cross_frequency_norm','.txt',bids_root,derivatives_root)
+            iccross_frequency_norm_path = get_derivative_path(layout,eeg_file,'component'+pipelabel,'cross_frequency_norm','.txt',bids_root,derivatives_root)
             os.makedirs(os.path.split(power_path)[0], exist_ok=True)
 
             json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
@@ -108,128 +109,127 @@ def features(THE_DATASET):
             if not os.path.isfile(sl_norm_path):
                 raw_data = mne.read_epochs(norm_path)
                 startsl = time.perf_counter()
-                sl = get_sl_freq(raw_data)
+                sl_dict = get_sl_derivates(raw_data)
                 finalsl = time.perf_counter()
                 print('TIME SL:::::::::::::::::::', finalsl-startsl)
-                sl_dict = {'sl' : sl,'channels':raw_data.info['ch_names']}
                 write_json(sl_dict,sl_norm_path)
                 write_json(json_dict,sl_norm_path.replace('.txt','.json'))
             else:
                 logger.info(f'{sl_norm_path}) already existed, skipping...')
 
-            if not os.path.isfile(sl_band_norm_path):
+            if not os.path.isfile(icsl_norm_path) and spatial_filter is not None:
                 raw_data = mne.read_epochs(norm_path)
                 startbandsl = time.perf_counter()
-                sl_band_dict = get_conectivity_band(raw_data,mode='sl')
+                icsl_dict = get_ics_sl_derivatives(raw_data,spatial_filter)
                 finalbandsl = time.perf_counter()
                 print('TIME BANDS SL:::::::::::::::::::', finalbandsl-startbandsl)
-                write_json(sl_band_dict,sl_band_norm_path)
-                write_json(json_dict,sl_band_norm_path.replace('.txt','.json'))
+                write_json(icsl_dict,icsl_norm_path)
+                write_json(json_dict,icsl_norm_path.replace('.txt','.json'))
             else:
-                logger.info(f'{sl_norm_path}) already existed, skipping...')
+                logger.info(f'{icsl_norm_path}) already existed, skipping...')
 
-            if not os.path.isfile(coherence_norm_path):
-                raw_data = mne.read_epochs(norm_path)
-                startcoherence = time.perf_counter()
-                fc,Cxyc = get_coherence_freq(raw_data)
-                finalcoherence = time.perf_counter()
-                print('TIME COHERENCE:::::::::::::::::::', finalcoherence-startcoherence)
-                coherence_dict = {'fc' : fc,'Cxyc' : Cxyc ,'channels':raw_data.info['ch_names']}
-                write_json(coherence_dict,coherence_norm_path)
-                write_json(json_dict,coherence_norm_path.replace('.txt','.json'))
-            else:
-                logger.info(f'{coherence_norm_path}) already existed, skipping...')
+            # if not os.path.isfile(coherence_norm_path):
+            #     raw_data = mne.read_epochs(norm_path)
+            #     startcoherence = time.perf_counter()
+            #     fc,Cxyc = get_coherence_freq(raw_data)
+            #     finalcoherence = time.perf_counter()
+            #     print('TIME COHERENCE:::::::::::::::::::', finalcoherence-startcoherence)
+            #     coherence_dict = {'fc' : fc,'Cxyc' : Cxyc ,'channels':raw_data.info['ch_names']}
+            #     write_json(coherence_dict,coherence_norm_path)
+            #     write_json(json_dict,coherence_norm_path.replace('.txt','.json'))
+            # else:
+            #     logger.info(f'{coherence_norm_path}) already existed, skipping...')
 
-            if not os.path.isfile(coherence_band_norm_path):
-                raw_data = mne.read_epochs(norm_path)
-                startbandscoherence = time.perf_counter()
-                coherence_band_dict = get_conectivity_band(raw_data,mode='coherence')
-                finalbandscoherence = time.perf_counter()
-                print('TIME BANDS COHERENCE:::::::::::::::::::', finalbandscoherence-startbandscoherence)
-                write_json(coherence_band_dict,coherence_band_norm_path)
-                write_json(json_dict,coherence_band_norm_path.replace('.txt','.json'))
-            else:
-                logger.info(f'{coherence_norm_path}) already existed, skipping...')
+            # if not os.path.isfile(coherence_band_norm_path):
+            #     raw_data = mne.read_epochs(norm_path)
+            #     startbandscoherence = time.perf_counter()
+            #     coherence_band_dict = get_conectivity_band(raw_data,mode='coherence')
+            #     finalbandscoherence = time.perf_counter()
+            #     print('TIME BANDS COHERENCE:::::::::::::::::::', finalbandscoherence-startbandscoherence)
+            #     write_json(coherence_band_dict,coherence_band_norm_path)
+            #     write_json(json_dict,coherence_band_norm_path.replace('.txt','.json'))
+            # else:
+            #     logger.info(f'{coherence_norm_path}) already existed, skipping...')
 
-            if not os.path.isfile(entropy_norm_path):
-                raw_data = mne.read_epochs(norm_path)
-                startentropy = time.perf_counter()
-                mean_entropy = get_entropy_freq(raw_data) 
-                finalentropy = time.perf_counter()
-                print('TIME ENTROPY:::::::::::::::::::', finalentropy-startentropy)
-                entropy_dict = {'mean_entropy' : mean_entropy,'channels':raw_data.info['ch_names']}
-                write_json(entropy_dict,entropy_norm_path)
-                write_json(json_dict,entropy_norm_path.replace('.txt','.json'))
-            else:
-                logger.info(f'{entropy_norm_path}) already existed, skipping...')
+            # if not os.path.isfile(entropy_norm_path):
+            #     raw_data = mne.read_epochs(norm_path)
+            #     startentropy = time.perf_counter()
+            #     mean_entropy = get_entropy_freq(raw_data) 
+            #     finalentropy = time.perf_counter()
+            #     print('TIME ENTROPY:::::::::::::::::::', finalentropy-startentropy)
+            #     entropy_dict = {'mean_entropy' : mean_entropy,'channels':raw_data.info['ch_names']}
+            #     write_json(entropy_dict,entropy_norm_path)
+            #     write_json(json_dict,entropy_norm_path.replace('.txt','.json'))
+            # else:
+            #     logger.info(f'{entropy_norm_path}) already existed, skipping...')
 
-            if not os.path.isfile(entropy_band_norm_path):
-                raw_data = mne.read_epochs(norm_path)
-                startbandsentropy = time.perf_counter()
-                entropy_band_dict = get_conectivity_band(raw_data,mode='entropy')
-                finalbandsentropy = time.perf_counter()
-                print('TIME BANDS ENTROPY:::::::::::::::::::', finalbandsentropy-startbandsentropy)
-                write_json(entropy_band_dict,entropy_band_norm_path)
-                write_json(json_dict,entropy_band_norm_path.replace('.txt','.json'))
-            else:
-                logger.info(f'{entropy_norm_path}) already existed, skipping...')
+            # if not os.path.isfile(entropy_band_norm_path):
+            #     raw_data = mne.read_epochs(norm_path)
+            #     startbandsentropy = time.perf_counter()
+            #     entropy_band_dict = get_conectivity_band(raw_data,mode='entropy')
+            #     finalbandsentropy = time.perf_counter()
+            #     print('TIME BANDS ENTROPY:::::::::::::::::::', finalbandsentropy-startbandsentropy)
+            #     write_json(entropy_band_dict,entropy_band_norm_path)
+            #     write_json(json_dict,entropy_band_norm_path.replace('.txt','.json'))
+            # else:
+            #     logger.info(f'{entropy_norm_path}) already existed, skipping...')
 
-            if not os.path.isfile(cross_frequency_norm_path):
-                raw_data = mne.read_epochs(norm_path)
-                startcross = time.perf_counter()
-                cross_frequency = get_conectivity_band(raw_data,mode='pme')
-                finalcross = time.perf_counter()
-                print('TIME CROSS FREQUENCY:::::::::::::::::::', finalcross-startcross)
-                cross_frequency_dict = {'cross_frequency' : cross_frequency,'channels':raw_data.info['ch_names']}
-                write_json(cross_frequency_dict,cross_frequency_norm_path)
-                write_json(json_dict,cross_frequency_norm_path.replace('.txt','.json'))
-            else:
-                logger.info(f'{entropy_norm_path}) already existed, skipping...')
+            # if not os.path.isfile(cross_frequency_norm_path):
+            #     raw_data = mne.read_epochs(norm_path)
+            #     startcross = time.perf_counter()
+            #     cross_frequency = get_conectivity_band(raw_data,mode='pme')
+            #     finalcross = time.perf_counter()
+            #     print('TIME CROSS FREQUENCY:::::::::::::::::::', finalcross-startcross)
+            #     cross_frequency_dict = {'cross_frequency' : cross_frequency,'channels':raw_data.info['ch_names']}
+            #     write_json(cross_frequency_dict,cross_frequency_norm_path)
+            #     write_json(json_dict,cross_frequency_norm_path.replace('.txt','.json'))
+            # else:
+            #     logger.info(f'{entropy_norm_path}) already existed, skipping...')
        
-            try:
-                print('TIME POWER:::::::::::::::::::', finalpower-startpower)
-            except:
-                pass
-            try:
-                print('TIME POWER NORM:::::::::::::::::::', finalpowernorm-startpowernorm)
-            except:
-                pass
-            try:
-                print('TIME IC POWER NORM:::::::::::::::::::', finalicpowernorm-starticpowernorm)
-            except:
-                pass
-            try:    
-                print('TIME IC POWER:::::::::::::::::::', finalicpower-starticpower)
-            except:
-                pass
-            try:
-                print('TIME SL:::::::::::::::::::', finalsl-startsl)
-            except:
-                pass
-            try:
-                print('TIME BANDS SL:::::::::::::::::::', finalbandsl-startbandsl)
-            except:
-                pass
-            try:
-                print('TIME COHERENCE:::::::::::::::::::', finalcoherence-startcoherence)
-            except:
-                pass
-            try:
-                print('TIME BANDS COHERENCE:::::::::::::::::::', finalbandscoherence-startbandscoherence)
-            except:
-                pass
-            try:
-                print('TIME ENTROPY:::::::::::::::::::', finalentropy-startentropy)
-            except:
-                pass
-            try:
-                print('TIME BANDS ENTROPY:::::::::::::::::::', finalbandsentropy-startbandsentropy)
-            except:
-                pass
-            try:
-                print('TIME CROSS FREQUENCY:::::::::::::::::::', finalcross-startcross)
-            except:
-                pass
+            # try:
+            #     print('TIME POWER:::::::::::::::::::', finalpower-startpower)
+            # except:
+            #     pass
+            # try:
+            #     print('TIME POWER NORM:::::::::::::::::::', finalpowernorm-startpowernorm)
+            # except:
+            #     pass
+            # try:
+            #     print('TIME IC POWER NORM:::::::::::::::::::', finalicpowernorm-starticpowernorm)
+            # except:
+            #     pass
+            # try:    
+            #     print('TIME IC POWER:::::::::::::::::::', finalicpower-starticpower)
+            # except:
+            #     pass
+            # try:
+            #     print('TIME SL:::::::::::::::::::', finalsl-startsl)
+            # except:
+            #     pass
+            # try:
+            #     print('TIME BANDS SL:::::::::::::::::::', finalbandsl-startbandsl)
+            # except:
+            #     pass
+            # try:
+            #     print('TIME COHERENCE:::::::::::::::::::', finalcoherence-startcoherence)
+            # except:
+            #     pass
+            # try:
+            #     print('TIME BANDS COHERENCE:::::::::::::::::::', finalbandscoherence-startbandscoherence)
+            # except:
+            #     pass
+            # try:
+            #     print('TIME ENTROPY:::::::::::::::::::', finalentropy-startentropy)
+            # except:
+            #     pass
+            # try:
+            #     print('TIME BANDS ENTROPY:::::::::::::::::::', finalbandsentropy-startbandsentropy)
+            # except:
+            #     pass
+            # try:
+            #     print('TIME CROSS FREQUENCY:::::::::::::::::::', finalcross-startcross)
+            # except:
+            #     pass
         except Exception as error:
             e+=1
             logger.exception(f'Error for {eeg_file}')

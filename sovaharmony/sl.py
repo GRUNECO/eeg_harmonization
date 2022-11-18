@@ -325,16 +325,7 @@ def synchronization(data, config, num_it, speed):
             
     return hit_matrix
 
-def get_sl_freq(new_signal,fmin=None,fmax=None,passband=False):
-    if passband:
-        new_signal =new_signal.filter(fmin,fmax)
-    data = new_signal.get_data()
-    new_data = np.transpose(data.copy(),(1,2,0))
-    for e in range(data.shape[0]):
-        for c in range(data.shape[1]):
-            assert np.all(data[e,c,:] == new_data[c,:,e])
-    sl = get_sl(new_data, new_signal.info['sfreq'])
-    return sl
+
 
 
     

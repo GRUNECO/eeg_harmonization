@@ -20,6 +20,14 @@ import time
 def features(THE_DATASET):
     # Inputs not dataset dependent
     def_spatial_filter='58x25'
+    bands ={'delta':(1.5,6),
+            'theta':(6,8.5),
+            'alpha-1':(8.5,10.5),
+            'alpha-2':(10.5,12.5),
+            'beta1':(12.5,18.5),
+            'beta2':(18.5,21),
+            'beta3':(21,30),
+            'gamma':(30,45)}
     if THE_DATASET.get('spatial_filter',def_spatial_filter):
         spatial_filter = get_spatial_filter(THE_DATASET.get('spatial_filter',def_spatial_filter))
     input_path = THE_DATASET.get('input_path',None)
@@ -66,7 +74,7 @@ def features(THE_DATASET):
             else:
                 signal = mne.read_epochs(reject_path)
                 startpower = time.perf_counter()
-                power_dict = get_power_derivates(signal)
+                power_dict = get_power_derivates(signal,bands)
                 finalpower = time.perf_counter()
                 print('TIME POWER:::::::::::::::::::', finalpower-startpower)
                 write_json(power_dict,power_path)

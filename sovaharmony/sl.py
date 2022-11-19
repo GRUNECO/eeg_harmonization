@@ -31,6 +31,7 @@ from numpy import diag
 from numpy import split
 from math import ceil as math_ceil
 import numpy as np
+from sovaharmony.utils import _verify_epochs_axes,_verify_epoch_continuous
 
 #Create the funtions
 
@@ -327,5 +328,13 @@ def synchronization(data, config, num_it, speed):
 
 
 
-
-    
+def get_sl_1band(signal,fmin=None,fmax=None):
+    if fmin and fmax:
+        new_signal = signal.filter(fmin,fmax)
+    else:
+        new_signal = signal.copy()
+    data = new_signal.get_data()
+    new_data = np.transpose(data.copy(),(1,2,0))
+    _verify_epochs_axes(data,new_data)
+    sl = get_sl(new_data, new_signal.info['sfreq'])
+    return sl

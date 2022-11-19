@@ -77,25 +77,6 @@ def Entropia_Permutacion(senal,D):
 
   return float(PE/np.log2(np.math.factorial(3))) #Normalizada
 
-def get_entropy_freq(new_signal,fmin=None,fmax=None,passband=False):
-    if passband:
-        new_signal =new_signal.filter(fmin,fmax)
-    data = new_signal.get_data()
-    (e, c, t) = data.shape
-    new_data = np.transpose(data.copy(),(1,2,0))
-    for e in range(data.shape[0]):
-        for c in range(data.shape[1]):
-            assert np.all(data[e,c,:] == new_data[c,:,e])
-    mean_channels = []
-    for channel in range(data.shape[1]):
-        segment = []
-        for epoch in range(data.shape[0]):
-            # Por segmento
-            entropy_segment = Entropia_Permutacion(new_data[channel,:,epoch])
-            segment.append(entropy_segment)
-            # Por canal
-        mean_channels.append(np.mean(segment))
-    return mean_channels
 
 
 #### PRUEBA DOS ENTROPIAS

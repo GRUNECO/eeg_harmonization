@@ -7,6 +7,7 @@ import pandas as pd
 from scipy.spatial.distance import euclidean
 from sovaharmony.sl import segment_signal
 from sovaharmony.entropy import Entropia_Permutacion
+from sovaharmony.utils import _verify_epochs_axes
 
 def s_entropy(freq_list):
     import math
@@ -88,23 +89,27 @@ def weighted_ordinal_patterns(ts, embdim, embdelay):
         wop.append(np.sum(result.loc[result['pattern']==pat,'weights'].values))
     return(wop)
 
-def get_entropy_freq(new_signal,fmin=None,fmax=None,passband=False):
-    if passband:
-        new_signal =new_signal.filter(fmin,fmax)
+def get_entropy_freq(signal,D=3,fmin=None,fmax=None):
+    if fmin and fmax:
+        new_signal =signal.filter(fmin,fmax)
+    else:
+        new_signal =signal.copy()
+
     data = new_signal.get_data()
+    del new_signal
     (e, c, t) = data.shape
     new_data = np.transpose(data.copy(),(1,2,0))
-    for e in range(data.shape[0]):
-        for c in range(data.shape[1]):
-            assert np.all(data[e,c,:] == new_data[c,:,e])
+    _verify_epochs_axes(data,new_data)
+    del data
     mean_channels = []
-    for channel in range(data.shape[1]):
+    for channel in range(c):
         segment = []
-        for epoch in range(data.shape[0]):
+        for epoch in range(e):
             # Por segmento
+            # O usar p_entropy(new_data[channel,:,epoch]) ??
             entropy_segment = Entropia_Permutacion(new_data[channel,:,epoch],D=3)
             segment.append(entropy_segment)
             # Por canal
         mean_channels.append(np.mean(segment))
-    return mean_channels
+    return np.array(mean_channels)
 

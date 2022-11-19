@@ -51,6 +51,7 @@ def _get_power(signal_epoch,bands):
     output['metadata'] = {'type':'power','kwargs':{'bands':bands}}
     bands_list = list(bands.keys())
     values = np.empty((len(bands_list),spaces))
+    output['metadata']['axes']={'bands':bands_list,'spaces':space_names}
     for space in space_names:
         space_idx = space_names.index(space)
         power = qeeg_psd_chronux(signal[space_idx,:,:],signal_epoch.info['sfreq'],bands)
@@ -85,7 +86,7 @@ def get_derivative(in_signal,feature,kwargs,spatial_filter=None):
         W_adapted = fit_spatial_filter(W,spatial_filter_chs,intersection_chs,mode='demixing')
         signal.reorder_channels(intersection_chs)
         signal2 = np.transpose(signal.get_data(),(1,2,0)) # epochs spaces times -> spaces times epochs
-        _verify_epochs_axes(signal.get_data(),signal)
+        _verify_epochs_axes(signal.get_data(),signal2)
         nchans,points,epochs = signal2.shape
         signalCont = np.reshape(signal2,(nchans,points*epochs),order='F')
         _verify_epoch_continuous(signal.get_data(),signalCont,('epochs','spaces','times'))

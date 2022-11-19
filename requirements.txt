@@ -5,3 +5,4 @@ seaborn
 statsmodels
 mne-bids
 versioneer
+pyarrow

@@ -15,6 +15,7 @@ from sovaharmony.spatial import get_spatial_filter
 import numpy as np
 from sovaharmony.pme import Amplitude_Modulation_Analysis
 import time
+import traceback
 OVERWRITE = False # Ojo con esta variable, es para obligar a sobreescribir los archivos
 # en general deberia estar en False
 def features(THE_DATASET):
@@ -75,7 +76,7 @@ def features(THE_DATASET):
             os.makedirs(os.path.split(power_path)[0], exist_ok=True)
 
             json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
-
+            
             if not OVERWRITE and os.path.isfile(power_path):
                 logger.info(f'{power_path}) already existed, skipping...')
             else:
@@ -103,8 +104,10 @@ def features(THE_DATASET):
             
             if OVERWRITE or not os.path.isfile(icpowers_norm_path) and spatial_filter is not None:
                 signal_normas = mne.read_epochs(norm_path)
+                kwargs = {'bands':bands}
+
                 starticpowernorm = time.perf_counter()
-                ic_powers_dict_norm = get_derivative(signal_normas,feature='power',spatial_filter=spatial_filter)
+                ic_powers_dict_norm = get_derivative(signal_normas,feature='power',kwargs=kwargs,spatial_filter=spatial_filter)
                 finalicpowernorm = time.perf_counter()
                 print('TIME IC POWER NORM:::::::::::::::::::', finalicpowernorm-starticpowernorm)
                 write_json(ic_powers_dict_norm,icpowers_norm_path)
@@ -114,8 +117,10 @@ def features(THE_DATASET):
   
             if OVERWRITE or not os.path.isfile(icpowers_path) and spatial_filter is not None:
                 signal = mne.read_epochs(reject_path)
+                kwargs = {'bands':bands}
+
                 starticpower = time.perf_counter()
-                ic_powers_dict = get_derivative(signal,feature='power',spatial_filter=spatial_filter)
+                ic_powers_dict = get_derivative(signal,feature='power',kwargs=kwargs,spatial_filter=spatial_filter)
                 finalicpower = time.perf_counter()
                 print('TIME IC POWER:::::::::::::::::::', finalicpower-starticpower)
                 write_json(ic_powers_dict,icpowers_path)
@@ -253,6 +258,7 @@ def features(THE_DATASET):
             logger.exception(f'Error for {eeg_file}')
             archivosconerror.append(eeg_file)
             print(error)
+            print(traceback.format_exc())
             pass
     
     return

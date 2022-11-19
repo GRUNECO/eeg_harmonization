@@ -49,7 +49,8 @@ def features(THE_DATASET):
     num_files = len(eegs)
     for i,eeg_file in enumerate(eegs):
         #process=str(i)+'/'+str(num_files)
-        logger.info(f"File {i+1} of {num_files} ({(i+1)*100/num_files}%) : {eeg_file}")
+        msg =f"File {i+1} of {num_files} ({(i+1)*100/num_files}%) : {eeg_file}"
+        logger.info(msg)
 
         reject_path = get_derivative_path(layout,eeg_file,'reject'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
         norm_path = get_derivative_path(layout,eeg_file,'huber'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
@@ -91,7 +92,9 @@ def features(THE_DATASET):
                             write_json(val_dict,feature_path)
                             write_json(json_dict,feature_path.replace('.txt','.json'))
                         else:
-                            logger.info(f'{feature_path}) already existed, skipping...')
+                            msg = f'{feature_path}) already existed, skipping...'
+                            logger.info(msg)
+                            print(msg)
             except Exception as error:
                 e+=1
                 logger.exception(f'Error for {eeg_file}-{feature_path}')

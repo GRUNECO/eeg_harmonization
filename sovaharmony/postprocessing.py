@@ -88,6 +88,7 @@ def features(THE_DATASET):
                             final = time.perf_counter()
                             tstring = f'TIME {feature_suffix}:::::::::::::::::::{final-start}'
                             times_strings.append(tstring)
+                            logger.info(tstring)
                             print(tstring)
                             write_json(val_dict,feature_path)
                             write_json(json_dict,feature_path.replace('.txt','.json'))
@@ -105,4 +106,5 @@ def features(THE_DATASET):
                 logger.exception(traceback.format_exc())
                 pass
         [print(x) for x in times_strings]
+        [logger.info(x) for x in times_strings]
     return

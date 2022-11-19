@@ -29,12 +29,15 @@ def get_spatial_filter(name='62x19'):
         A,W tuple of np.ndarrays
         Mixing and Demixing Matrices of the default spatial filter of the module.
     """
+    if name is None:
+        return None
     # How sure are we that the order of the channels of matlab is the same as of python?
     mat_contents = loadmat(os.path.join(os.path.dirname(os.path.abspath(__file__)),'spatial_filters','spatial_filter__'+name+'.mat'))
     W = mat_contents['W']
     A = mat_contents['A']
     ch_names = [x[0] for x in mat_contents['ch_names'][0,:].tolist()]
-    return A,W,ch_names
+    sf = {'A':A,'W':W,'ch_names':ch_names,'name':name}
+    return sf
 
 def plot_spatial_filter(name='62x19'):
     #ch_names = [us.chn_name_mapping(x) for x in ch_names]

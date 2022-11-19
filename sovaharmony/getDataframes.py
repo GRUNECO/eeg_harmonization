@@ -9,7 +9,7 @@ import re
 import pandas as pd 
 from bids import BIDSLayout
 from bids.layout import parse_file_entities
-from pydantic import NoneBytes
+#from pydantic import NoneBytes
 from .createDataframes import get_metrics_prep
 from .createDataframes import get_metrics_wica
 from .createDataframes import get_metrics_reject

@@ -1,5 +1,7 @@
 sovaflow
 sovaViolin
 pybids
+seaborn
+statsmodels
 mne-bids
 versioneer

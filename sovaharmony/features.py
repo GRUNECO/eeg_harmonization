@@ -44,19 +44,21 @@ def _verify_epoch_continuous(data,spaces_times,data_axes,max_epochs=None):
 ### INTERNAL FEATURES FUNCTIONS ###
 def _get_power(signal_epoch,bands):
     signal = np.transpose(signal_epoch.get_data(),(1,2,0)) # epochs spaces times -> spaces times epochs
-    _verify_epochs_axes(signal.get_data(),signal)
+    _verify_epochs_axes(signal_epoch.get_data(),signal)
     space_names = signal_epoch.info['ch_names']
     spaces,times,epochs = signal.shape
     output = {}
     output['metadata'] = {'type':'power','kwargs':{'bands':bands}}
-
-    values = np.empty(len(bands.keys()),spaces)
-    for space in range(signal.shape[0]):
-        power = qeeg_psd_chronux(signal[space,:,:],signal_epoch.info['sfreq'],bands)
-        for b,brange in bands.keys():
-            values[b,space]=power[b]
+    bands_list = list(bands.keys())
+    values = np.empty((len(bands_list),spaces))
+    for space in space_names:
+        space_idx = space_names.index(space)
+        power = qeeg_psd_chronux(signal[space_idx,:,:],signal_epoch.info['sfreq'],bands)
+        for b in bands.keys():
+            band_idx = bands_list.index(b)
+            values[band_idx,space_idx]=power[b]
     output['values'] = values
-
+    return output
 #### generalizado#######
 
 foo_map={
@@ -78,7 +80,7 @@ def get_derivative(in_signal,feature,kwargs,spatial_filter=None):
     signal = in_signal.copy()
     if spatial_filter is not None:
         # ICs powers
-        A,W,spatial_filter_chs = spatial_filter
+        A,W,spatial_filter_chs,sf_name = spatial_filter['A'],spatial_filter['W'],spatial_filter['ch_names'],spatial_filter['name']
         intersection_chs = list(set(spatial_filter_chs).intersection(signal.ch_names))
         W_adapted = fit_spatial_filter(W,spatial_filter_chs,intersection_chs,mode='demixing')
         signal.reorder_channels(intersection_chs)
@@ -105,6 +107,7 @@ def get_derivative(in_signal,feature,kwargs,spatial_filter=None):
         output['metadata']['space']='ics'
         output['metadata']['W'] = W_adapted
         output['metadata']['W_channels']=intersection_chs
+        output['metadata']['spatial_filter_name']=sf_name
     else:
         output['metadata']['space']='sensors'
     return output

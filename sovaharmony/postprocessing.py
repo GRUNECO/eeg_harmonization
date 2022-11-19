@@ -98,6 +98,8 @@ def features(THE_DATASET):
                 archivosconerror.append((eeg_file,feature_path))
                 print(error)
                 print(traceback.format_exc())
+                logger.exception(error)
+                logger.exception(traceback.format_exc())
                 pass
         [print(x) for x in times_strings]
     return

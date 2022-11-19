@@ -199,8 +199,8 @@ def harmonize(THE_DATASET,fast_mode=False):
                 for ch in signal_ch._data:
                     std_ch.append(mad_std(ch))
                 
-                huber = sm.robust.scale.Huber()
-                k = huber(np.array(std_ch))[0]
+                huber = sm.robust.scale.Huber() 
+                k = huber(np.array(std_ch))[0] # o np.median(np.array(std_ch)) o np.mean(np.array(std_ch))
                 signal2._data=signal2._data/k
                
                 signal2.save(huber_path ,split_naming='bids', overwrite=True)

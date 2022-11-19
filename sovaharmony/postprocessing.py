@@ -12,7 +12,7 @@ import json
 import os
 from sovaflow.flow import get_ics_power_derivatives
 from sovaflow.flow import get_power_derivates
-from sovaflow.utils import get_spatial_filter
+from sovaharmony.spatial import get_spatial_filter
 import numpy as np
 from sovaharmony.pme import Amplitude_Modulation_Analysis
 import time

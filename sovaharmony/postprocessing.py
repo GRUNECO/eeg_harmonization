@@ -1,19 +1,11 @@
-
-#from sovaharmony.features import get_sl_freq
-from sovaharmony.coh import get_coherence_freq
-from sovaharmony.p_entropy import get_entropy_freq
-#from sovaharmony.pme import get_pme_freq
 from sovaflow.utils import cfg_logger
 from sovaharmony.processing import get_derivative_path
 from sovaharmony.processing import write_json
 from bids import BIDSLayout
 import mne
-import json
 import os
 from sovaharmony.features import get_derivative
 from sovaharmony.spatial import get_spatial_filter
-import numpy as np
-from sovaharmony.pme import Amplitude_Modulation_Analysis
 import time
 import traceback
 OVERWRITE = False # Ojo con esta variable, es para obligar a sobreescribir los archivos

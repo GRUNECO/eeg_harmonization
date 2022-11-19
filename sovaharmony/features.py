@@ -1,4 +1,4 @@
-from sovaharmony.coh import get_coherence_bands,get_coherence_freq
+from sovaharmony.coh import get_coherence
 from sovaharmony.sl import get_sl_1band
 from sovaharmony.p_entropy import get_entropy_freq
 #from sovaharmony.pme import get_pme_freq
@@ -57,13 +57,9 @@ def _get_sl(signal_epoch,bands):
 
 def _get_coh(signal_epoch,window,bands=None):
     chs = signal_epoch.info['ch_names']
-    if bands is None:
-        fc, Cfxy = get_coherence_freq(signal_epoch,window=window)
-        axes={'freqs':fc,'space1':chs,'space2':chs}
-    else:
-        blist=list(bands.keys())
-        _,Cfxy = get_coherence_bands(signal_epoch,bands,window)
-        axes = {'bands':blist,'spaces1':chs,'spaces2':chs}
+    blist=list(bands.keys())
+    _,Cfxy = get_coherence(signal_epoch,bands,window)
+    axes = {'bands':blist,'spaces1':chs,'spaces2':chs}
     output = {}
     dim0 = list(axes.keys())[0]
     output['metadata'] = {'type':f'coherence-{dim0}','kwargs':{'window':window,'bands':bands}}
@@ -111,7 +107,6 @@ foo_map={
     'power':_get_power,
     'sl':_get_sl,
     'cohbands':_get_coh,
-    'cohfreqs':_get_coh,
     'crossfreq':_get_pme,
     'entropy':_get_entropy
 }

@@ -68,7 +68,8 @@ def features(THE_DATASET):
         times_strings = []
         for feature,kwargs in features_tuples:
             try:
-                for sf in [None, spatial_filter]:
+                #for sf in [None, spatial_filter]: # Channels and Components
+                for sf in [spatial_filter]: # Only components
                     for norm_ in [True,False]:
                         if sf is not None:
                             sf_label = f'ics[{spatial_filter["name"]}]'

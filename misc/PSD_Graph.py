@@ -14,7 +14,7 @@ import os
 from sovaharmony.datasets import BIOMARCADORES_CE as DATA    
 import time 
 from bids import BIDSLayout
-from sovaharmony.get_conectivity import get_conectivity_band
+from sovaharmony.features import get_conectivity_band
 from sovaharmony.sl import get_sl_freq
 from sovaharmony.coh import get_coherence_freq
 from sovaharmony.p_entropy import get_entropy_freq

@@ -1,4 +1,4 @@
-from sovaharmony.get_conectivity import get_sl_derivates, get_ics_sl_derivatives
+from sovaharmony.features import get_sl_derivates, get_ics_sl_derivatives
 from sovaharmony.sl import get_sl_freq
 from sovaharmony.coh import get_coherence_freq
 from sovaharmony.p_entropy import get_entropy_freq

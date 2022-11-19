@@ -7,7 +7,114 @@ from sovaharmony.pme import Amplitude_Modulation_Analysis
 import numpy as np
 from sovaflow.flow import fit_spatial_filter
 from sovaflow.utils import createRaw
+from sovachronux.qeeg_psd_chronux import qeeg_psd_chronux
+
 import mne
+
+## USE PYTHON >3.7 , fundamental to guarantee dict order
+
+def _verify_epochs_axes(epochs_spaces_times,spaces_times_epochs,max_epochs=None):
+    """
+    """
+    epochs,spaces,times = epochs_spaces_times.shape
+    if max_epochs is None:
+        max_epochs = epochs
+    for e in range(np.max([epochs,max_epochs])):
+        for c in range(spaces):
+            assert np.all(epochs_spaces_times[e,c,:] == spaces_times_epochs[c,:,e])
+    return True
+
+def _verify_epoch_continuous(data,spaces_times,data_axes,max_epochs=None):
+    epochs_idx = data_axes.index('epochs')
+    spaces_idx = data_axes.index('spaces')
+    times_idx = data_axes.index('times')
+    epochs,spaces,times = data.shape[epochs_idx],data.shape[spaces_idx],data.shape[times_idx]
+    if not epochs_idx in [0,2]:
+        raise ValueError('Axes should be either epochs,spaces,times or spaces,times,epochs')
+    if max_epochs is None:
+        max_epochs = epochs
+    for e in range(np.max([epochs,max_epochs])):
+        for c in range(spaces):
+            if epochs_idx==0:
+                assert np.all(data[e,c,:] == spaces_times[c,e*times:(e+1)*times])
+            elif epochs_idx==2:
+                assert np.all(data[c,:,e] == spaces_times[c,e*times:(e+1)*times])
+    return True
+
+### INTERNAL FEATURES FUNCTIONS ###
+def _get_power(signal_epoch,bands):
+    signal = np.transpose(signal_epoch.get_data(),(1,2,0)) # epochs spaces times -> spaces times epochs
+    _verify_epochs_axes(signal.get_data(),signal)
+    space_names = signal_epoch.info['ch_names']
+    spaces,times,epochs = signal.shape
+    output = {}
+    output['metadata'] = {'type':'power','kwargs':{'bands':bands}}
+
+    values = np.empty(len(bands.keys()),spaces)
+    for space in range(signal.shape[0]):
+        power = qeeg_psd_chronux(signal[space,:,:],signal_epoch.info['sfreq'],bands)
+        for b,brange in bands.keys():
+            values[b,space]=power[b]
+    output['values'] = values
+
+#### generalizado#######
+
+foo_map={
+    'power':_get_power,
+    'sl':_get_power,
+    'coherence':_get_power,
+    'cross-freq':_get_power,
+}
+def get_derivative(in_signal,feature,kwargs,spatial_filter=None):
+    """
+    Returns derivative
+    If spatial_filter is not None, it will be computed over ics, otherwise over channels
+
+    signal: mne.Epochs object
+    feature: str, the feature you want
+    kwargs: arguments for the fuction that calculates that feature
+    spatial_filter: tuple (A,W,spatial_filter_chs)
+    """
+    signal = in_signal.copy()
+    if spatial_filter is not None:
+        # ICs powers
+        A,W,spatial_filter_chs = spatial_filter
+        intersection_chs = list(set(spatial_filter_chs).intersection(signal.ch_names))
+        W_adapted = fit_spatial_filter(W,spatial_filter_chs,intersection_chs,mode='demixing')
+        signal.reorder_channels(intersection_chs)
+        signal2 = np.transpose(signal.get_data(),(1,2,0)) # epochs spaces times -> spaces times epochs
+        _verify_epochs_axes(signal.get_data(),signal)
+        nchans,points,epochs = signal2.shape
+        signalCont = np.reshape(signal2,(nchans,points*epochs),order='F')
+        _verify_epoch_continuous(signal.get_data(),signalCont,('epochs','spaces','times'))
+        ics = W_adapted @ signalCont
+        comps = ics.shape[0]
+        ics_epoch = np.reshape(ics,(comps,points,epochs),order='F')
+        _verify_epoch_continuous(ics_epoch,ics,('spaces','times','epochs'))
+        ics_epoch2 = np.transpose(ics_epoch,(2,0,1))
+        _verify_epochs_axes(ics_epoch2,ics_epoch)
+        del ics_epoch
+        del ics
+        del signalCont
+        del signal2
+        info_epochs=mne.create_info(['C'+str(x) for x in range(comps)], in_signal.info['sfreq'], ch_types='eeg')
+        signal = mne.EpochsArray(ics_epoch2,info_epochs)
+    output=foo_map[feature](signal,**kwargs)
+
+    if spatial_filter is not None:
+        output['metadata']['space']='ics'
+        output['metadata']['W'] = W_adapted
+        output['metadata']['W_channels']=intersection_chs
+    else:
+        output['metadata']['space']='sensors'
+    return output
+
+# each metric has an internal function that is executed internally in get_derivative
+# that function should receive signal (mne.Epochs) and kwargs, its arguments
+#_get_[derivative_name]
+
+
+######## CONNECTIVITY ###########
 
 
 def get_conectivity_band(signal,mode,spatial_filter):

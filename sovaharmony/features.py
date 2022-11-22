@@ -106,7 +106,7 @@ def _get_entropy(signal_epoch,bands,D):
 foo_map={
     'power':_get_power,
     'sl':_get_sl,
-    'cohbands':_get_coh,
+    'cohfreq':_get_coh,
     'crossfreq':_get_pme,
     'entropy':_get_entropy
 }

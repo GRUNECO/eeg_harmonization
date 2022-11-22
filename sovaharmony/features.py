@@ -55,7 +55,7 @@ def _get_sl(signal_epoch,bands):
     output['values'] = values
     return output
 
-def _get_coh(signal_epoch,window,bands=None):
+def _get_coh(signal_epoch,window,bands):
     chs = signal_epoch.info['ch_names']
     blist=list(bands.keys())
     _,Cfxy = get_coherence(signal_epoch,bands,window)

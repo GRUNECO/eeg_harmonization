@@ -52,8 +52,7 @@ def features(THE_DATASET):
         features_tuples=[
             ('power',{'bands':bands}),
             ('sl',{'bands':bands}),
-            ('cohfreqs',{'window':3,'bands':None}),
-            ('cohbands',{'window':3,'bands':bands}),
+            ('cohfreq',{'window':'hann','bands':bands}),
             ('entropy',{'bands':bands,'D':3}),
             ('crossfreq',{'bands':bands}),
         ]

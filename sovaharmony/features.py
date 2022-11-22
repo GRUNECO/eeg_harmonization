@@ -55,10 +55,10 @@ def _get_sl(signal_epoch,bands):
     output['values'] = values
     return output
 
-def _get_coh(signal_epoch,window,bands=None):
+def _get_coh(signal_epoch,window,bands):
     chs = signal_epoch.info['ch_names']
     blist=list(bands.keys())
-    _,Cfxy = get_coherence(signal_epoch,bands,window)
+    _,Cfxy = get_coherence(signal_epoch,bands,signal_epoch.info['sfreq'],window)
     axes = {'bands':blist,'spaces1':chs,'spaces2':chs}
     output = {}
     dim0 = list(axes.keys())[0]
@@ -106,7 +106,7 @@ def _get_entropy(signal_epoch,bands,D):
 foo_map={
     'power':_get_power,
     'sl':_get_sl,
-    'cohbands':_get_coh,
+    'cohfreq':_get_coh,
     'crossfreq':_get_pme,
     'entropy':_get_entropy
 }

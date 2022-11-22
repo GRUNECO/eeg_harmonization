@@ -58,7 +58,7 @@ def _get_sl(signal_epoch,bands):
 def _get_coh(signal_epoch,window,bands):
     chs = signal_epoch.info['ch_names']
     blist=list(bands.keys())
-    _,Cfxy = get_coherence(signal_epoch,bands,window)
+    _,Cfxy = get_coherence(signal_epoch,bands,signal_epoch.info['sfreq'],window)
     axes = {'bands':blist,'spaces1':chs,'spaces2':chs}
     output = {}
     dim0 = list(axes.keys())[0]

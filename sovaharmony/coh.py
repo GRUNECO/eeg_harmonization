@@ -5,11 +5,11 @@
 from scipy.signal import coherence
 from mne_connectivity import spectral_connectivity_epochs as mne_conn
 import numpy as np
-from sovaharmony.utils import _verify_epochs_axes,_verify_epoch_continuous
+#from sovaharmony.utils import _verify_epochs_axes,_verify_epoch_continuous
 import itertools
 # Why not use https://mne.tools/mne-connectivity/stable/generated/mne_connectivity.spectral_connectivity_epochs.html???
 
-def get_coherence(signal,bands,window=3,freqs=None,Cfxy=None):
+def get_coherence(signal,bands,window='hann',freqs=None,Cfxy=None):
     if not freqs and not Cfxy and window:
         freqs,Cfxy = coherence(signal,window)
         

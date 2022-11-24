@@ -3,7 +3,7 @@
 '''
 
 from scipy.signal import coherence
-from mne_connectivity import spectral_connectivity_epochs as mne_conn
+#from mne_connectivity import spectral_connectivity_epochs as mne_conn
 import numpy as np
 #from sovaharmony.utils import _verify_epochs_axes,_verify_epoch_continuous
 import itertools

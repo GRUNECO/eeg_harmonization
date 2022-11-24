@@ -142,7 +142,7 @@ def get_derivative(in_signal,feature,kwargs,spatial_filter=None):
         del ics
         del signalCont
         del signal2
-        info_epochs=mne.create_info(['C'+str(x) for x in range(comps)], in_signal.info['sfreq'], ch_types='eeg')
+        info_epochs=mne.create_info(['C'+str(x+1) for x in range(comps)], in_signal.info['sfreq'], ch_types='eeg')
         signal = mne.EpochsArray(ics_epoch2,info_epochs)
     output=foo_map[feature](signal,**kwargs)
 

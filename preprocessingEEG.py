@@ -6,7 +6,7 @@ from sovaharmony.getDataframes import get_dataframe_powers
 from sovaharmony.getDataframes import get_dataframe_reject
 from sovaharmony.getDataframes import get_dataframe_powers
 from sovaharmony.getDataframes import get_dataframe_sl
-from sovaharmony.datasets import BIOMARCADORESMini as DATA    
+from sovaharmony.datasets import BIOMARCADORES_CE as DATA    
 import time 
 
 THE_DATASETS=[DATA]

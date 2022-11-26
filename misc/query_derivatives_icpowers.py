@@ -6,8 +6,6 @@ import pandas as pd
 from bids.layout import parse_file_entities
 from sovaharmony.datasets import DUQUE 
 
-
-
 def get_dataframe_columnsIC(THE_DATASET,feature):  
     '''Obtain data frames with powers of Components in different columns'''
     input_path = THE_DATASET.get('input_path',None)
@@ -18,12 +16,11 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
     data_path = input_path
     layout = BIDSLayout(data_path,derivatives=True)
     layout.get(scope='derivatives', return_type='file')
-    eegs_powers = layout.get(extension='.txt',task=task,suffix=feature, return_type='filename')
-    eegs_powers = [x for x in eegs_powers if f'_space-ics[58x25]_norm-True_' in x]
-
+    paths= layout.get(extension='.txt',task=task,suffix=feature, return_type='filename')
+    paths = [x for x in paths if f'_space-ics[58x25]_norm-True_' in x]
     list_subjects = []
-    for i in range(len(eegs_powers)):
-        with open(eegs_powers[i], 'r') as f:
+    for i in range(len(paths)):
+        with open(paths[i], 'r') as f:
             data = json.load(f)
 
         if 'spaces' in data['metadata']['axes'].keys():
@@ -34,17 +31,14 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
 
         icvalues = np.array(data['values'])
         bandas = data['metadata']['axes']['bands']
-
         datos_1_sujeto = {}
-        info_bids_sujeto = parse_file_entities(eegs_powers[i])
-        datos_1_sujeto['participant_id'] = 'sub-'+info_bids_sujeto['subject']
-        
+        info_bids_sujeto = parse_file_entities(paths[i])
+        datos_1_sujeto['participant_id'] = 'sub-'+info_bids_sujeto['subject']   
         if group_regex:
             regex = re.search('(.+).{3}',info_bids_sujeto['subject'])
             datos_1_sujeto['group'] = regex.string[regex.regs[-1][0]:regex.regs[-1][1]]
         else:
             datos_1_sujeto['group'] = 'Control'
-
         try:
             datos_1_sujeto['visit'] = info_bids_sujeto['session']
         except:
@@ -56,17 +50,16 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
                 if data['metadata']['type']=='crossfreq':
                     for b1,band1 in enumerate(bandas):
                         datos_1_sujeto[f'{feature}_{comp_labels[c]}_M_{band1}_{band.title()}']=icvalues[c][b][b1]
-                elif data['metadata']['type']=='sl':
+                elif data['metadata']['type']=='sl' or data['metadata']['type']=='coherence-bands':
                     datos_1_sujeto[f'{feature}_{comp_labels[c]}_{band.title()}']=np.mean(icvalues[b][c])
                 elif data['metadata']['type']=='entropy':
                     datos_1_sujeto[f'{feature}_{comp_labels[c]}_{band.title()}']=icvalues[b,c]
-
         list_subjects.append(datos_1_sujeto)
-
     df = pd.DataFrame(list_subjects)
     df['database']=[name]*len(list_subjects)
     df.to_feather(r'{input_path}\derivatives\data_{feature}_columns_components_{name}.feather'.format(name=name,input_path=input_path,feature=feature))
     print('Done!')
 
-metricas=['crossfreq','entropy','sl']
-get_dataframe_columnsIC(DUQUE,feature='crossfreq')
+metricas=['crossfreq','entropy','sl','cohfreq']
+for i in metricas:
+    get_dataframe_columnsIC(DUQUE,feature=i)

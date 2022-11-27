@@ -59,8 +59,8 @@ def features(THE_DATASET):
         times_strings = []
         for feature,kwargs in features_tuples:
             try:
-                #for sf in [None, spatial_filter]: # Channels and Components
-                for sf in [spatial_filter]: # Only components
+                for sf in [None, spatial_filter]: # Channels and Components
+                #for sf in [spatial_filter]: # Only components
                     #for norm_ in [True,False]: # Only with huber and without huber
                     for norm_ in [True]: # Only with huber
                         if sf is not None:

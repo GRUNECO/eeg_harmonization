@@ -8,7 +8,7 @@ from sovaharmony.features import get_derivative
 from sovaharmony.spatial import get_spatial_filter
 import time
 import traceback
-OVERWRITE = True # Ojo con esta variable, es para obligar a sobreescribir los archivos
+OVERWRITE = False # Ojo con esta variable, es para obligar a sobreescribir los archivos
 # en general deberia estar en False
 def features(THE_DATASET):
     # Inputs not dataset dependent

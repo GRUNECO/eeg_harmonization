@@ -33,7 +33,7 @@ def _get_power(signal_epoch,bands):
         dummy = qeeg_psd_chronux(signal[space_idx,:,:],signal_epoch.info['sfreq'],bands)
         for b in bands.keys():
             band_idx = bands_list.index(b)
-            values[band_idx,space_idx]=dummy[b]
+            values[band_idx,space_idx]=dummy[band_idx]
     output['values'] = values
     return output
 
@@ -58,7 +58,10 @@ def _get_sl(signal_epoch,bands):
 def _get_coh(signal_epoch,window,bands):
     chs = signal_epoch.info['ch_names']
     blist=list(bands.keys())
-    _,Cfxy = get_coherence(signal_epoch,bands,signal_epoch.info['sfreq'],window)
+    epochs,nchans,points = signal_epoch.get_data().shape
+    signalCont = np.reshape(signal_epoch.get_data(),(nchans,points*epochs),order='F')
+    _verify_epoch_continuous(signal_epoch.get_data(),signalCont,('epochs','spaces','times'))
+    _,Cfxy = get_coherence(signalCont,bands,signal_epoch.info['sfreq'],window)
     axes = {'bands':blist,'spaces1':chs,'spaces2':chs}
     output = {}
     dim0 = list(axes.keys())[0]

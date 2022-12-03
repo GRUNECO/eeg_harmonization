@@ -13,7 +13,7 @@ def get_coherence(signal,bands,fs,window='hann',Cfxy=None):
     for a in range(len(signal.get_data()[1])):
         for b in range(a,len(signal.get_data()[1])):
             if a != b:
-                freqs,Cfxy = coherence(signal.get_data()[a,:],signal.get_data()[b,:],fs,window)
+                freq,Cfxy = coherence(signal.get_data()[a,:],signal.get_data()[b,:],fs,window)
     blist = list(bands.keys())
     nbands = len(bands.keys())
     nchans = len(signal.info['ch_names'])

@@ -33,7 +33,7 @@ def _get_power(signal_epoch,bands):
         dummy = qeeg_psd_chronux(signal[space_idx,:,:],signal_epoch.info['sfreq'],bands)
         for b in bands.keys():
             band_idx = bands_list.index(b)
-            values[band_idx,space_idx]=dummy[b]
+            values[band_idx,space_idx]=dummy[band_idx]
     output['values'] = values
     return output
 

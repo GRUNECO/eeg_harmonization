@@ -6,11 +6,7 @@ from sovaharmony.getDataframes import get_dataframe_powers
 from sovaharmony.getDataframes import get_dataframe_reject
 from sovaharmony.getDataframes import get_dataframe_powers
 from sovaharmony.getDataframes import get_dataframe_sl
-<<<<<<< HEAD
-from sovaharmony.datasets import DUQUE as DATA    
-=======
 from sovaharmony.datasets import DUQUEVHI as DATA    
->>>>>>> ba8e31abde35a97727fb655cfabad9530a43aee7
 import time 
 
 THE_DATASETS=[DATA]

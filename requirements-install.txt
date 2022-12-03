@@ -1,6 +1,6 @@
 git+https://gitfront.io/r/GRUNECO/wdwHTYJe8bbz/sovachronux.git
-git+https://gitfront.io/r/yjmantilla/e26e54b1952da01b4529449b6370ba0e5e608f78/sovawica.git
-git+https://gitfront.io/r/yjmantilla/5c5817890b14af2e5ae8ae9ba3f14522c337522e/sovareject.git
+git+https://gitfront.io/r/GRUNECO/db7qFm7z89d4/sovawica.git
+git+https://gitfront.io/r/GRUNECO/pD1ut9JRPFNw/sovareject.git
 git+https://gitfront.io/r/GRUNECO/xiGpXFpQvM2T/sovaflow.git
 git+https://gitfront.io/r/GRUNECO/Vyo9MVr7QNTZ/violinplot.git
 pybids

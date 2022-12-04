@@ -22,7 +22,7 @@ def get_coherence_epochs(signal,window=3):
     ch_names = signal.info['ch_names']
     data = signal.get_data()
     (e, c, t) = data.shape
-    new_data = np.concatenate(data,axis=0)
+    new_data = np.concatenate(data,axis=1)
     nperseg = int(np.floor(window*signal.info['sfreq']))
     _verify_epoch_continuous(data,new_data,('epochs','spaces','times'))
     fc, Cxyc = coherence(new_data[0,:], new_data[0,:], signal.info['sfreq'], 'hann', nperseg = nperseg)
@@ -37,7 +37,7 @@ def get_coherence_epochs(signal,window=3):
     return fc, Cfxy
 
 def get_coherence_continuous(signal,bands,window=3,freqs=None,Cfxy=None):
-    if not freqs and not Cfxy and window:
+    if freqs is None and Cfxy is None and window is not None:
         freqs,Cfxy = get_coherence_epochs(signal,window)
     blist = list(bands.keys())
     nbands = len(bands.keys())

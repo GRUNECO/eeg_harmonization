@@ -1,4 +1,4 @@
-from sovaharmony.processing import harmonize 
+from sovaharmony.preprocessing import harmonize 
 from sovaharmony.postprocessing import features
 from sovaharmony.getDataframes import get_dataframe_prep
 from sovaharmony.getDataframes import get_dataframe_wica

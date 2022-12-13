@@ -1,6 +1,6 @@
 from sovaflow.utils import cfg_logger
-from sovaharmony.processing import get_derivative_path
-from sovaharmony.processing import write_json
+from sovaharmony.preprocessing import get_derivative_path
+from sovaharmony.preprocessing import write_json
 from bids import BIDSLayout
 import mne
 import os

@@ -53,7 +53,7 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
                         datos_1_sujeto[f'{feature}{comp_labels[c]}_M{band1}_{band.title()}']=icvalues[c][b][b1]
                 elif data['metadata']['type']=='sl' or data['metadata']['type']=='coherence-bands':
                     datos_1_sujeto[f'{feature}{comp_labels[c]}{band.title()}']=np.mean(icvalues[b][c])
-                elif data['metadata']['type']=='entropy':
+                elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power':
                     datos_1_sujeto[f'{feature}{comp_labels[c]}{band.title()}']=icvalues[b,c]
         list_subjects.append(datos_1_sujeto)
     df = pd.DataFrame(list_subjects)
@@ -126,7 +126,7 @@ def get_dataframe_columnsROI(THE_DATASET,feature):
                         datos_1_sujeto[f'{feature}{roi_labels[r]}_M{band1}_{band.title()}']= icvalues[roi][b][b1][np.nonzero(icvalues[roi][b][b1])].mean()
                 elif data['metadata']['type']=='sl' or data['metadata']['type']=='coherence-bands':
                     datos_1_sujeto[f'{feature}{roi_labels[r]}{band.title()}']=np.mean(icvalues[b][roi])
-                elif data['metadata']['type']=='entropy':
+                elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power':
                     datos_1_sujeto[f'{feature}{roi_labels[r]}{band.title()}']=np.mean(icvalues[b,roi])
         list_subjects.append(datos_1_sujeto)
     df = pd.DataFrame(list_subjects)

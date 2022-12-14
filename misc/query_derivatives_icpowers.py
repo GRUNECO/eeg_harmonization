@@ -133,5 +133,5 @@ def get_dataframe_columnsROI(THE_DATASET,feature):
 
 metricas=['sl','crossfreq','entropy','cohfreq']
 for i in metricas:
-    #get_dataframe_columnsIC(DUQUEVHI,feature=i)
+    get_dataframe_columnsIC(DUQUEVHI,feature=i)
     get_dataframe_columnsROI(DUQUEVHI,feature=i)

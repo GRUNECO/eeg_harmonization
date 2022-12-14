@@ -86,7 +86,10 @@ def get_dataframe_columnsROI(THE_DATASET,feature):
             data=ast.literal_eval(f.read())
         new_rois = []
 
-        if 'spaces1' in data['metadata']['axes'].keys():
+        if 'spaces' in data['metadata']['axes'].keys():
+            sensors = data['metadata']['axes']['spaces']
+
+        elif 'spaces1' in data['metadata']['axes'].keys():
             sensors = data['metadata']['axes']['spaces1']
             
         elif 'spaces2' in data['metadata']['axes'].keys():

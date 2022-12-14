@@ -134,7 +134,7 @@ def get_dataframe_columnsROI(THE_DATASET,feature):
     df.to_feather(r'{input_path}\derivatives\data_{feature}columns_ROI{name}.feather'.format(name=name,input_path=input_path,feature=feature))
     print('Done!')
 
-metricas=['sl','crossfreq','entropy','cohfreq']
+metricas=['power','sl','crossfreq','entropy','cohfreq']
 for i in metricas:
     get_dataframe_columnsIC(DUQUEVHI,feature=i)
     get_dataframe_columnsROI(DUQUEVHI,feature=i)

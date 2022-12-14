@@ -1,3 +1,7 @@
+'''
+@autor: Verónica Henao Isaza, Universidad de Antioquia, 2022
+'''
+
 #manejo de elemeotos del sistema, como carpetas
 import scipy.io as sio;
 import numpy as np;

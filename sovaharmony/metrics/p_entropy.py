@@ -5,8 +5,8 @@ import itertools
 import numpy as np
 import pandas as pd
 from scipy.spatial.distance import euclidean
-from sovaharmony.sl import segment_signal
-from sovaharmony.entropy import Entropia_Permutacion
+from sovaharmony.metrics.sl import segment_signal
+from sovaharmony.metrics.entropy import Entropia_Permutacion
 from sovaharmony.utils import _verify_epochs_axes
 
 def s_entropy(freq_list):

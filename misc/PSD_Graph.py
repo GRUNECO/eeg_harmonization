@@ -14,10 +14,10 @@ import os
 from sovaharmony.datasets import BIOMARCADORES_CE as DATA    
 import time 
 from bids import BIDSLayout
-from sovaharmony.features import get_conectivity_band
-from sovaharmony.sl import get_sl_freq
-from sovaharmony.coh import get_coherence_freq
-from sovaharmony.p_entropy import get_entropy_freq
+from sovaharmony.metrics.features import get_conectivity_band
+from sovaharmony.metrics.sl import get_sl_freq
+from sovaharmony.metrics.coh import get_coherence_freq
+from sovaharmony.metrics.p_entropy import get_entropy_freq
 #from sovaharmony.pme import get_pme_freq
 from sovaflow.utils import cfg_logger
 from sovaharmony.processing import get_derivative_path

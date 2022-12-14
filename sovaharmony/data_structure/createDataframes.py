@@ -7,27 +7,12 @@
 """
 
 from requests import session
-import json
+
 import numpy as np
 import pandas as pd 
 import itertools
+from sovaharmony.utils import load_txt
 
-def load_txt(file):
-  '''
-  Function that reads txt files
-
-  Parameters
-  ----------
-    file: extend .txt 
-
-  Returns
-  -------
-    data: 
-      Contains the information that was stored in the txt file
-  '''
-  with open(file, 'r') as f:
-    data=json.load(f)
-  return data
 
 def feather2xlsx(path,name_file):
   file_feather=pd.read_feather(path+name_file+'.feather')

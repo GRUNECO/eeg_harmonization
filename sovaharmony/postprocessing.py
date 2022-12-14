@@ -4,7 +4,7 @@ from sovaharmony.preprocessing import write_json
 from bids import BIDSLayout
 import mne
 import os
-from sovaharmony.features import get_derivative
+from sovaharmony.metrics.features import get_derivative
 from sovaharmony.spatial import get_spatial_filter
 import time
 import traceback

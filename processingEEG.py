@@ -1,11 +1,10 @@
 from sovaharmony.preprocessing import harmonize 
 from sovaharmony.postprocessing import features
-from sovaharmony.getDataframes import get_dataframe_prep
-from sovaharmony.getDataframes import get_dataframe_wica
-from sovaharmony.getDataframes import get_dataframe_powers
-from sovaharmony.getDataframes import get_dataframe_reject
-from sovaharmony.getDataframes import get_dataframe_powers
-from sovaharmony.getDataframes import get_dataframe_sl
+from sovaharmony.data_structure.getDataframes import get_dataframe_prep
+from sovaharmony.data_structure.getDataframes import get_dataframe_wica
+from sovaharmony.data_structure.getDataframes import get_dataframe_reject
+from sovaharmony.data_structure.query_derivatives import get_dataframe_columnsIC
+from sovaharmony.data_structure.query_derivatives import get_dataframe_columnsROI
 from sovaharmony.datasets import DUQUEVHI as DATA    
 import time 
 
@@ -23,23 +22,14 @@ for dataset in THE_DATASETS:
     final = time.perf_counter()
     print('TIME POSTPROCESSING:::::::::::::::::::', final-start)
 
-    start = time.perf_counter()
     # Preprocessing 
     get_dataframe_prep(dataset)
     get_dataframe_wica(dataset)
     get_dataframe_reject(dataset)
-    # Extraction of features 
-    get_dataframe_powers(dataset,mode="channels",stage=None)
-    get_dataframe_powers(dataset,mode="channels",stage="norm")
-    get_dataframe_powers(dataset,mode="components",stage=None)
-    get_dataframe_powers(dataset,mode="components",stage="norm")
-    get_dataframe_sl(dataset,mode='ROIs',ROIs=dataset['ROIs'])
-    final = time.perf_counter()
-    print('TIME CREATE FEATHERS:::::::::::::::::::', final-start)
-    '''
-    
-    #get_dataframe_mean_sl(dataset)
-    '''
+    metricas=['power','sl','crossfreq','entropy','cohfreq']
+    for i in metricas:
+        get_dataframe_columnsIC(dataset,feature=i)
+        get_dataframe_columnsROI(dataset,feature=i)
 
 
     

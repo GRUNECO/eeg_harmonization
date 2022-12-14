@@ -1,4 +1,23 @@
 import numpy as np
+import json
+
+def load_txt(file):
+  '''
+  Function that reads txt files
+
+  Parameters
+  ----------
+    file: extend .txt 
+
+  Returns
+  -------
+    data: 
+      Contains the information that was stored in the txt file
+  '''
+  with open(file, 'r') as f:
+    data=json.load(f)
+  return data
+
 def _verify_epochs_axes(epochs_spaces_times,spaces_times_epochs,max_epochs=None):
     """
     """

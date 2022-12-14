@@ -6,6 +6,7 @@ import re
 import pandas as pd
 from bids.layout import parse_file_entities
 from sovaharmony.datasets import DUQUEVHI 
+from sovaharmony.utils import load_txt
 
 def get_dataframe_columnsIC(THE_DATASET,feature):  
     '''Obtain data frames with powers of Components in different columns'''
@@ -21,9 +22,7 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
     paths = [x for x in paths if f'space-ics[58x25]_norm-True' in x]
     list_subjects = []
     for i in range(len(paths)):
-        with open(paths[i], 'r') as f:
-            data = json.load(f)
-
+        data=load_txt(paths[i])
         if 'spaces' in data['metadata']['axes'].keys():
             comp_labels = data['metadata']['axes']['spaces']
             
@@ -58,7 +57,7 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
         list_subjects.append(datos_1_sujeto)
     df = pd.DataFrame(list_subjects)
     df['database']=[name]*len(list_subjects)
-    df.to_feather(r'{input_path}\derivatives\data_{feature}columns_components{name}.feather'.format(name=name,input_path=input_path,feature=feature))
+    df.to_feather(r'{input_path}\derivatives\data_{task}_{feature}columns_components{name}.feather'.format(name=name,input_path=input_path,task=task,feature=feature))
     print('Done!')
 
 def get_dataframe_columnsROI(THE_DATASET,feature):  
@@ -82,8 +81,9 @@ def get_dataframe_columnsROI(THE_DATASET,feature):
     roi_labels = ['F','C','PO','T']
 
     for i in range(len(paths)):
-        with open(paths[i],'r', encoding='utf-8', errors='ignore') as f:
-            data=ast.literal_eval(f.read())
+        # with open(paths[i],'r', encoding='utf-8', errors='ignore') as f:
+        #     data=ast.literal_eval(f.read())
+        data=load_txt(paths[i])
         new_rois = []
 
         if 'spaces' in data['metadata']['axes'].keys():
@@ -131,10 +131,7 @@ def get_dataframe_columnsROI(THE_DATASET,feature):
         list_subjects.append(datos_1_sujeto)
     df = pd.DataFrame(list_subjects)
     df['database']=[name]*len(list_subjects)
-    df.to_feather(r'{input_path}\derivatives\data_{feature}columns_ROI{name}.feather'.format(name=name,input_path=input_path,feature=feature))
+    df.to_feather(r'{input_path}\derivatives\data_{task}_{feature}columns_ROI{name}.feather'.format(name=name,input_path=input_path,task=task,feature=feature))
     print('Done!')
 
-metricas=['sl','crossfreq','entropy','cohfreq']
-for i in metricas:
-    get_dataframe_columnsIC(DUQUEVHI,feature=i)
-    get_dataframe_columnsROI(DUQUEVHI,feature=i)
+

@@ -1,7 +1,6 @@
 import os
 import glob
 import numpy as np
-
 import requests
   
 subjects = os.listdir(r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\SRM')

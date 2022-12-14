@@ -1,3 +1,10 @@
+'''
+@autor: Yorguin Jose Mantilla Ramos, Universidad de Antioquia, 2022
+'''
+
+% Function of MATLAB normalization huber 
+
+
 function X = calculateHuberMean_yj(Y, rho, iters)
 
 % THIS IS JUST A LOCAL COPY OF 

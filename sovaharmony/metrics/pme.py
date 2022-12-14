@@ -11,8 +11,8 @@ import pandas as pd
 import os
 from sovaflow.utils import createRaw
 
-####################### Internal libraries ####################################
-import sovaharmony.linear_FIR_filter_v2 as lfir
+####################### Internal libraries #####################################
+#import sovaharmony.linear_FIR_filter_v2 as lfir
 import mne
 
 ########################## My exception classes ###############################

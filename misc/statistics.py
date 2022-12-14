@@ -7,14 +7,8 @@ import glob
 import pandas as pd 
 import itertools
 import os
+from sovaharmony.utils import load_txt
 
-def load_txt(file):
-  '''
-  Function that reads txt files
-  '''
-  with open(file, 'r') as f:
-    data=json.load(f)
-  return data
 
 def final_thresholds(data):
   '''

@@ -49,15 +49,15 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
             for c in range(len(comp_labels)):
                 if data['metadata']['type']=='crossfreq':
                     for b1,band1 in enumerate(bandas):
-                        datos_1_sujeto[f'{feature}{comp_labels[c]}_M{band1}_{band.title()}']=icvalues[c][b][b1]
+                        datos_1_sujeto[f'{feature}_{comp_labels[c]}_M{band1}_{band.title()}']=icvalues[c][b][b1]
                 elif data['metadata']['type']=='sl' or data['metadata']['type']=='coherence-bands':
-                    datos_1_sujeto[f'{feature}{comp_labels[c]}{band.title()}']=np.mean(icvalues[b][c])
+                    datos_1_sujeto[f'{feature}_{comp_labels[c]}_{band.title()}']=np.mean(icvalues[b][c])
                 elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power':
-                    datos_1_sujeto[f'{feature}{comp_labels[c]}{band.title()}']=icvalues[b,c]
+                    datos_1_sujeto[f'{feature}_{comp_labels[c]}_{band.title()}']=icvalues[b,c]
         list_subjects.append(datos_1_sujeto)
     df = pd.DataFrame(list_subjects)
     df['database']=[name]*len(list_subjects)
-    df.to_feather(r'{input_path}\derivatives\data_{task}_{feature}columns_components{name}.feather'.format(name=name,input_path=input_path,task=task,feature=feature))
+    df.to_feather(r'{input_path}\derivatives\data_{task}_{feature}_columns_components_{name}.feather'.format(name=name,input_path=input_path,task=task,feature=feature))
     print('Done!')
 
 def get_dataframe_columnsROI(THE_DATASET,feature):  
@@ -123,13 +123,13 @@ def get_dataframe_columnsROI(THE_DATASET,feature):
             for r,roi in enumerate(new_rois):
                 if data['metadata']['type']=='crossfreq':
                     for b1,band1 in enumerate(bandas):
-                        datos_1_sujeto[f'{feature}{roi_labels[r]}_M{band1}_{band.title()}']= icvalues[roi][b][b1][np.nonzero(icvalues[roi][b][b1])].mean()
+                        datos_1_sujeto[f'{feature}_{roi_labels[r]}_M{band1}_{band.title()}']= icvalues[roi][b][b1][np.nonzero(icvalues[roi][b][b1])].mean()
                 elif data['metadata']['type']=='sl' or data['metadata']['type']=='coherence-bands':
-                    datos_1_sujeto[f'{feature}{roi_labels[r]}{band.title()}']=np.mean(icvalues[b][roi])
+                    datos_1_sujeto[f'{feature}_{roi_labels[r]}_{band.title()}']=np.mean(icvalues[b][roi])
                 elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power':
-                    datos_1_sujeto[f'{feature}{roi_labels[r]}{band.title()}']=np.mean(icvalues[b,roi])
+                    datos_1_sujeto[f'{feature}_{roi_labels[r]}_{band.title()}']=np.mean(icvalues[b,roi])
         list_subjects.append(datos_1_sujeto)
     df = pd.DataFrame(list_subjects)
     df['database']=[name]*len(list_subjects)
-    df.to_feather(r'{input_path}\derivatives\data_{task}_{feature}columns_ROI{name}.feather'.format(name=name,input_path=input_path,task=task,feature=feature))
+    df.to_feather(r'{input_path}\derivatives\data_{task}_{feature}_columns_ROI_{name}.feather'.format(name=name,input_path=input_path,task=task,feature=feature))
     print('Done!')

@@ -11,7 +11,7 @@ imagenes_png = []
 for features in postprocessing:
     for s in space: 
         for file in os.listdir(path+features+'/'+s):
-            if file.endswith(".png"):
+            if file.endswith("_table.png"):
                 imagenes_png.append(path+features+'/'+s+'/'+file)
         #imagenes_png = [archivo for archivo in os.listdir(path+features+'/'+s) if archivo.endswith(".png")]
         img.append(imagenes_png)

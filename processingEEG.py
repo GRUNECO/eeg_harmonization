@@ -5,7 +5,7 @@ from sovaharmony.data_structure.getDataframes import get_dataframe_wica
 from sovaharmony.data_structure.getDataframes import get_dataframe_reject
 from sovaharmony.data_structure.query_derivatives import get_dataframe_columnsIC
 from sovaharmony.data_structure.query_derivatives import get_dataframe_columnsROI
-from sovaharmony.datasets import DUQUEVHI as DATA    
+from sovaharmony.datasets import CHBMP as DATA    
 import time 
 
 THE_DATASETS=[DATA]

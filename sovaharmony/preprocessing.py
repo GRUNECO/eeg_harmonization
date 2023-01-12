@@ -1,7 +1,6 @@
 from sovaflow.flow import preflow
 from sovaflow.flow import crop_raw_data,run_reject
 from sovaflow.utils import cfg_logger
-from sovaflow.utils import get_spatial_filter
 from sovaViolin.functions_postprocessing_channels import compare_nD_power
 import mne
 import json
@@ -64,7 +63,6 @@ def harmonize(THE_DATASET,fast_mode=False):
     'events_to_keep': list, list of events to keep for the analysis
     'run-label': str, label associated with the run of the algorithm so that the derivatives are not overwritten.
     'channels': list, channel labels to keep for analysis in the order wanted. Use standard 1005 names in UPPER CASE
-    'spatial_filter': str, spatial filter to be used for component analysis. Should correspond to those in sovaflow. One of '53x53', '58x25', '62x19'
     'L_FREQ' : high-pass frequency for detrending (def 1)
     'H_FREQ' : low-pass frequency (def 50)
     'epoch_length': length of epoching in seconds (def 5)
@@ -80,7 +78,6 @@ def harmonize(THE_DATASET,fast_mode=False):
     'events_to_keep':None,
     'run-label':'restEC'
     'channels':['FP1', 'FPZ', 'FP2', 'AF3', 'AF4', 'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8', 'FC5', 'FC3', 'FC1', 'FCZ', 'FC2', 'FC4', 'FC6', 'T7', 'C5', 'C3', 'C1', 'CZ', 'C2', 'C4', 'C6', 'T8', 'TP7', 'CP5', 'CP3', 'CP1', 'CPZ', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3', 'P1', 'PZ', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POZ', 'PO4', 'PO6', 'PO8', 'O1', 'OZ', 'O2']
-    'spatial_filter':'58x25',
     'H_FREQ' : 30,
     'epoch_length':2
     }
@@ -96,11 +93,6 @@ def harmonize(THE_DATASET,fast_mode=False):
     #default_channels = ['AF3',	'AF4',	'C1',	'C2',	'C3',	'C4',	'C5',	'C6',	'CP1',	'CP2',	'CP3',	'CP4',	'CP5',	'CP6',	'CPZ',	'CZ',	'F1',	'F2',	'F3',	'F4',	'F5',	'F6',	'F7',	'F8',	'FC1',	'FC2',	'FC3',	'FC4',	'FC5',	'FC6',	'FP1',	'FP2',	'FZ',	'O1',	'O2',	'OZ',	'P1',	'P2',	'P3',	'P4',	'P5',	'P6',	'P7',	'P8',	'PO3',	'PO4',	'PO7',	'PO8',	'POZ',	'PZ',	'T7',	'T8',	'TP7',	'TP8'] #Yorguin
     channels = THE_DATASET.get('channels',default_channels)
     layout_dict = THE_DATASET.get('layout',None)
-    def_spatial_filter='58x25' #Original 
-    #def_spatial_filter='54x10' # Yorguin prueba 28 09 2022
-    # Inputs not dataset dependent
-    if THE_DATASET.get('spatial_filter',def_spatial_filter):
-        spatial_filter = get_spatial_filter(THE_DATASET.get('spatial_filter',def_spatial_filter))
     # Static Params
     pipeline = 'sovaharmony'
     pipelabel = '['+THE_DATASET.get('run-label', '')+']'

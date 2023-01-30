@@ -1,0 +1,29 @@
+dataset_description:                            # Configuring the dataset_description.json file
+  Name : Quantum                                # Name of the dataset, set up as a fixed string
+  Authors:                                      # Here I put the personnel involved in the acquisition of the dataset
+    - Luisa Maria Zapata Saldarriaga            # See http://fcon_1000.projects.nitrc.org/indi/retro/MPI_LEMON.html
+
+sidecar:                                        # Configuring the sidecar eeg file
+  PowerLineFrequency : 60                       # Noted from the visual inspection of the eeg spectrum
+  EEGReference : Mastoide derecha               # As mentioned in https://www.nature.com/articles/sdata2018308
+
+# channels:                                       # Configuring the channels tsv
+#   type :                                        # This property allow us to overwrite channel types inferred by MNE
+#     VEO : VEOG                                  # Here the syntax is <channel name> : <channel type according to bids notation>
+#     HEO : HEOG                                  # Here we set the type of F3, it was already correctly inferred by mne but it is included to illustrate retyping of various channels.
+non-bids:                                       # Additional configuration not belonging specifically to any of the previous objects
+  eeg_extension : .edf                          # Sets which extension to read as an eeg file
+  path_analysis:                                # Some bids properties can be inferred from the path of the source files
+    #pattern : convert2bids/%entities.subject%_%entities.session%_%entities.task%.edf # For example here we extract from the path the "subject" child of the "entities" object
+    #pattern: estudiantes_bio\/.+(.{2})_(.+)(.{2}).edf
+    pattern: residentes\/.+(.{2})_(.+)(.{2}).edf
+    fields:
+      - entities.subject
+      - entities.session
+      - entities.task
+    #TR02_S1CE.edf
+
+    # fields :
+    #   - entities.subject
+    #   - entities.session
+    #   - entities.task

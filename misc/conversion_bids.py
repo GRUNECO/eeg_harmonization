@@ -1,17 +1,17 @@
 import os # For path manipulation
-import shutil # File manipulation
+#import shutil # File manipulation
 from mne_bids import print_dir_tree # To show the input/output directories structures inside this example
 from sovabids.rules import apply_rules # Apply rules for conversion
 from sovabids.convert import convert_them # Do the conversion
-from sovabids.datasets import lemon_prepare # Download the dataset
+#from sovabids.datasets import lemon_prepare # Download the dataset
 from sovabids.settings import REPO_PATH
 
-sourcePath=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\NEW'
-bidsPath=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\DUQUE'
-rulePath=r"E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\misc\reglasDuque.yml"
+sourcePath=r'/home/pyeeglapsim/Documents/Proyecto_EEG_LapSim/FORMATO_EDF/residentes'
+bidsPath=r'/home/pyeeglapsim/Documents/Proyecto_EEG_LapSim/BIDS/residentes'
+rulePath=r'/home/pyeeglapsim/Documents/Proyecto_EEG_LapSim/Processing/eeg_harmonization/misc/reglasQuantum.yml'
 source_path = os.path.abspath(sourcePath) # For the input data we will convert
 bids_path= os.path.abspath(bidsPath) # The output directory that will have the converted data
-rules_path = os.path.abspath(rulesPath) # The rules file that setups the rule for conversion
+rules_path = os.path.abspath(rulePath) # The rules file that setups the rule for conversion
 mapping_path = os.path.abspath(os.path.join(bids_path,'code','sovabids','mappings.yml')) # The mapping file that will hold the results of applying the rules to each file
 
 

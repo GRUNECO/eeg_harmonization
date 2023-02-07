@@ -15,8 +15,15 @@ non-bids:                                       # Additional configuration not b
   eeg_extension : .edf                          # Sets which extension to read as an eeg file
   path_analysis:                                # Some bids properties can be inferred from the path of the source files
     #pattern : convert2bids/%entities.subject%_%entities.session%_%entities.task%.edf # For example here we extract from the path the "subject" child of the "entities" object
-    pattern: estudiantes_bio\/.+(.{2})_(.{2})(.+).edf
-    fields :
+    #pattern: estudiantes_bio\/.+(.{2})_(.+)(.{2}).edf
+    pattern: residentes\/.+(.{2})_(.{2})(.+).edf
+    fields:
       - entities.subject
       - entities.session
       - entities.task
+    #TR02_S1CE.edf
+
+    # fields :
+    #   - entities.subject
+    #   - entities.session
+    #   - entities.task

@@ -5,7 +5,7 @@ import numpy as np
 import re
 import pandas as pd
 from bids.layout import parse_file_entities
-from sovaharmony.datasets import DUQUEVHI 
+#from sovaharmony.datasets import DUQUEVHI 
 from sovaharmony.utils import load_txt
 
 def get_dataframe_columnsIC(THE_DATASET,feature):  

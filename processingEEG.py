@@ -5,14 +5,15 @@ from sovaharmony.data_structure.getDataframes import get_dataframe_wica
 from sovaharmony.data_structure.getDataframes import get_dataframe_reject
 from sovaharmony.data_structure.query_derivatives import get_dataframe_columnsIC
 from sovaharmony.data_structure.query_derivatives import get_dataframe_columnsROI
-from sovaharmony.datasets import BIOMARCADORES_CE as DATA    
+from sovaharmony.datasets import Estudiantes2021 as DATA    
 import time 
 
 THE_DATASETS=[DATA]
 for dataset in THE_DATASETS:
     # Preprocessing pipeline
     #start = time.perf_counter()
-    #process=harmonize(dataset,fast_mode=False)
+    print(dataset)
+    process=harmonize(dataset,fast_mode=False)
     #final = time.perf_counter()
     #print('TIME PREPROCESSING:::::::::::::::::::', final-start)
 

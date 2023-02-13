@@ -24,16 +24,16 @@ for dataset in THE_DATASETS:
     print('TIME POSTPROCESSING:::::::::::::::::::', final-start)
 
     # Preprocessing files 
-    #start = time.perf_counter()
-    #get_dataframe_prep(dataset)
-    #get_dataframe_wica(dataset)
-    #get_dataframe_reject(dataset)
-    #metricas=['power','sl','crossfreq','entropy','cohfreq']
-    #for i in metricas:
-    #    get_dataframe_columnsIC(dataset,feature=i)
-    #    get_dataframe_columnsROI(dataset,feature=i)
-    #final = time.perf_counter()
-    #print('TIME DERIVATIVES OF PREPROCESSING:::::::::::::::::::', final-start)
+    start = time.perf_counter()
+    get_dataframe_prep(dataset)
+    get_dataframe_wica(dataset)
+    get_dataframe_reject(dataset)
+    metricas=['power','sl','crossfreq','entropy','cohfreq']
+    for i in metricas:
+        get_dataframe_columnsIC(dataset,feature=i)
+        get_dataframe_columnsROI(dataset,feature=i)
+    final = time.perf_counter()
+    print('TIME DERIVATIVES OF PREPROCESSING:::::::::::::::::::', final-start)
 
 
     

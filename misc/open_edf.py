@@ -3,22 +3,53 @@ import glob
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# %     ind1 = find(type==32767);    % Marca de inicio de grabación
+# %     ind2 = find(type==9728); % Marca de fin de grabación
 
-#filename = r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\CHBMP\ds_bids_chbmp\sub-CBM00001\eeg\sub-cbm00001_task-protmap_eeg.edf"
-#filename = r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\SRM\sub-001\ses-t1\eeg\sub-001_ses-t1_task-resteyesc_eeg.edf"
-#filename = r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\LEMON\sub-032301\RSEEG\sub-032301.vhdr"
-#filename = r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\sub-CTR001\ses-V0\eeg\sub-CTR001_ses-V0_task-CE_eeg.vhdr"
-#filename1 = r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaharmony\sub-CTR001\ses-V0\eeg\sub-CTR001_ses-V0_task-CE_desc-norm_eeg"
-#filename2 = r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaharmony\sub-CTR001\ses-V0\eeg\sub-CTR001_ses-V0_task-CE_desc-reject[restCE]_eeg"
-#filename = r"E:\Academico\Universidad\Posgrado\Tesis\Datos\BASESDEDATOS\BIOMARCADORES_BIDS\derivatives\sovaharmony\sub-CTR001\ses-V0\eeg\sub-CTR001_ses-V0_task-CE_desc-norm_eeg"
-#filename1 = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-CTR009\ses-V4\eeg\sub-CTR009_ses-V4_task-CE_desc-reject[restCE]_eeg.fif"
-#filename2 = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-CTR017\ses-V4\eeg\sub-CTR017_ses-V4_task-CE_desc-reject[restCE]_eeg.fif"
-#filename3 = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-CTR018\ses-V3\eeg\sub-CTR018_ses-V3_task-CE_desc-reject[restCE]_eeg.fif"
-filename=r'/home/pyeeglapsim/Documents/Proyecto_EEG_LapSim/BIDS/Test_BIDS/convert2bids/TR02_S1CE.edf'
-#filename = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-G2018\ses-V3\eeg\sub-G2018_ses-V3_task-CE_desc-reject[restCE]_eeg.fif"
-#filename = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-CTR002\ses-V0\eeg\sub-CTR002_ses-V0_task-CE_desc-wica_eeg.fif"
+# % Selección segmento de grabación
+#     event = EEG.event;
+#     type = zeros(2,1);
+#     for ii = 1:length(event)
+#         type(ii) = event(1,ii).type;
+#     end
+# %     ind1 = find(type==32767);    % Marca de inicio de grabación
+# %     ind2 = find(type==9728); % Marca de fin de grabación
+#       ind1 = type(1);
+#       ind2 = type(2);
+#     %if isempty(ind1)
+#     if ind1 == 0
+#         ini_rec = 1;
+#     else
+#         ini_rec = event(1,1).latency;
+#     end
+#     if ind2 == 0
+#         end_rec = length(EEG.data);
+#     else
+
+filename=r'E:\PROYECTO_EEG_LAPSIM\FORMATO_EDF\estudiantes_2021\TRLP28~ S1CE_b9bd277d-86d9-40a1-880a-3e334c68c7bb.edf'
+filename2=r'D:\XIMENA\BIDS\Estudiantes2021\sub-28\ses-S1\eeg\sub-28_ses-S1_task-CE_eeg.vhdr'
 raw = mne.io.read_raw(filename,preload=True )
+raw2= mne.io.read_raw(filename2,preload=True )
+
+raw.pick_types(eeg=True, eog=True, stim=True).crop(tmax=60).load_data()
+report = mne.Report(title='Raw example')
+# This method also accepts a path, e.g., raw=raw_path
+report.add_raw(raw=raw, title='Raw 1', psd=True)  # omit PSD plot
+report.save(r'D:\XIMENA\report_raw_1.html', overwrite=True)
+
+raw2.pick_types(eeg=True, eog=True, stim=True).crop(tmax=60).load_data()
+report2 = mne.Report(title='Raw example BIDS')
+report2.add_raw(raw=raw, title='Raw BDIS', psd=True)  # omit PSD plot
+report2.save(r'D:\XIMENA\report_raw_BIDS.html', overwrite=True)
+
+print('\nChannels whitout BIDS')
 print(raw.ch_names)
+
+print('\nChannels whit BIDS')
+print(raw2.ch_names)
+
+# raw.plot()
+# raw2.plot()
 #raw1 = read_raw(filename1,preload=True )
 #raw2 = read_raw(filename2,preload=True )
 #raw3 = read_raw(filename3,preload=True )

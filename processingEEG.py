@@ -26,9 +26,9 @@ for dataset in THE_DATASETS:
 
     # Preprocessing files 
     #start = time.perf_counter()
-    #get_dataframe_prep(dataset)
-    #get_dataframe_wica(dataset)
-    #get_dataframe_reject(dataset)
+    get_dataframe_prep(dataset)
+    get_dataframe_wica(dataset)
+    get_dataframe_reject(dataset)
     
     path=r'D:\XIMENA\BIDS\Estudiantes2021\derivatives\sovaharmony'
     metricas=['entropy','cohfreq','power','sl','crossfreq']

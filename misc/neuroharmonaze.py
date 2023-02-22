@@ -3,79 +3,61 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from funtionsHarmonize import delcol 
+from funtionsHarmonize import mapsDrop
 from funtionsHarmonize import negativeTest
-
-data = pd.read_feather(r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes\Data_complete_roi.feather')
-
-databases = {label:float(idx) for idx,label in enumerate(np.unique(data['database']))}
-print(databases)
-group = {label:float(idx) for idx,label in enumerate(np.unique(data['group']))}
-print(group)
-gender = {label:float(idx) for idx,label in enumerate(np.unique(data['sex']))}
-print(gender)
+from funtionsHarmonize import select
+from funtionsHarmonize import renameDatabases
+from funtionsHarmonize import sumNegatives
 
 
-data.loc[:,'group'] = data.loc[:,'group'].map(group)
-data.loc[:,'sex'] = data.loc[:,'sex'].map(gender)
-data = data[data['group'] == 0.0]
-database = data['database']
-data.loc[:,'database'] = data.loc[:,'database'].map(databases) 
+m = ['power','sl','cohfreq','entropy','crossfreq'] # Pongo las que voy a eliminar
+b = ['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma']  # Pongo las que voy a eliminar
+for allm in m:  
+    for allb in b:  
+        data = pd.read_feather(r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes\Data_complete_roi.feather')
+        data,covars = mapsDrop(data)
+        title,data = select(data,allm,OneBand=allb,WithoutBand=None)
+        ######## eeg_harmonization ##########
+        data_eeg = data.reset_index(drop=True) 
+        Biomarcadores_eeg,Duque_eeg,SRM_eeg,CHBMP_eeg = renameDatabases(data_eeg)
+        Biomarcadores_eeg.drop(['database'],axis=1,inplace=True)
+        Duque_eeg.drop(['database'],axis=1,inplace=True)
+        SRM_eeg.drop(['database'],axis=1,inplace=True)
+        CHBMP_eeg.drop(['database'],axis=1,inplace=True)
+        npp = sumNegatives(Biomarcadores_eeg,Duque_eeg,SRM_eeg,CHBMP_eeg)
 
-covars = {'SITE':data['database'].to_numpy(),
-          'gender':data['sex'].to_numpy(),
-          'age':data['age'].to_numpy()}
+        ######## neuroHarmonize ###########
+        database_col = np.array(data['database'])
+        data.drop(['database'],axis=1,inplace=True)
+        columnas = data.columns
+        covars = pd.DataFrame(covars)  
+        my_data = np.array(data)
+        negativeTest(my_data)
+        # run harmonization and store the adjusted data
+        my_model, my_data_adj = harmonizationLearn(my_data, covars)
+        print(my_data_adj)
+        nh=negativeTest(my_data_adj)
+        datos_windex=data.reset_index()    
+        new_data = pd.DataFrame(data=my_data_adj,columns=columnas)
+        new_data['database']=database_col
+        Biomarcadores,Duque,SRM,CHBMP = renameDatabases(new_data)
 
-
-
-data.drop(['participant_id','visit','condition','group','sex','age'],axis=1,inplace=True)
-data.drop(['MM_total','FAS_F','FAS_S','FAS_A','education'],axis=1,inplace=True)
-
-
-####
-m = ['sl','cohfreq','entropy','crossfreq']
-b = ['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma']
-bp = ['Delta','Theta','Alpha-1','Alpha-2','Gamma']
-bm = ['Mdelta','Mtheta','Malpha-1','Malpha-2','Mbeta1','Mbeta2','Mbeta3','Mgamma']
-roi = ['F','C','T','PO']
-data = delcol(data,m,b,bm,roi)
-data = delcol(data,['power'],bp,bm,roi)
-####
-
-#database_col = data['database'].reset_index(inplace=True)
-database_col = np.array(data['database'])
-data.drop(['database'],axis=1,inplace=True)
-columnas = data.columns
-
-col = ['SITE','gender','age','participant_id','visit','condition','group','MM_total','FAS_F','FAS_S','FAS_A','education',]
-
-covars = pd.DataFrame(covars)  
-
-my_data = np.array(data)
-negativeTest(my_data)
-# run harmonization and store the adjusted data
-my_model, my_data_adj = harmonizationLearn(my_data, covars)
-#data_combat = neuroCombat(dat=data['power_F_Delta'].to_numpy(),
-#    covars=covars,
-#    batch_col='SITE',
-#    categorical_cols=col)["data"]
-
-print(my_data_adj)
-negativeTest(my_data_adj)
-datos_windex=data.reset_index()    
-#new_data=pd.concat([datos_windex.loc[:,col],pd.DataFrame(data=my_data_adj,columns=columnas)],axis=1)
-new_data = pd.DataFrame(data=my_data_adj,columns=columnas)
-new_data['database']=database_col
-
-Biomarcadores = new_data[new_data['database'] == 0.0]
-Duque = new_data[new_data['database'] == 2.0]
-SRM = new_data[new_data['database'] == 3.0]
-CHBMP = new_data[new_data['database'] == 1.0]
-
-sns.kdeplot(Biomarcadores['power_F_Beta1'], color='black', label='Biomarcadores')
-sns.kdeplot(Duque['power_F_Beta1'], color='g', label='Duque')
-sns.kdeplot(SRM['power_F_Beta1'], color='r', label='SRM')
-sns.kdeplot(CHBMP['power_F_Beta1'], color='b', label='CHBMP')
-plt.title(+' - neuroHarmonize')
-plt.legend()
-plt.show()
+        for band in columnas:
+            sns.kdeplot(Biomarcadores_eeg[band], color='darkcyan', label='Biomarcadores')
+            sns.kdeplot(Duque_eeg[band], color='#708090', label='Duque')
+            sns.kdeplot(SRM_eeg[band], color='lightgreen', label='SRM')
+            sns.kdeplot(CHBMP_eeg[band], color='mediumblue', label='CHBMP')
+            sns.kdeplot(Biomarcadores[band], color='darkcyan', label='Biomarcadores', linestyle='--')
+            sns.kdeplot(Duque[band], color='#708090', label='Duque', linestyle='--')
+            sns.kdeplot(SRM[band], color='lightgreen', label='SRM', linestyle='--')
+            sns.kdeplot(CHBMP[band], color='mediumblue', label='CHBMP', linestyle='--')
+            plt.title(f'# negatives - sovaharmony(-): {npp} and neuroHarmonize(--): {nh} ')
+            plt.suptitle(title)
+            plt.legend()
+            #plt.show()
+            if nh==0: 
+                plt.savefig(r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Graficos_Harmonize\\SinNegativos\{name}_{title}_density.png'.format(name=band,title=title))
+                plt.close()
+            elif nh!=0:
+                plt.savefig(r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Graficos_Harmonize\ConNegativos\{name}_{title}_density.png'.format(name=band,title=title))
+                plt.close()

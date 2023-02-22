@@ -209,11 +209,11 @@ def joinimages(paths):
     new_im.save(paths[1])
     print('Done!')
 
-path=r'D:\XIMENA\BIDS\Estudiantes2021\derivatives' #Cambia dependieron de quien lo corra
+path=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes\Long' #Cambia dependieron de quien lo corra
 
 #data loading
-data_p_roi=pd.read_feather(r'{path}\Long_format\data_long_power_roi.feather'.format(path=path))
-data_p_com=pd.read_feather(r'{path}\Long_format\data_long_power_components.feather'.format(path=path))
+data_p_roi=pd.read_feather(r'{path}\data_long_power_roi_without_oitliers.feather'.format(path=path))
+data_p_com=pd.read_feather(r'{path}\data_long_power_components_without_oitliers.feather'.format(path=path))
 # data_sl_roi=pd.read_feather(r'{path}\data_long_sl_roi.feather'.format(path=path))
 # data_sl_com=pd.read_feather(r'{path}\data_long_sl_components.feather'.format(path=path))
 # data_c_roi=pd.read_feather(r'{path}\data_long_coherence_roi.feather'.format(path=path))
@@ -244,9 +244,9 @@ for metric in datos_roi.keys():
         d_banda_com=d_com[d_com['Band']==band]
         if metric!='Cross Frequency':  
             print(str(band)+' '+str(metric)) 
-            #table_roi,save_roi=stats_pair(d_banda_roi,metric,'ROI',path,band,'ROI')
+            table_roi,save_roi=stats_pair(d_banda_roi,metric,'ROI',path,band,'ROI')
             check_roi=create_check(save_roi,'ROI',band,metric,'different',None)
-            #table_com,save_com=stats_pair(d_banda_com,metric,'Component',path,band,'IC') 
+            table_com,save_com=stats_pair(d_banda_com,metric,'Component',path,band,'IC') 
             check_com=create_check(save_com,'Component',band,metric,'different',None)
             path_roi=graphics(d_banda_roi,metric,path,band,'ROI',num_columns=2,save=True,plot=False)
             path_com=graphics(d_banda_com,metric,path,band,'IC',num_columns=4,save=True,plot=False)
@@ -291,7 +291,7 @@ for metric in datos_roi.keys():
 print('table lista')
 matrix_com['Compared groups']=matrix_com['A']+'-'+matrix_com['B']
 matrix_roi['Compared groups']=matrix_roi['A']+'-'+matrix_roi['B']
-filename = r"{path}\check_sin_cv.xlsx".format(path=path)
+filename = r"{path}\se_1.xlsx".format(path=path)
 writer = pd.ExcelWriter(filename)
 matrix_com.to_excel(writer ,sheet_name='Component')
 matrix_roi.to_excel(writer ,sheet_name='ROI')

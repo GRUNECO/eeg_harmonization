@@ -12,25 +12,25 @@ import time
 
 THE_DATASETS=[DATA]
 for dataset in THE_DATASETS:
-    # Preprocessing pipeline
-    #start = time.perf_counter()
-    #process=harmonize(dataset,fast_mode=False)
-    #final = time.perf_counter()
-    #print('TIME PREPROCESSING:::::::::::::::::::', final-start)
+    #Preprocessing pipeline
+    start = time.perf_counter()
+    process=harmonize(dataset,fast_mode=False)
+    final = time.perf_counter()
+    print('TIME PREPROCESSING:::::::::::::::::::', final-start)
 
     # Postprocessing pipeline (extraction of features)
-    #start = time.perf_counter()
-    #postprocess=features(dataset)
-    #final = time.perf_counter()
-    #print('TIME POSTPROCESSING:::::::::::::::::::', final-start)
+    start = time.perf_counter()
+    postprocess=features(dataset)
+    final = time.perf_counter()
+    print('TIME POSTPROCESSING:::::::::::::::::::', final-start)
 
     # Preprocessing files 
-    #start = time.perf_counter()
+    start = time.perf_counter()
     get_dataframe_prep(dataset)
     get_dataframe_wica(dataset)
     get_dataframe_reject(dataset)
     
-    path=r'D:\XIMENA\BIDS\Estudiantes2021\derivatives\sovaharmony'
+    path=r'D:\XIMENA\BIDS\Estudiantes\derivatives\sovaharmony'
     metricas=['entropy','cohfreq','power','sl','crossfreq']
     for i in metricas:
         data_IC=get_dataframe_columnsIC(dataset,feature=i)

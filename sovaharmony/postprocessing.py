@@ -63,7 +63,7 @@ def features(THE_DATASET):
                 for sf in [None, spatial_filter]: # Channels and Components
                 #for sf in [spatial_filter]: # Only components
                     #for norm_ in [True,False]: # Only with huber and without huber
-                    for norm_ in [False]: # Only with without huber
+                    for norm_ in [True]: # Only with without huber
                         if sf is not None:
                             sf_label = f'ics[{spatial_filter["name"]}]'
                         else:

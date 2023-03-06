@@ -824,7 +824,6 @@ def Save_PME(pme, Channels = True, Path_Name_File = "",
             raise DoingError('The signal variable can only have 2 or 3 dimensions!!') 
     except:
         return False
-            
                                 
 def Load_PME(Path_Name_File, Name_Bands = ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma']):
     """

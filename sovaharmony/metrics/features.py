@@ -77,7 +77,6 @@ def _get_pme(signal_epoch,bands):
     bands_list = list(bands.keys())
     values = np.empty((len(bands_list),spaces))
     output['metadata']['axes']={'spaces':space_names,'bands':bands_list,'bands':bands_list}
-
     values = Amplitude_Modulation_Analysis(signal,signal_epoch.info['sfreq'],Bands=list(bands.values()))
     output['values'] = values
     return output

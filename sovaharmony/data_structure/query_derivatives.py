@@ -19,7 +19,7 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
     layout = BIDSLayout(data_path,derivatives=True)
     layout.get(scope='derivatives', return_type='file')
     paths= layout.get(extension='.txt',task=task,suffix=feature, return_type='filename')
-    paths = [x for x in paths if f'space-ics[58x25]_norm-False' in x]
+    paths = [x for x in paths if f'space-ics[58x25]_norm-True' in x]
     list_subjects = []
     for i in range(len(paths)):
         data=load_txt(paths[i])
@@ -73,7 +73,7 @@ def get_dataframe_columnsROI(THE_DATASET,feature):
     layout = BIDSLayout(data_path,derivatives=True)
     layout.get(scope='derivatives', return_type='file')
     paths= layout.get(extension='.txt',task=task,suffix=feature, return_type='filename')
-    paths = [x for x in paths if f'space-sensors_norm-False' in x]
+    paths = [x for x in paths if f'space-sensors_norm-True' in x]
     list_subjects = []
     F = ['FP1', 'FPZ', 'FP2', 'AF3', 'AF4', 'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8'] 
     T = ['FT7', 'FC5', 'FC6', 'FT8', 'T7', 'C5', 'C6', 'T8', 'TP7', 'CP5', 'CP6', 'TP8']

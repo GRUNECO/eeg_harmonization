@@ -3,7 +3,8 @@ import img2pdf
 import itertools
 import numpy as np
 
-path = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Resultados_Armonizacion_BD\Graficos_resultados_effect_size_sin_cv'
+path = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados correlacion\SS_ROI'
+#C:\Users\veroh\OneDrive - Universidad de Antioquia\Resultados_Armonizacion_BD\Graficos_resultados_effect_size_sin_cv'
 postprocessing = ['Coherence','Cross Frequency','Entropy','SL']
 space = ['IC','ROI']
 img = []
@@ -18,5 +19,5 @@ for file in os.listdir(path):
 #imagenes_png = [archivo for archivo in os.listdir(path+features+'/'+s) if archivo.endswith(".png")]
 img.append(imagenes_png)
 imagenes=list(itertools.chain(*img))
-with open(r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Resultados_Armonizacion_BD\SE_sin_cv.pdf", "wb") as documento:
+with open(r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados correlacion\SS_ROI.pdf", "wb") as documento:
     documento.write(img2pdf.convert(imagenes))

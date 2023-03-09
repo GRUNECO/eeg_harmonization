@@ -1,6 +1,6 @@
 import numpy as np
 import itertools #Usado para ver las posibles permutaciones
-import mne
+
 
 def Entropia_Permutacion(senal,D):
   """

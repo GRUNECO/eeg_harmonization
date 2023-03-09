@@ -28,8 +28,10 @@ import matplotlib.pyplot as plt
 
 filename=r'E:\PROYECTO_EEG_LAPSIM\FORMATO_EDF\estudiantes_2021\TRLP28~ S1CE_b9bd277d-86d9-40a1-880a-3e334c68c7bb.edf'
 filename2=r'D:\XIMENA\BIDS\Estudiantes2021\sub-28\ses-S1\eeg\sub-28_ses-S1_task-CE_eeg.vhdr'
+filename3=r'D:\XIMENA\BIDS\Estudiantes2021\derivatives\sovaharmony\sub-28\ses-S1\eeg\sub-28_ses-S1_task-CE_desc-reject[CE]_eeg.fif'
 raw = mne.io.read_raw(filename,preload=True )
 raw2= mne.io.read_raw(filename2,preload=True )
+
 
 raw.pick_types(eeg=True, eog=True, stim=True).crop(tmax=60).load_data()
 report = mne.Report(title='Raw example')

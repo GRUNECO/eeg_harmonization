@@ -48,27 +48,29 @@ datacol = pd.concat([dataCTRG2, dataG1])
 data_eeg_dataAll = datacol.reset_index(drop=True) 
 dataAll,covarsAll = covars(datacol)
 title,dataAll = select(dataAll,'All',OneBand=None,WithoutBand=None,Gamma='power',space=space)
-
-
-######## eeg_harmonization ##########
-noGene,Gene = renameModel(dataAll)
-noGene.drop(['database'],axis=1,inplace=True)
-nnoGene=negativeTest(np.array(noGene))
-Gene.drop(['database'],axis=1,inplace=True)
-nGene=negativeTest(np.array(Gene))
-
-######## neuroHarmonize ###########
+#
+#
+######### eeg_harmonization ##########
+#noGene,Gene = renameModel(dataAll)
+#noGene.drop(['database'],axis=1,inplace=True)
+#nnoGene=negativeTest(np.array(noGene))
+#Gene.drop(['database'],axis=1,inplace=True)
+#nGene=negativeTest(np.array(Gene))
+#
+######### neuroHarmonize ###########
 database_database = np.array(dataAll['database'])
-dataAll.drop(['database'],axis=1,inplace=True)
-columnasAll = dataAll.columns
-new_All = pd.DataFrame(data=dataAll,columns=columnasAll)
-new_All['database'] = database_database
-#new_All = return_col(new_All,data)
-new_All = add_Gamma(new_All)
-new = 'Data_complete_'+space+'_sovaharmony_All(SRM_CHBMP_G1_G2)'
-#new_All.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path_feather,name=new))
+#dataAll.drop(['database'],axis=1,inplace=True)
+#columnasAll = dataAll.columns
+#new_All = pd.DataFrame(data=dataAll,columns=columnasAll)
+#new_All['database'] = database_database
+#new_All_G = return_col(new_All,data)
+#new_All_G = add_Gamma(new_All)
+#new = 'Data_complete_'+space+'_sovaharmony_All(SRM_CHBMP_G1_G2)'
+#new_All_G.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path_feather,name=new))
 
 ##
+dataAll.drop(['database'],axis=1,inplace=True)
+columnasAll = dataAll.columns
 covarsAll = pd.DataFrame(covarsAll)  
 my_dataAll = np.array(dataAll)
 nmy_dataAll =negativeTest(my_dataAll)
@@ -82,11 +84,11 @@ new_dataAll = pd.DataFrame(data=my_data_adj_trans,columns=columnasAll)
 new_dataAll['database'] = database_database
 stats_metrics = descrive(dataAll,new_dataAll)
 #df_stats = df_stats.append(stats_metrics,ignore_index = True)
-new_dataAll = return_col(new_dataAll,data)
+new_dataAll = return_col(data,new_dataAll)
 new_dataAll = add_Gamma(new_dataAll)
 new_name = 'Data_complete_'+space+'_neuroHarmonize_All(SRM_CHBMP_G1_G2)'
 new_dataAll.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path_feather,name=new_name))
-noGene_h,Gene_h = renameModel(new_All)
+#noGene_h,Gene_h = renameModel(new_All)
 noGene_ht,Gene_ht = renameModel(new_dataAll)
 
 for band in columnasAll:

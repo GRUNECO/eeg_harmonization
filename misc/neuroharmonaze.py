@@ -32,7 +32,8 @@ row=0
 #Tab
 path_feather = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
 data = pd.read_feather(path_feather+r'Data_complete_roi.feather')
-data,covars = mapsDrop(data,0.0)
+datavo,covars = mapsDrop(data,0.0,'V0')
+datat1,covars = mapsDrop(data,0.0,'t1')
 #title,data = select(data,allm,OneBand=allb,WithoutBand=None)
 title,data = select(data,'All',OneBand=None,WithoutBand=None)
 ######## eeg_harmonization ##########

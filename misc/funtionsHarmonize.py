@@ -1,8 +1,15 @@
 import numpy as np
 import pandas as pd
 
+def covars(data):
+    covars = {'SITE':data['database'].to_numpy(),
+        'gender':data['sex'].to_numpy(),
+        'age':data['age'].to_numpy()}
+    data.drop(['participant_id','visit','condition','group','sex','age'],axis=1,inplace=True)
+    data.drop(['MM_total','FAS_F','FAS_S','FAS_A','education'],axis=1,inplace=True)
+    return data,covars
 
-def mapsDrop(data,filtGroup):
+def mapsDrop(data,filtGroup,visit1,visit2=None):
     databases = {label:float(idx) for idx,label in enumerate(np.unique(data['database']))}
     print(databases)
     group = {label:float(idx) for idx,label in enumerate(np.unique(data['group']))}
@@ -13,14 +20,10 @@ def mapsDrop(data,filtGroup):
     data.loc[:,'group'] = data.loc[:,'group'].map(group)
     data.loc[:,'sex'] = data.loc[:,'sex'].map(gender)
     data = data[data['group'] == filtGroup]
+    data = data[(data['visit'] == visit1) | (data['visit'] == visit2)]
     database = data['database']
     data.loc[:,'database'] = data.loc[:,'database'].map(databases) 
-    covars = {'SITE':data['database'].to_numpy(),
-          'gender':data['sex'].to_numpy(),
-          'age':data['age'].to_numpy()}
-    data.drop(['participant_id','visit','condition','group','sex','age'],axis=1,inplace=True)
-    data.drop(['MM_total','FAS_F','FAS_S','FAS_A','education'],axis=1,inplace=True)
-    return data,covars
+    return data
 
 
 def negativeTest(model):
@@ -53,16 +56,24 @@ def createModel(path,drop,control=None,replace=None):
     return model,data.columns
 
 
-def select(data,metric,OneBand=None,WithoutBand=None):
+def select(data,metric,OneBand=None,WithoutBand=None,Gamma=None,space='roi'):
     m = ['power','sl','cohfreq','entropy','crossfreq'] # Pongo las que voy a eliminar
     b = ['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma']  # Pongo las que voy a eliminar
     Beta = ['Beta1','Beta2','Beta3']
     Alpha = ['Alpha-1','Alpha-2']
-    roi = ['F','C','T','PO']
+    if space == 'roi':
+        roi = ['F','C','T','PO']
+    elif space == 'ic':
+        roi = ['C14','C15','C18','C20','C22','C23','C24','C25'] #ic
     bm = ['Mdelta','Mtheta','Malpha-1','Malpha-2','Mbeta1','Mbeta2','Mbeta3','Mgamma']  # Pongo las que voy a eliminar
     if metric == 'All':
         if OneBand == None and WithoutBand == None:
-            title = f'All_metrics_and_all_bands'
+            if Gamma != None:
+                title = f'All_metrics_and_without_the_{WithoutBand}_band_OnlyPower'
+                data = delcol(data,['power'],['Gamma'],roi,bm)
+                return title, data
+            else:
+                title = f'All_metrics_and_all_bands'
             return title,data
         elif OneBand == 'Beta' and WithoutBand == None:
             title = f'All_metrics_and_only_the_Beta_band'
@@ -136,6 +147,12 @@ def renameDatabases(data):
     SRM = data[data['database'] == 3.0]
     CHBMP = data[data['database'] == 1.0]
     return Biomarcadores,Duque,SRM,CHBMP
+
+def renameModel(data):
+    noGene = data[data['database'] == 0.0]
+    Gene = data[data['database'] == 1.0]
+    return noGene,Gene
+
 def sumNegatives(Biomarcadores,Duque,SRM,CHBMP):
     nb=negativeTest(np.array(Biomarcadores))
     nd=negativeTest(np.array(Duque))
@@ -185,3 +202,72 @@ def to_save_df(new_data,df):
     #df = df.reset_index()
                 
     return df
+
+def add_Gamma(new_All,space='roi'):
+    if space == 'roi':
+        s = ['F','C','T','PO']
+    elif space == 'ic':
+        s = ['C14','C15','C18','C20','C22','C23','C24','C25'] #ic
+    for roi in s:
+        new_All['power_'+roi+'_Gamma']=1-(new_All['power_'+roi+'_Delta']+new_All['power_'+roi+'_Theta']+new_All['power_'+roi+'_Alpha-1']+new_All['power_'+roi+'_Alpha-2']+new_All['power_'+roi+'_Beta1']+new_All['power_'+roi+'_Beta2']+new_All['power_'+roi+'_Beta3'])
+    return new_All
+
+def return_col(data,new_All):
+    cols = ['participant_id','visit','condition','group','sex','age','MM_total','FAS_F','FAS_S','FAS_A','education']
+    participant_id = []
+    visit = []
+    condition = []
+    group = []
+    sex = []
+    age = []
+    MM_total = []
+    FAS_F = []
+    FAS_S = []
+    FAS_A = []
+    education = []
+    for f in range(data.shape[0]):
+        try:
+            id1 = data[data.index == f].index[0]
+            id2 = new_All[new_All.index == f].index[0]
+            if id1 == id2:
+                print(f)
+                for c in cols:
+                    if c == 'participant_id':
+                        participant_id.append(data.iloc[f][c])
+                    elif c == 'visit':
+                        visit.append(data.iloc[f][c])
+                    elif c == 'condition':
+                       condition.append(data.iloc[f][c])
+                    elif c == 'group':
+                       group.append(data.iloc[f][c])
+                    elif c == 'sex':
+                       sex.append(data.iloc[f][c])
+                    elif c == 'age':
+                       age.append(data.iloc[f][c])
+                    elif c == 'MM_total':
+                       MM_total.append(data.iloc[f][c])
+                    elif c == 'FAS_F':
+                       FAS_F.append(data.iloc[f][c])
+                    elif c == 'FAS_S':
+                       FAS_S.append(data.iloc[f][c])
+                    elif c == 'FAS_A':
+                       FAS_A.append(data.iloc[f][c])
+                    elif c == 'education':
+                       education.append(data.iloc[f][c])
+            else:
+                pass
+        except:
+            continue
+    new_All['participant_id'] = np.array(participant_id)
+    new_All['visit'] = np.array(visit)
+    new_All['condition'] = np.array(condition)
+    new_All['group'] = np.array(group)
+    new_All['sex'] = np.array(sex)
+    new_All['age'] = np.array(age)
+    new_All['MM_total'] = np.array(MM_total)
+    new_All['FAS_F'] = np.array(FAS_F)
+    new_All['FAS_S'] = np.array(FAS_S)
+    new_All['FAS_A'] = np.array(FAS_A)
+    new_All['education'] = np.array(education)
+
+    return new_All

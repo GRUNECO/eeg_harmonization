@@ -212,7 +212,24 @@ def add_Gamma(new_All,space='roi'):
         new_All['power_'+roi+'_Gamma']=1-(new_All['power_'+roi+'_Delta']+new_All['power_'+roi+'_Theta']+new_All['power_'+roi+'_Alpha-1']+new_All['power_'+roi+'_Alpha-2']+new_All['power_'+roi+'_Beta1']+new_All['power_'+roi+'_Beta2']+new_All['power_'+roi+'_Beta3'])
     return new_All
 
-def return_col(data,new_All):
+def return_col(data1,data2,fist=True):
+    '''
+    data1: 340 rows , 381 columns  : database [0,1] : group Nan
+    fist: data2: 695 rows , 396 columns  : database {'BIOMARCADORES': 0.0, 'CHBMP': 1.0, 'DUQUE': 2.0, 'SRM': 3.0} : group {'Control': 0.0, 'DCL': 1.0, 'DTA': 2.0, 'G1': 3.0, 'G2': 4.0}
+    data2: 340 rows , 381 columns  : database [0,1] : group []
+    '''
+    if fist == True:
+        databases = {label:float(idx) for idx,label in enumerate(np.unique(data2['database']))}
+        print(databases)
+        group = {label:float(idx) for idx,label in enumerate(np.unique(data2['group']))}
+        print(group)
+        gender = {label:float(idx) for idx,label in enumerate(np.unique(data2['sex']))}
+        print(gender)
+        data2.loc[:,'group'] = data2.loc[:,'group'].map(group)
+        data2.loc[:,'sex'] = data2.loc[:,'sex'].map(gender)
+        data2.loc[:,'database'] = data2.loc[:,'database'].map(databases) 
+    else:
+        pass
     cols = ['participant_id','visit','condition','group','sex','age','MM_total','FAS_F','FAS_S','FAS_A','education']
     participant_id = []
     visit = []
@@ -225,49 +242,71 @@ def return_col(data,new_All):
     FAS_S = []
     FAS_A = []
     education = []
-    for f in range(data.shape[0]):
+    cont=1
+    for f in range(data2.shape[0]):
         try:
-            id1 = data[data.index == f].index[0]
-            id2 = new_All[new_All.index == f].index[0]
+            id1 = data1[data1.index == f].index[0]
+            id2 = data2[data2.index == f].index[0]
             if id1 == id2:
-                print(f)
                 for c in cols:
                     if c == 'participant_id':
-                        participant_id.append(data.iloc[f][c])
+                        participant_id.append(data2.iloc[f][c])
                     elif c == 'visit':
-                        visit.append(data.iloc[f][c])
+                        visit.append(data2.iloc[f][c])
                     elif c == 'condition':
-                       condition.append(data.iloc[f][c])
+                       condition.append(data2.iloc[f][c])
                     elif c == 'group':
-                       group.append(data.iloc[f][c])
+                       group.append(data2.iloc[f][c])
                     elif c == 'sex':
-                       sex.append(data.iloc[f][c])
+                       sex.append(data2.iloc[f][c])
                     elif c == 'age':
-                       age.append(data.iloc[f][c])
+                       age.append(data2.iloc[f][c])
                     elif c == 'MM_total':
-                       MM_total.append(data.iloc[f][c])
+                       MM_total.append(data2.iloc[f][c])
                     elif c == 'FAS_F':
-                       FAS_F.append(data.iloc[f][c])
+                       FAS_F.append(data2.iloc[f][c])
                     elif c == 'FAS_S':
-                       FAS_S.append(data.iloc[f][c])
+                       FAS_S.append(data2.iloc[f][c])
                     elif c == 'FAS_A':
-                       FAS_A.append(data.iloc[f][c])
+                       FAS_A.append(data2.iloc[f][c])
                     elif c == 'education':
-                       education.append(data.iloc[f][c])
+                       education.append(data2.iloc[f][c])
             else:
                 pass
         except:
+            cont += 1
             continue
-    new_All['participant_id'] = np.array(participant_id)
-    new_All['visit'] = np.array(visit)
-    new_All['condition'] = np.array(condition)
-    new_All['group'] = np.array(group)
-    new_All['sex'] = np.array(sex)
-    new_All['age'] = np.array(age)
-    new_All['MM_total'] = np.array(MM_total)
-    new_All['FAS_F'] = np.array(FAS_F)
-    new_All['FAS_S'] = np.array(FAS_S)
-    new_All['FAS_A'] = np.array(FAS_A)
-    new_All['education'] = np.array(education)
+    print(cont)
+    data1['participant_id'] = np.array(participant_id)
+    data1['visit'] = np.array(visit)
+    data1['condition'] = np.array(condition)
+    data1['group'] = np.array(group)
+    data1['sex'] = np.array(sex)
+    data1['age'] = np.array(age)
+    data1['MM_total'] = np.array(MM_total)
+    data1['FAS_F'] = np.array(FAS_F)
+    data1['FAS_S'] = np.array(FAS_S)
+    data1['FAS_A'] = np.array(FAS_A)
+    data1['education'] = np.array(education)
+    data1 = data1.reset_index(drop=True) 
+    for l in range(len(data1['group'])):
+        if data1['group'][l] == 0.0:
+            data1['group'][l] = 'Control'
+    for l in range(len(data1['group'])):
+        if data1['group'][l] == 4.0:
+            data1['group'][l] = 'Control'
+    for l in range(len(data1['group'])):
+        if data1['group'][l] == 1.0:
+            data1['group'][l] = 'G1'
+    for l in range(len(data1['group'])):
+        if data1['group'][l] == 3.0:
+            data1['group'][l] = 'G1'
+    for l in range(len(data1['database'])):
+        if data1['database'][l] == 0.0:
+            data1['database'][l] = 'CHBMP+SRM+BIOMARCADORES'
+    for l in range(len(data1['database'])):
+        if data1['database'][l] == 1.0:
+            data1['database'][l] = 'BIOMARCADORES'
 
-    return new_All
+
+    return data1

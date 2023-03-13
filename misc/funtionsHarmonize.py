@@ -9,19 +9,22 @@ def covars(data):
     data.drop(['MM_total','FAS_F','FAS_S','FAS_A','education'],axis=1,inplace=True)
     return data,covars
 
-def mapsDrop(data,filtGroup,visit1,visit2=None):
+def labels(data):
     databases = {label:float(idx) for idx,label in enumerate(np.unique(data['database']))}
     print(databases)
     group = {label:float(idx) for idx,label in enumerate(np.unique(data['group']))}
     print(group)
     gender = {label:float(idx) for idx,label in enumerate(np.unique(data['sex']))}
     print(gender)
+    return databases,group,gender
+
+def mapsDrop(data,filtGroup,visit1,visit2=None):
+    databases,group,gender = labels(data)
 
     data.loc[:,'group'] = data.loc[:,'group'].map(group)
     data.loc[:,'sex'] = data.loc[:,'sex'].map(gender)
     data = data[data['group'] == filtGroup]
     data = data[(data['visit'] == visit1) | (data['visit'] == visit2)]
-    database = data['database']
     data.loc[:,'database'] = data.loc[:,'database'].map(databases) 
     return data
 
@@ -215,8 +218,8 @@ def add_Gamma(new_All,space='roi'):
 def return_col(data1,data2,fist=True):
     '''
     data1: 340 rows , 381 columns  : database [0,1] : group Nan
-    fist: data2: 695 rows , 396 columns  : database {'BIOMARCADORES': 0.0, 'CHBMP': 1.0, 'DUQUE': 2.0, 'SRM': 3.0} : group {'Control': 0.0, 'DCL': 1.0, 'DTA': 2.0, 'G1': 3.0, 'G2': 4.0}
-    data2: 340 rows , 381 columns  : database [0,1] : group []
+    if fist == True: data2: data2: 695 rows , 396 columns  : database {'BIOMARCADORES': 0.0, 'CHBMP': 1.0, 'DUQUE': 2.0, 'SRM': 3.0} : group {'Control': 0.0, 'DCL': 1.0, 'DTA': 2.0, 'G1': 3.0, 'G2': 4.0}
+    data2: 340 rows , 381 columns  : database [0,1] : group ['Control', 'G1']
     '''
     if fist == True:
         databases = {label:float(idx) for idx,label in enumerate(np.unique(data2['database']))}

@@ -17,7 +17,7 @@ from funtionsHarmonize import return_col
 
 #m = ['power'] 
 #b = ['Gamma']
-space='roi'
+space='ic'
 m = ['power','sl','cohfreq','entropy','crossfreq'] 
 b = ['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma'] 
 path = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Graficos_Harmonize'

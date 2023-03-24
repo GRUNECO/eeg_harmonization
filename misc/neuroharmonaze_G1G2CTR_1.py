@@ -1,3 +1,8 @@
+'''
+Componentes de interés
+    C14, C15, C18, C20, C22, C23, C24, C25 
+'''
+#Juntar y luego armonizar
 from neuroHarmonize import harmonizationLearn
 import pandas as pd
 import numpy as np
@@ -13,11 +18,13 @@ from funtionsHarmonize import renameModel
 from funtionsHarmonize import covars
 from funtionsHarmonize import add_Gamma
 from funtionsHarmonize import return_col
+from funtionsHarmonize import extract_components_interes
+from funtionsHarmonize import rename_cols
 
 
 #m = ['power'] 
 #b = ['Gamma']
-space='roi'
+space='ic'
 m = ['power','sl','cohfreq','entropy','crossfreq'] 
 b = ['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma'] 
 path = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Graficos_Harmonize'
@@ -50,6 +57,7 @@ dataAll,covarsAll = covars(datacol)
 title,dataAll = select(dataAll,'All',OneBand=None,WithoutBand=None,Gamma='power',space=space)
 
 
+
 ######### eeg_harmonization ##########
 noGene,Gene = renameModel(dataAll)
 noGene.drop(['database'],axis=1,inplace=True)
@@ -64,53 +72,57 @@ columnasAll = dataAll.columns
 new_All = pd.DataFrame(data=dataAll,columns=columnasAll)
 new_All['database'] = database_database
 new_All_G = return_col(new_All,data,fist=True)
-new_All_G = add_Gamma(new_All_G)
-new = 'Data_complete_'+space+'_sovaharmony_All(SRM_CHBMP_G1_G2)'
-new_All_G.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path_feather,name=new))
-new_All_G = new_All_G.reset_index(drop=True) 
-
-##
-covarsAll = pd.DataFrame(covarsAll)  
-try:
-    dataAll.drop(['database'],axis=1,inplace=True)
-except:
-    pass
-my_dataAll = np.array(dataAll)
-nmy_dataAll =negativeTest(my_dataAll)
-data_transformtdataAll = np.log(0.001+my_dataAll)
-# run harmonization and store the adjusted data
-my_modeldataAll, my_data_adjdataAll = harmonizationLearn(data_transformtdataAll, covarsAll,smooth_terms=['gender'])
-my_data_adj_trans = np.exp(my_data_adjdataAll)-0.0009 #back-transform
-nmy_data_adjdataAll=negativeTest(my_data_adj_trans)
-datos_windex=dataAll.reset_index()    
-new_dataAll = pd.DataFrame(data=my_data_adj_trans,columns=columnasAll)
-new_dataAll['database'] = database_database
-stats_metrics = descrive(dataAll,new_dataAll)
-#df_stats = df_stats.append(stats_metrics,ignore_index = True)
-new_dataAll = return_col(new_dataAll,new_All_G,fist=False)
-new_dataAll = add_Gamma(new_dataAll)
-new_name = 'Data_complete_'+space+'_neuroHarmonize_All(SRM_CHBMP_G1_G2)'
-new_dataAll.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path_feather,name=new_name))
-#noGene_h,Gene_h = renameModel(new_All)
-noGene_ht,Gene_ht = renameModel(new_dataAll)
-
-for band in columnasAll:
-    sns.kdeplot(noGene[band], color='darkcyan', label='no Gene')
-    sns.kdeplot(Gene[band], color='#708090', label='Gene')
-    sns.kdeplot(noGene_ht[band], color='darkcyan', label='no Gene', linestyle='--')
-    sns.kdeplot(Gene_ht[band], color='#708090', label='Gene', linestyle='--')
-    plt.title(f'# negatives - sovaharmony(-): {nnoGene,nGene} and neuroHarmonize(--): {nmy_dataAll,nmy_data_adjdataAll}')
-    plt.suptitle(title)
-    plt.legend()
-    plt.show()
-    #plt.savefig(r'{path}\TransformadosG1G2\{name}_{title}_G1G2density.png'.format(path=path,name=band,title=title))
-    plt.close()
-#Tab
-#df_stats.to_excel(writer, startrow=row)
-#df_stats_trans.to_excel(writer_trans, startrow=row)
-row+=5
-writer.save()
-#writer_trans.save()
-## Tab
-writer.close()
-#writer_trans.close()    
+new_All_G = add_Gamma(new_All_G,space)
+new = 'Data_complete_'+space+'_sovaharmony_'+allm
+#new_All_G.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path_feather,name=new))
+#new_All_G = new_All_G.reset_index(drop=True) 
+#
+###
+#covarsAll = pd.DataFrame(covarsAll)  
+#dataAll.drop(['database'],axis=1,inplace=True)
+#if space == 'ic':
+#    components=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25' ]
+#    dataAll=extract_components_interes(dataAll,components)
+#else:
+#    pass
+#my_dataAll = np.array(dataAll)
+#nmy_dataAll =negativeTest(my_dataAll)
+#data_transformtdataAll = np.log(0.001+my_dataAll)
+## run harmonization and store the adjusted data
+#my_modeldataAll, my_data_adjdataAll = harmonizationLearn(data_transformtdataAll, covarsAll,smooth_terms=['gender'])
+##my_modeldataAll, my_data_adjdataAll = harmonizationLearn(my_dataAll, covarsAll,smooth_terms=['gender'])
+#my_data_adj_trans = np.exp(my_data_adjdataAll)-0.0009 #back-transform
+#nmy_data_adjdataAll=negativeTest(my_data_adj_trans)
+#datos_windex=dataAll.reset_index()    
+#new_dataAll = pd.DataFrame(data=my_data_adj_trans,columns=columnasAll)
+#new_dataAll['database'] = database_database
+#stats_metrics = descrive(dataAll,new_dataAll)
+##df_stats = df_stats.append(stats_metrics,ignore_index = True)
+#new_dataAll = return_col(new_dataAll,new_All_G,fist=False)
+#new_dataAll = rename_cols(new_dataAll)
+#new_dataAll = add_Gamma(new_dataAll)
+#new_name = 'Data_complete_'+space+'_neuroHarmonize_All(SRM_CHBMP_G1_G2)'
+#new_dataAll.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path_feather,name=new_name))
+##noGene_h,Gene_h = renameModel(new_All)
+#noGene_ht,Gene_ht = renameModel(new_dataAll)
+#
+#for band in columnasAll:
+#    sns.kdeplot(noGene[band], color='darkcyan', label='no Gene')
+#    sns.kdeplot(Gene[band], color='#708090', label='Gene')
+#    sns.kdeplot(noGene_ht[band], color='darkcyan', label='no Gene', linestyle='--')
+#    sns.kdeplot(Gene_ht[band], color='#708090', label='Gene', linestyle='--')
+#    plt.title(f'# negatives - sovaharmony(-): {nnoGene,nGene} and neuroHarmonize(--): {nmy_dataAll,nmy_data_adjdataAll}')
+#    plt.suptitle(title)
+#    plt.legend()
+#    plt.show()
+#    #plt.savefig(r'{path}\TransformadosG1G2\{name}_{title}_G1G2density.png'.format(path=path,name=band,title=title))
+#    plt.close()
+##Tab
+##df_stats.to_excel(writer, startrow=row)
+##df_stats_trans.to_excel(writer_trans, startrow=row)
+#row+=5
+#writer.save()
+##writer_trans.save()
+### Tab
+#writer.close()
+##writer_trans.close()    

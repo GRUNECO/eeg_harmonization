@@ -21,6 +21,7 @@ def labels(data):
     return databases,group,gender
 
 def mapsDrop(data,filtGroup=None,visit1=None,visit2=None):
+    #filter_dataset=filter_band[filter_band.Components.isin(components)]
     databases,group,gender = labels(data)
 
     data.loc[:,'group'] = data.loc[:,'group'].map(group)
@@ -315,23 +316,24 @@ def return_col(data1,data2,fist=True):
     return data1
 
 def rename_cols(data1,namebase1,namebase2,namegroup1,namegroup2):
+    #rename_cols(data_eeg_dataAll,'CHBMP+SRM+BIOMARCADORES','BIOMARCADORES','Control','G1')
     for l in range(len(data1['group'])):
-        if data1['group'][l] == 0.0:
+        if data1['group'][l] == 0.0: #Controles
             data1['group'][l] = namegroup1
     for l in range(len(data1['group'])):
         if data1['group'][l] == 4.0:
             data1['group'][l] = namegroup1
     for l in range(len(data1['group'])):
-        if data1['group'][l] == 1.0:
+        if data1['group'][l] == 1.0: #Portadores
             data1['group'][l] = namegroup2
     for l in range(len(data1['group'])):
-        if data1['group'][l] == 3.0:
+        if data1['group'][l] == 3.0: 
             data1['group'][l] = namegroup2
     for l in range(len(data1['database'])):
-        if data1['database'][l] == 0.0:
+        if data1['database'][l] == 0.0: #Biomarcadores+SRM+CHBMP
             data1['database'][l] = namebase1
     for l in range(len(data1['database'])):
-        if data1['database'][l] == 1.0:
+        if data1['database'][l] == 1.0: #Biomarcadores
             data1['database'][l] = namebase2
     return data1
 
@@ -423,9 +425,9 @@ def verificarVIF(x_pred):
 
     return [feat for feat in VIF_orig if feat not in VIF_less_th_5]
 
-def save_complete(new_name,data,path_feather):
+def save_complete(new_name,data,path_feather,database1,database2,group1,group2):
     data_eeg_dataAll = data.reset_index(drop=True) 
-    data_eeg_dataAll = rename_cols(data_eeg_dataAll,'BIOMARCADORES','BIOMARCADORES','G2','G1')
+    data_eeg_dataAll = rename_cols(data_eeg_dataAll,database1,database2,group1,group2)
     data_eeg_dataAll.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path_feather,name=new_name))
 
 def G1G2(new_dataAll,dd=None,database_database=None,database=False):
@@ -435,9 +437,59 @@ def G1G2(new_dataAll,dd=None,database_database=None,database=False):
     else:
         data['database'] = database_database
         data = return_col(data,dd,fist=False)
-    dataG1 = mapsDrop(data,3.0,'V0') #Portadores
-    dataG1['database']=dataG1.database.replace([0.0,2.0],1.0)
-    dataG2 = mapsDrop(data,4.0,'V0') #No portadores
-    dataG2['database']=dataG2.database.replace([0.0,2.0],0.0)
+    dataG1 = mapsDrop(data,1.0,'V0') #Portadores
+    dataG2 = mapsDrop(data,2.0,'V0') #No portadores
     datacol = pd.concat([dataG2, dataG1])
+    datacol['group'] = datacol.group.replace(2,0)
+    datacol['database'] = datacol.database.replace(2,1)
+    return datacol
+
+def organizarDataFrame(new_dataAll,database_database,allm,dd,space):
+    new_dataAll['database'] = database_database
+    new_dataAll = return_col(new_dataAll,dd,fist=False)
+    if allm == 'power':
+        new_dataAll = add_Gamma(new_dataAll,space)
+    new_dataAll = filter_visit_group(new_dataAll)
+    return new_dataAll
+
+    
+
+def filter_visit_group(new_dataAll):
+    dataCTR = mapsDrop(new_dataAll,0.0,'V0','t1')
+    dataCTR = dataCTR[(dataCTR['database'] == 3.0) | (dataCTR['database'] == 1.0)]
+    dataCTR['database']=dataCTR.database.replace([1.0,3.0],0.0) #Biomarcadores+SRM+CHBMP
+    dataG1 = mapsDrop(new_dataAll,1.0,'V0') #Portadores
+    dataG1['database']=dataG1.database.replace([0.0,2.0],1.0) #Biomarcadores
+    dataG2 = mapsDrop(new_dataAll,2.0,'V0') #No portadores
+    dataG2['database']=dataG2.database.replace([0.0,2.0],0.0) #Biomarcadores+SRM+CHBMP
+    dataG2['group']=dataG2.database.replace([2.0],0.0) #Controles
+    dataCTRG2 = pd.concat([dataCTR, dataG2])
+    datacol = pd.concat([dataCTRG2, dataG1])
+    return datacol
+
+def filter_visit_DTA(new_dataAll):
+    #mapsDrop(data,filtGroup=None,visit1=None,visit2=None)
+    dataCTR = mapsDrop(new_dataAll,0.0,'V0','t1')
+    dataCTR = dataCTR[(dataCTR['database'] == 3.0) | (dataCTR['database'] == 1.0)]
+    dataCTR['database']=dataCTR.database.replace([1.0,3.0],0.0) #Biomarcadores+SRM+CHBMP
+    dataDTA = mapsDrop(new_dataAll,1.0,'V0') #Portadores
+    dataDTA['database']=dataDTA.database.replace([0.0,2.0],1.0) #Biomarcadores
+    dataG2 = mapsDrop(new_dataAll,2.0,'V0') #No portadores
+    dataG2['database']=dataG2.database.replace([0.0,2.0],0.0) #Biomarcadores+SRM+CHBMP
+    dataG2['group']=dataG2.database.replace([2.0],0.0) #Controles
+    dataCTRG2 = pd.concat([dataCTR, dataG2])
+    datacol = pd.concat([dataCTRG2, dataDTA])
+    return datacol
+
+def filter_visit_DCL(new_dataAll):
+    dataCTR = mapsDrop(new_dataAll,0.0,'V0','t1')
+    dataCTR = dataCTR[(dataCTR['database'] == 3.0) | (dataCTR['database'] == 1.0)]
+    dataCTR['database']=dataCTR.database.replace([1.0,3.0],0.0) #Biomarcadores+SRM+CHBMP
+    dataG1 = mapsDrop(new_dataAll,1.0,'V0') #Portadores
+    dataG1['database']=dataG1.database.replace([0.0,2.0],1.0) #Biomarcadores
+    dataG2 = mapsDrop(new_dataAll,2.0,'V0') #No portadores
+    dataG2['database']=dataG2.database.replace([0.0,2.0],0.0) #Biomarcadores+SRM+CHBMP
+    dataG2['group']=dataG2.database.replace([2.0],0.0) #Controles
+    dataCTRG2 = pd.concat([dataCTR, dataG2])
+    datacol = pd.concat([dataCTRG2, dataG1])
     return datacol

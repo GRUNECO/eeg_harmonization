@@ -1,5 +1,7 @@
 import json
 import ast
+import os
+import errno
 from bids import BIDSLayout
 import numpy as np
 import re
@@ -21,6 +23,7 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
     paths= layout.get(extension='.txt',task=task,suffix=feature, return_type='filename')
     paths = [x for x in paths if f'space-ics[58x25]_norm-True' in x]
     list_subjects = []
+    print(paths)
     for i in range(len(paths)):
         data=load_txt(paths[i])
         # if 'spaces' in data['metadata']['axes'].keys():
@@ -58,7 +61,13 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
         list_subjects.append(datos_1_sujeto)
     df = pd.DataFrame(list_subjects)
     df['database']=[name]*len(list_subjects)
-    df.to_feather(r'{input_path}\derivatives\data_{task}_{feature}_columns_components_{name}.feather'.format(name=name,input_path=input_path,task=task,feature=feature))
+    try:
+        path="{input_path}\derivatives\data_columns\IC".format(input_path=input_path).replace('\\','/')
+        os.makedirs(path)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    df.to_feather(r'{path}\data_{task}_{feature}_columns_components_{name}.feather'.format(name=name,path=path,task=task,feature=feature))
     print('Done!')
     return df 
 
@@ -133,6 +142,12 @@ def get_dataframe_columnsROI(THE_DATASET,feature):
         list_subjects.append(datos_1_sujeto)
     df = pd.DataFrame(list_subjects)
     df['database']=[name]*len(list_subjects)
-    df.to_feather(r'{input_path}\derivatives\data_{task}_{feature}_columns_ROI_{name}.feather'.format(name=name,input_path=input_path,task=task,feature=feature))
+    try:
+        path="{input_path}\derivatives\data_columns\ROI".format(input_path=input_path).replace('\\','/')
+        os.makedirs(path)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    df.to_feather(r'{path}\data_{task}_{feature}_columns_ROI_{name}.feather'.format(name=name,path=path,task=task,feature=feature))
     print('Done!')
     return df 

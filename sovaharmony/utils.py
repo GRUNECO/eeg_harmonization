@@ -2,7 +2,6 @@
 @autor: Valeria Cadavid Castro, Universidad de Antioquia, 
 @autor: Verónica Henao Isaza, Universidad de Antioquia, 
 @autor: Luisa María Zapata Saldarriaga, Universidad de Antioquia, luisazapatasaldarriaga@gmail.com
-@autor: Yorguin José Mantilla Ramos, Universidad de Antioquia, yjmantilla@gmail.com
 
 """
 
@@ -11,6 +10,10 @@ import json
 import pandas as pd
 import warnings
 import collections
+import seaborn as sns
+import matplotlib.pyplot as plt
+import os
+import errno
 
 def load_txt(file):
   '''
@@ -88,7 +91,13 @@ def dataframe_long_roi(data,type,columns,name,path):
         d_sep= d_sep.rename(columns={i:type})
         data_new=data_new.append(d_sep,ignore_index = True) #Uno el dataframe 
     data_new['ROI']=data_new['ROI'].replace({'T_':'T'}, regex=True)#Quito el _ y lo reemplazo con '' 
-    data_new.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path,name=name))
+    try:
+        path="{input_path}\data_long\ROI".format(input_path=path).replace('\\','/')
+        os.makedirs(path)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    data_new.reset_index(drop=True).to_feather('{path}\data_long_{task}_{metric}_{name}_roi.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 
 def dataframe_long_components(data,type,columns,name,path):
@@ -117,7 +126,13 @@ def dataframe_long_components(data,type,columns,name,path):
         d_sep['Component']=[componente]*len(d_sep)
         d_sep= d_sep.rename(columns={i:type})
         data_new=data_new.append(d_sep,ignore_index = True) #Uno el dataframe 
-    data_new.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path,name=name))
+    try:
+        path="{input_path}\data_long\IC".format(input_path=path).replace('\\','/')
+        os.makedirs(path)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    data_new.reset_index(drop=True).to_feather('{path}\data_{task}_{metric}_long_{name}_components.feather'.format(path=path,name=data_new['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 
 def dataframe_long_cross_roi(data,type,columns,name,path):
@@ -154,7 +169,13 @@ def dataframe_long_cross_roi(data,type,columns,name,path):
         data_new=data_new.append(d_sep,ignore_index = True) #Uno el dataframe 
     data_new['ROI']=data_new['ROI'].replace({'T_':'T'}, regex=True)#Quito el _ y lo reemplazo con '' 
     data_new['Band']=data_new['Band'].replace({'_':''}, regex=True)#Quito el _ y lo reemplazo con ''
-    data_new.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path,name=name))
+    try:
+        path="{input_path}\data_long\ROI".format(input_path=path).replace('\\','/')
+        os.makedirs(path)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    data_new.reset_index(drop=True).to_feather('{path}\data_long_{task}_{metric}_{name}_roi.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 
 def dataframe_long_cross_ic(data,type='Cross Frequency',columns=None,name=None,path=None):
@@ -188,7 +209,13 @@ def dataframe_long_cross_ic(data,type='Cross Frequency',columns=None,name=None,p
         d_sep= d_sep.rename(columns={i:type})
         data_new=data_new.append(d_sep,ignore_index = True) #Uno el dataframe 
     data_new['Band']=data_new['Band'].replace({'_':''}, regex=True)#Quito el _ y lo reemplazo con ''
-    data_new.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path,name=name))
+    try:
+        path="{input_path}\data_long\IC".format(input_path=path).replace('\\','/')
+        os.makedirs(path)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    data_new.reset_index(drop=True).to_feather('{path}\data_long_{task}_{metric}_{name}_ic.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 
 def dataframe_componentes_deseadas(data,columnas):
@@ -442,3 +469,4 @@ columns_entropy_ic=['entropy_C14_Delta', 'entropy_C14_Theta',
 
 
 '''manejo de pandas: https://joserzapata.github.io/courses/python-ciencia-datos/pandas/'''
+

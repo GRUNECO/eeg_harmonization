@@ -43,7 +43,7 @@ for space in s:
         #Tab
         path_feather = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
         data_in = pd.read_feather(path_feather+r'\Data_complete_'+space+'.feather')
-        data = MatchIt_R(data_in)
+        data = MatchIt_R(data_in,'DTA','Control')
         dd = data.copy()
         data = mapsDrop(data)
         dataAll,covarsAll = covars(data)
@@ -77,9 +77,9 @@ for space in s:
         #save sovaharmony
         sovaeeg = dataAll.copy()
 
-        data_sovaeeg = organizarDataFrame(sovaeeg,database_database,allm,dd,space)
+        data_sovaeeg = organizarDataFrame(sovaeeg,database_database,allm,dd,space,version=3)
         new_sovaname = 'Data_complete_'+space+'_sovaharmony_DTA_'+allm
-        save_complete(new_sovaname,data_sovaeeg,path_feather,'CHBMP+SRM+BIOMARCADORES','BIOMARCADORES','Control','G1')
+        save_complete(new_sovaname,data_sovaeeg,path_feather,'CHBMP+SRM+BIOMARCADORES','BIOMARCADORES','Control','DTA')
         
  
         #neuroHarmonize
@@ -97,9 +97,9 @@ for space in s:
 
         #save neuroHarmonize
 
-        datacol = organizarDataFrame(new_dataAll,database_database,allm,dd,space) 
+        datacol = organizarDataFrame(new_dataAll,database_database,allm,dd,space,version=3) 
         new_name = 'Data_complete_'+space+'_neuroHarmonize_DTA_'+allm
-        save_complete(new_name,datacol,path_feather,'CHBMP+SRM+BIOMARCADORES','BIOMARCADORES','Control','G1')
+        save_complete(new_name,datacol,path_feather,'CHBMP+SRM+BIOMARCADORES','BIOMARCADORES','Control','DTA')
 
 
         #noGene_h,Gene_h = renameModel(new_All)

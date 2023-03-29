@@ -444,17 +444,22 @@ def G1G2(new_dataAll,dd=None,database_database=None,database=False):
     datacol['database'] = datacol.database.replace(2,1)
     return datacol
 
-def organizarDataFrame(new_dataAll,database_database,allm,dd,space):
+def organizarDataFrame(new_dataAll,database_database,allm,dd,space,version=1):
     new_dataAll['database'] = database_database
     new_dataAll = return_col(new_dataAll,dd,fist=False)
     if allm == 'power':
         new_dataAll = add_Gamma(new_dataAll,space)
-    new_dataAll = filter_visit_group(new_dataAll)
+    if version == 1:
+        new_dataAll = CTRG1(new_dataAll.copy())
+    elif version == 2:
+        new_dataAll = G1G2(new_dataAll.copy(),dd,database_database,database=True)
+    elif version == 3:
+        new_dataAll = CTRx(new_dataAll.copy())
     return new_dataAll
 
     
 
-def filter_visit_group(new_dataAll):
+def CTRG1(new_dataAll):
     dataCTR = mapsDrop(new_dataAll,0.0,'V0','t1')
     dataCTR = dataCTR[(dataCTR['database'] == 3.0) | (dataCTR['database'] == 1.0)]
     dataCTR['database']=dataCTR.database.replace([1.0,3.0],0.0) #Biomarcadores+SRM+CHBMP
@@ -467,29 +472,12 @@ def filter_visit_group(new_dataAll):
     datacol = pd.concat([dataCTRG2, dataG1])
     return datacol
 
-def filter_visit_DTA(new_dataAll):
+def CTRx(new_dataAll):
     #mapsDrop(data,filtGroup=None,visit1=None,visit2=None)
-    dataCTR = mapsDrop(new_dataAll,0.0,'V0','t1')
+    dataCTR = mapsDrop(new_dataAll,0.0,'V0','t1') #CTR
     dataCTR = dataCTR[(dataCTR['database'] == 3.0) | (dataCTR['database'] == 1.0)]
     dataCTR['database']=dataCTR.database.replace([1.0,3.0],0.0) #Biomarcadores+SRM+CHBMP
-    dataDTA = mapsDrop(new_dataAll,1.0,'V0') #Portadores
+    dataDTA = mapsDrop(new_dataAll,1.0,'V0') #DTA
     dataDTA['database']=dataDTA.database.replace([0.0,2.0],1.0) #Biomarcadores
-    dataG2 = mapsDrop(new_dataAll,2.0,'V0') #No portadores
-    dataG2['database']=dataG2.database.replace([0.0,2.0],0.0) #Biomarcadores+SRM+CHBMP
-    dataG2['group']=dataG2.database.replace([2.0],0.0) #Controles
-    dataCTRG2 = pd.concat([dataCTR, dataG2])
-    datacol = pd.concat([dataCTRG2, dataDTA])
-    return datacol
-
-def filter_visit_DCL(new_dataAll):
-    dataCTR = mapsDrop(new_dataAll,0.0,'V0','t1')
-    dataCTR = dataCTR[(dataCTR['database'] == 3.0) | (dataCTR['database'] == 1.0)]
-    dataCTR['database']=dataCTR.database.replace([1.0,3.0],0.0) #Biomarcadores+SRM+CHBMP
-    dataG1 = mapsDrop(new_dataAll,1.0,'V0') #Portadores
-    dataG1['database']=dataG1.database.replace([0.0,2.0],1.0) #Biomarcadores
-    dataG2 = mapsDrop(new_dataAll,2.0,'V0') #No portadores
-    dataG2['database']=dataG2.database.replace([0.0,2.0],0.0) #Biomarcadores+SRM+CHBMP
-    dataG2['group']=dataG2.database.replace([2.0],0.0) #Controles
-    dataCTRG2 = pd.concat([dataCTR, dataG2])
-    datacol = pd.concat([dataCTRG2, dataG1])
+    datacol = pd.concat([dataCTR, dataDTA])
     return datacol

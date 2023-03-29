@@ -43,7 +43,7 @@ for space in s:
         #Tab
         path_feather = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
         data_in = pd.read_feather(path_feather+r'\Data_complete_'+space+'.feather')
-        data = MatchIt_R(data_in)
+        data = MatchIt_R(data_in,'G1','Control')
         dd = data.copy()
         data = mapsDrop(data)
         dataAll,covarsAll = covars(data)

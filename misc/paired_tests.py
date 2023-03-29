@@ -42,10 +42,10 @@ def R_to_pd():
         new_pd = pd.DataFrame(dict(pd_from_r_df.items()), columns=R_data.columns.values)   
         return new_pd
 
-def MatchIt_R(data,G = 'G1'):
+def MatchIt_R(data,group1 = 'G1', group2 = 'Control' ):
     data['treatG1'] = data['group']
-    data['treatG1'] = data.treatG1.replace(G,'Treat') 
-    data['treatG1'] = data.treatG1.replace('G2','Control')
+    data['treatG1'] = data.treatG1.replace(group1,'Treat') 
+    data['treatG1'] = data.treatG1.replace(group2,'Control')
     dataTreat = data[data['treatG1'] == 'Treat']
     dataCTR = data[data['treatG1'] == 'Control']
     data = pd.concat([dataTreat, dataCTR])

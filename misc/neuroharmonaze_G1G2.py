@@ -43,7 +43,7 @@ for space in s:
         #Tab
         path_feather = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
         data_in = pd.read_feather(path_feather+r'\Data_complete_'+space+'.feather')
-        data = MatchIt_R(data_in)
+        data = MatchIt_R(data_in,'G1','G2')
         dd = data.copy()
         data = mapsDrop(data)
         dataAll,covarsAll = covars(data)
@@ -77,7 +77,7 @@ for space in s:
         #save sovaharmony
         sovaeeg = dataAll.copy()
 
-        sovaeegG1G2 =G1G2(sovaeeg,dd,database_database,database=True)
+        sovaeegG1G2 =organizarDataFrame(sovaeeg,dd,database_database,database=True,version=2)
         new_name_G1G2 = 'Data_complete_'+space+'_sovaharmony_G1G2_'+allm
         save_complete(new_name_G1G2,sovaeegG1G2,path_feather,'BIOMARCADORES','DUQUE','G2','G1')
         
@@ -95,7 +95,7 @@ for space in s:
         
 
         #save neuroHarmonize
-        data_eeg_dataAll_G1G2 = G1G2(new_dataAll.copy(),dd,database_database,database=True)
+        data_eeg_dataAll_G1G2 = organizarDataFrame(new_dataAll.copy(),dd,database_database,database=True,version=2)
         new_name_harmonize_G1G2 = 'Data_complete_'+space+'_neuroHarmonize_G1G2_'+allm
         save_complete(new_name_harmonize_G1G2,data_eeg_dataAll_G1G2,path_feather,'BIOMARCADORES','DUQUE','G2','G1')
 

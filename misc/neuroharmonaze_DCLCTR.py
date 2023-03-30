@@ -77,9 +77,9 @@ for space in s:
         #save sovaharmony
         sovaeeg = dataAll.copy()
 
-        data_sovaeeg = organizarDataFrame(sovaeeg,database_database,allm,dd,space,version=3)
+        data_sovaeeg = organizarDataFrame(sovaeeg,database_database,allm,dd,space)
         new_sovaname = 'Data_complete_'+space+'_sovaharmony_DCL_'+allm
-        save_complete(new_sovaname,data_sovaeeg,path_feather,'CHBMP+SRM+BIOMARCADORES','BIOMARCADORES','Control','DCL')
+        save_complete(new_sovaname,data_sovaeeg,dd,path_feather,'Control','DCL')
         
  
         #neuroHarmonize
@@ -97,9 +97,9 @@ for space in s:
 
         #save neuroHarmonize
 
-        datacol = organizarDataFrame(new_dataAll,database_database,allm,dd,space,version=3) 
+        datacol = organizarDataFrame(new_dataAll,database_database,allm,dd,space) 
         new_name = 'Data_complete_'+space+'_neuroHarmonize_DCL_'+allm
-        save_complete(new_name,datacol,path_feather,'CHBMP+SRM+BIOMARCADORES','BIOMARCADORES','Control','Control')
+        save_complete(new_name,datacol,dd,path_feather,'Control','DCL')
 
 
         #noGene_h,Gene_h = renameModel(new_All)

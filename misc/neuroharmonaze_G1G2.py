@@ -15,7 +15,7 @@ from funtionsHarmonize import renameModel
 from funtionsHarmonize import covars
 from funtionsHarmonize import extract_components_interes
 from funtionsHarmonize import rename_cols
-from paired_tests import MatchIt_R
+from paired_tests import MatchIt_G1G2
 from funtionsHarmonize import organizarDataFrame
 from funtionsHarmonize import G1G2
 from funtionsHarmonize import save_complete
@@ -43,7 +43,7 @@ for space in s:
         #Tab
         path_feather = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
         data_in = pd.read_feather(path_feather+r'\Data_complete_'+space+'.feather')
-        data = MatchIt_R(data_in,'G1','G2')
+        data = MatchIt_G1G2(data_in,'G1','G2')
         dd = data.copy()
         data = mapsDrop(data)
         dataAll,covarsAll = covars(data)
@@ -77,9 +77,9 @@ for space in s:
         #save sovaharmony
         sovaeeg = dataAll.copy()
 
-        sovaeegG1G2 =organizarDataFrame(sovaeeg,dd,database_database,database=True,version=2)
+        sovaeegG1G2 =organizarDataFrame(sovaeeg,database_database,allm,dd,space)
         new_name_G1G2 = 'Data_complete_'+space+'_sovaharmony_G1G2_'+allm
-        save_complete(new_name_G1G2,sovaeegG1G2,path_feather,'BIOMARCADORES','DUQUE','G2','G1')
+        save_complete(new_name_G1G2,sovaeegG1G2,dd,path_feather,'G1','G2')
         
         #neuroHarmonize
         my_dataAll = np.array(dataAll)
@@ -95,9 +95,9 @@ for space in s:
         
 
         #save neuroHarmonize
-        data_eeg_dataAll_G1G2 = organizarDataFrame(new_dataAll.copy(),dd,database_database,database=True,version=2)
+        data_eeg_dataAll_G1G2 = organizarDataFrame(new_dataAll.copy(),database_database,allm,dd,space)
         new_name_harmonize_G1G2 = 'Data_complete_'+space+'_neuroHarmonize_G1G2_'+allm
-        save_complete(new_name_harmonize_G1G2,data_eeg_dataAll_G1G2,path_feather,'BIOMARCADORES','DUQUE','G2','G1')
+        save_complete(new_name_harmonize_G1G2,data_eeg_dataAll_G1G2,dd,path_feather,'G1','G2')
 
         #noGene_h,Gene_h = renameModel(new_All)
         #noGene_ht,Gene_ht = renameModel(new_dataAll)

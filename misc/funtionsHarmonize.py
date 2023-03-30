@@ -315,26 +315,39 @@ def return_col(data1,data2,fist=True):
     data1 = data1.reset_index(drop=True) 
     return data1
 
-def rename_cols(data1,namebase1,namebase2,namegroup1,namegroup2):
-    #rename_cols(data_eeg_dataAll,'CHBMP+SRM+BIOMARCADORES','BIOMARCADORES','Control','G1')
+def rename_cols(data1,data2,namegroup1,namegroup2):
     for l in range(len(data1['group'])):
         if data1['group'][l] == 0.0: #Controles
             data1['group'][l] = namegroup1
     for l in range(len(data1['group'])):
-        if data1['group'][l] == 4.0:
-            data1['group'][l] = namegroup1
-    for l in range(len(data1['group'])):
         if data1['group'][l] == 1.0: #Portadores
             data1['group'][l] = namegroup2
-    for l in range(len(data1['group'])):
-        if data1['group'][l] == 3.0: 
-            data1['group'][l] = namegroup2
-    for l in range(len(data1['database'])):
-        if data1['database'][l] == 0.0: #Biomarcadores+SRM+CHBMP
-            data1['database'][l] = namebase1
-    for l in range(len(data1['database'])):
-        if data1['database'][l] == 1.0: #Biomarcadores
-            data1['database'][l] = namebase2
+
+    try:
+        for l in range(len(data1['database'])):
+            if data1['database'][l] == 0.0: 
+                data1['database'][l] = list(data2['database'].unique())[0]
+    except:
+        pass
+    try:
+        for l in range(len(data1['database'])):
+            if data1['database'][l] == 1.0: 
+                data1['database'][l] = list(data2['database'].unique())[1]
+    except:
+        pass
+    try:
+        for l in range(len(data1['database'])):
+            if data1['database'][l] == 2.0: 
+                data1['database'][l] = list(data2['database'].unique())[2]
+    except:
+        pass
+    try:
+        for l in range(len(data1['database'])):
+            if data1['database'][l] == 3.0:
+                data1['database'][l] = list(data2['database'].unique())[3]
+    except:
+        pass    
+
     return data1
 
 def extract_components_interes(data_df, components):
@@ -367,67 +380,9 @@ def graf(columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy
         #plt.savefig(r'{path}\TransformadosG1G2\{name}_{title}_G1G2density.png'.format(path=path,name=band,title=title))
         plt.close()
 
-# Debo importar LinearRegression para el calculo de las Ri
-#https://profesordata.com/2020/08/22/metodos-de-seleccion-de-variables-el-factor-de-inflacion-de-la-varianza/
-'''
-Se dice que existe un grado de multicolinealidad si un conjunto de las características independientes 
-puede ser calculado como combinación lineal del resto.
-Y esto puede ser un problema y es que si se tiene un conjunto de datos que presenta multicolinealidad
-tenemos el riesgo de que en el proceso de entrenamiento del modelo de Aprendizaje Automático Supervisado
-se esté utilizando información «duplicada» y, debido a esta duplicidad en la información, los procesos 
-de entrenamiento no pueden encontrar los parámetros adecuados para la correcta construcción de los 
-modelos predictivos.
-'''
-from sklearn.linear_model import LinearRegression
-
-
-def calculateVIF(var_predictoras_df):
-    var_pred_labels = list(var_predictoras_df.columns)
-    num_var_pred = len(var_pred_labels)
-    
-    lr_model = LinearRegression()
-    
-    result = pd.DataFrame(index = ['VIF'], columns = var_pred_labels)
-    result = result.fillna(0)
-    
-    for ite in range(num_var_pred):
-        x_features = var_pred_labels[:]
-        y_feature = var_pred_labels[ite]
-        x_features.remove(y_feature)
-        
-        x = var_predictoras_df[x_features]
-        y = var_predictoras_df[y_feature]
-        
-        lr_model.fit(var_predictoras_df[x_features], var_predictoras_df[y_feature])
-        
-        result[y_feature] = 1/(1 - lr_model.score(var_predictoras_df[x_features], var_predictoras_df[y_feature]))
-    
-    return result
-
-def selectDataUsingVIF(var_predictoras_df, max_VIF = 5):
-    result = var_predictoras_df.copy(deep = True)
-    
-    VIF = calculateVIF(result)
-    
-    while VIF.values.max() > max_VIF:
-        col_max = np.where(VIF == VIF.values.max())[1][0]
-        features = list(result.columns)
-        features.remove(features[col_max])
-        result = result[features]
-        
-        VIF = calculateVIF(result)
-        
-    return result
-
-def verificarVIF(x_pred):
-    VIF_orig = calculateVIF(x_pred.copy(deep = True)).columns.to_list()
-    VIF_less_th_5 = calculateVIF(selectDataUsingVIF(x_pred)).columns.to_list()
-
-    return [feat for feat in VIF_orig if feat not in VIF_less_th_5]
-
-def save_complete(new_name,data,path_feather,database1,database2,group1,group2):
+def save_complete(new_name,data,dd,path_feather,group1,group2):
     data_eeg_dataAll = data.reset_index(drop=True) 
-    data_eeg_dataAll = rename_cols(data_eeg_dataAll,database1,database2,group1,group2)
+    data_eeg_dataAll = rename_cols(data_eeg_dataAll,dd,group1,group2)
     data_eeg_dataAll.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path_feather,name=new_name))
 
 def G1G2(new_dataAll,dd=None,database_database=None,database=False):
@@ -444,17 +399,11 @@ def G1G2(new_dataAll,dd=None,database_database=None,database=False):
     datacol['database'] = datacol.database.replace(2,1)
     return datacol
 
-def organizarDataFrame(new_dataAll,database_database,allm,dd,space,version=1):
+def organizarDataFrame(new_dataAll,database_database,allm,dd,space):
     new_dataAll['database'] = database_database
     new_dataAll = return_col(new_dataAll,dd,fist=False)
     if allm == 'power':
         new_dataAll = add_Gamma(new_dataAll,space)
-    if version == 1:
-        new_dataAll = CTRG1(new_dataAll.copy())
-    elif version == 2:
-        new_dataAll = G1G2(new_dataAll.copy(),dd,database_database,database=True)
-    elif version == 3:
-        new_dataAll = CTRx(new_dataAll.copy())
     return new_dataAll
 
     
@@ -475,9 +424,9 @@ def CTRG1(new_dataAll):
 def CTRx(new_dataAll):
     #mapsDrop(data,filtGroup=None,visit1=None,visit2=None)
     dataCTR = mapsDrop(new_dataAll,0.0,'V0','t1') #CTR
-    dataCTR = dataCTR[(dataCTR['database'] == 3.0) | (dataCTR['database'] == 1.0)]
-    dataCTR['database']=dataCTR.database.replace([1.0,3.0],0.0) #Biomarcadores+SRM+CHBMP
+    #dataCTR = dataCTR[(dataCTR['database'] == 3.0) | (dataCTR['database'] == 1.0)]
+    #dataCTR['database']=dataCTR.database.replace([1.0,3.0],0.0) #Biomarcadores+SRM+CHBMP
     dataDTA = mapsDrop(new_dataAll,1.0,'V0') #DTA
-    dataDTA['database']=dataDTA.database.replace([0.0,2.0],1.0) #Biomarcadores
+    #dataDTA['database']=dataDTA.database.replace([0.0,2.0],1.0) #Biomarcadores
     datacol = pd.concat([dataCTR, dataDTA])
     return datacol

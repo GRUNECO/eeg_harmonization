@@ -98,7 +98,6 @@ for st in Stage:
                 icc3['Bands']=ban
                 icc3['Components']=comp
                 icc_value=icc_value.append(icc3,ignore_index=True)
-
         icc_value.append(icc_value)
     icc_value.append(icc_value)
 icc_value.to_csv(r'E:\Academico\Universidad\Posgrado\Tesis\Paquetes\eeg_harmonization\sovaharmony\Reproducibilidad\ICC_values_csv\icc_values_Components_G1-G2.csv',sep=';')

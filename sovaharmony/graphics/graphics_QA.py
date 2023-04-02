@@ -1,29 +1,46 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import os 
+import errno
+import numpy as np
+import joypy
 
-def graphics(data,type,path,name_band,id,id_cross=None,num_columns=4,save=True,plot=True):
+#Colors: https://coolors.co/b2abf2-89043d-2fe6de
+
+def graphics(data,type,path,name_band,id,id_cross=None,num_columns=4,save=True,plot=True,kind="box",palette='winter_r',x='group'):
     '''Function to make graphs of the given data '''
-    max=data[type].max()
-    sns.set(rc={'figure.figsize':(15,12)})
+    data_max=data[data['Band']==name_band]
+
+    #fig1, axs1 = joypy.joyplot(data_max, by = "condition",column=type,color=["#FDAE61", "#FEE08B", "#FFFFBF", "#E6F598", "#ABDDA4"]) 
+    
+
+    max=data_max[type].max()
+    sns.set(rc={'figure.figsize':(18,14)})
     sns.set_theme(style="white")
     if id=='IC':
         col='Component'
     else:
         col='ROI'
-    axs=sns.catplot(x='group',y=type,data=data,hue='database',dodge=True, kind="box",col=col,col_wrap=num_columns,palette='winter_r',fliersize=1.5,linewidth=0.5,legend=False)
-    #plt.yticks(np.arange(0,round(max),0.1))
+    # sns.set(style="ticks")
+    # sns.set_style("darkgrid")
+    axs=sns.catplot(x=x,y=type,data=data,hue='database',dodge=True, kind=kind,col=col,col_wrap=num_columns,palette=palette,fliersize=1.5,linewidth=0.5,legend=False)
+    plt.yticks(np.arange(0,round(max),0.1))
     axs.set(xlabel=None)
     axs.set(ylabel=None)
     if id_cross==None:
         axs.fig.suptitle(type+' in '+r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')
+        #fig1.title(type+' in '+r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')
+        
     else:
         axs.fig.suptitle(type+' in '+id_cross+' of ' +r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')
+        #fig1.title(type+' in '+id_cross+' of ' +r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')  
     if id=='IC':
         axs.add_legend(loc='upper right',bbox_to_anchor=(.59,.95),ncol=4,title="Database")
         axs.fig.subplots_adjust(top=0.85,bottom=0.121, right=0.986,left=0.05, hspace=0.138, wspace=0.062) 
         axs.fig.text(0.5, 0.04, 'Group', ha='center', va='center')
         axs.fig.text(0.01, 0.5,  type, ha='center', va='center',rotation='vertical')
+
     else:
         
         axs.add_legend(loc='upper right',bbox_to_anchor=(.7,.95),ncol=4,title="Database")
@@ -34,9 +51,21 @@ def graphics(data,type,path,name_band,id,id_cross=None,num_columns=4,save=True,p
         plt.show()
     if save==True:
         if id_cross==None:
-            path_complete='{path}\Graficos_{type}\{id}\{name_band}_{type}_{id}.png'.format(path=path,name_band=name_band,id=id,type=type)  
+            path_complete='{path}\Graficos_{type}\{id}\{x}'.format(path=path,id=id,type=type,x=x)  
+            try:
+                os.makedirs(path_complete)
+            except OSError as e:
+                if e.errno != errno.EEXIST:
+                    raise
+            path_complete=path_complete+'\{name_band}_{type}_{id}.png'.format(name_band=name_band,id=id,type=type)
         else:
-            path_complete='{path}\Graficos_{type}\{id}\{name_band}_{id_cross}_{type}_{id}.png'.format(path=path,name_band=name_band,id=id,type=type,id_cross=id_cross)
+            path_complete='{path}\Graficos_{type}\{id}\{x}'.format(path=path,id=id,type=type,x=x)
+            try:
+                os.makedirs(path_complete)
+            except OSError as e:
+                if e.errno != errno.EEXIST:
+                    raise
+            path_complete=path_complete+'\{name_band}_{id_cross}_{type}_{id}.png'.format(name_band=name_band,id=id,type=type,id_cross=id_cross)
         plt.savefig(path_complete)
     plt.close()
     return path_complete

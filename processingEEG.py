@@ -101,11 +101,4 @@ for dataset in THE_DATASETS:
 
             dataframe_long_cross_roi(data_ROI,type='Cross Frequency',columns=columns_cross_roi,name="data_long_crossfreq_roi",path=path)
             #dataframe_long_cross_ic(data_IC,type='Cross Frequency',columns=columns_cross_ic,name="data_long_crossfreq_components",path=path)
-            
-
-
-    
-
-
-
 

@@ -42,12 +42,59 @@ def R_to_pd():
         new_pd = pd.DataFrame(dict(pd_from_r_df.items()), columns=R_data.columns.values)   
         return new_pd
 
-def MatchIt_R(data,G = 'G1'):
+def MatchIt_R(data,group1 = 'G1', group2 = 'Control' ):
     data['treatG1'] = data['group']
-    data['treatG1'] = data.treatG1.replace(G,'Treat') 
-    data['treatG1'] = data.treatG1.replace('G2','Control')
+    data['treatG1'] = data.treatG1.replace(group1,'Treat') 
+    data['treatG1'] = data.treatG1.replace(group2,'Control')
     dataTreat = data[data['treatG1'] == 'Treat']
     dataCTR = data[data['treatG1'] == 'Control']
+    data = pd.concat([dataTreat, dataCTR])
+    data = data[(data['visit'] == 'V0') | (data['visit'] == 't1')]
+
+
+    pd_to_R(data)
+    r('''
+    R_data$treatG1 <- factor(R_data$treatG1)
+    R_data$sex <- factor(R_data$sex)
+    R_data$group <- factor(R_data$group)
+    R_data$participant_id <- factor(R_data$participant_id)
+    ''')
+    r('''
+    EDADG12 <- matchit(treatG1 ~ age+sex, data = R_data, 
+        method = "nearest", ratio = 2)
+    ''')
+
+    r('''summary(EDADG12, un=FALSE)''')
+    #r('''plot(summary(EDADG12))''')
+    #r('''plot(EDADG12, type='jitter')''')
+    #r('''plot(EDADG12, type='hist')''')
+    #r('''plot(EDADG12, type = "qq")''')
+    r('''
+    EDADG12treat <- match.data(EDADG12, group = "treated")
+    EDADG12control <- match.data(EDADG12, group = "control")
+    ''')
+    r('''
+    EDADG12total <- rbind(EDADG12treat,EDADG12control)
+    ''')
+
+    data_MatchIt =R_to_pd()
+    r('''
+    head(EDADG12total)
+    ''')
+    #ggplot(EDADG12total, aes(x=treatG1, y=age, fill=treatG1)) + geom_violin(show.legend = FALSE, alpha=0.5, colour="navyblue", fill = "white", size=1) + geom_boxplot(show.legend = FALSE, alpha=0.5, width=0.2, colour="purple4", fill = "purple4") + stat_summary (fun=median, show.legend = FALSE, geom = "crossbar") + geom_dotplot(binaxis = "y",binwidth = 0.8, stackdir = "center", show.legend = FALSE, colour="black", fill="darkblue")
+    r('''
+    t.test(EDADG12total$age~EDADG12total$treatG1)
+    ''')
+
+    data_MatchIt = data_MatchIt.drop(['treatG1', 'distance', 'weights','subclass'],axis=1)
+    return data_MatchIt
+
+def MatchIt_G1G2(data,group1 = 'G1', group2 = 'G2' ):
+    data['treatG1'] = data['group']
+    data['treatG1'] = data.treatG1.replace(group1,'Treat') 
+    data['treatG1'] = data.treatG1.replace(group2,'G2')
+    dataTreat = data[data['treatG1'] == 'Treat']
+    dataCTR = data[data['treatG1'] == 'G2']
     data = pd.concat([dataTreat, dataCTR])
     data = data[(data['visit'] == 'V0') | (data['visit'] == 't1')]
 

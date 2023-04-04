@@ -87,7 +87,8 @@ for space in s:
         nmy_dataAll =negativeTest(my_dataAll)
         data_transformtdataAll = np.log(0.001+my_dataAll)
         # run harmonization and store the adjusted data
-        my_modeldataAll, my_data_adjdataAll = harmonizationLearn(data_transformtdataAll, covarsAll) ###DUDA
+        my_modeldataAll, my_data_adjdataAll = harmonizationLearn(data_transformtdataAll, covarsAll,eb=False) ###DUDA
+        my_data_adjdataAll =  my_data_adjdataAll[~np.isnan( my_data_adjdataAll).any(axis=1)] 
         #my_modeldataAll, my_data_adjdataAll = harmonizationLearn(my_dataAll, covarsAll,smooth_terms=['gender'])
         my_data_adj_trans = np.exp(my_data_adjdataAll)-0.0009 #back-transform
         nmy_data_adjdataAll=negativeTest(my_data_adj_trans)

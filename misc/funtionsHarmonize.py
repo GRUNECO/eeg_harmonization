@@ -326,25 +326,25 @@ def rename_cols(data1,data2,namegroup1,namegroup2):
     try:
         for l in range(len(data1['database'])):
             if data1['database'][l] == 0.0: 
-                data1['database'][l] = list(data2['database'].unique())[0]
+                data1['database'][l] = sorted(list(data2['database'].unique()))[0]
     except:
         pass
     try:
         for l in range(len(data1['database'])):
             if data1['database'][l] == 1.0: 
-                data1['database'][l] = list(data2['database'].unique())[1]
+                data1['database'][l] = sorted(list(data2['database'].unique()))[1]
     except:
         pass
     try:
         for l in range(len(data1['database'])):
             if data1['database'][l] == 2.0: 
-                data1['database'][l] = list(data2['database'].unique())[2]
+                data1['database'][l] = sorted(list(data2['database'].unique()))[2]
     except:
         pass
     try:
         for l in range(len(data1['database'])):
             if data1['database'][l] == 3.0:
-                data1['database'][l] = list(data2['database'].unique())[3]
+                data1['database'][l] = sorted(list(data2['database'].unique()))[3]
     except:
         pass    
 

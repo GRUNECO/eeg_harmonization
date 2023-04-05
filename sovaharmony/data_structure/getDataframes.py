@@ -169,6 +169,7 @@ def get_dataframe_reject(THE_DATASET):
   stats_reject = layout.get(extension='.txt', task=task,suffix='stats', return_type='filename')
   stats_reject = [x for x in stats_reject if f'desc-reject[{runlabel}]' in x]        #rej_stats_studies+=stats_reject
   list_studies=[name]*len(stats_reject)
+  list_task=[task]*len(stats_reject)
   list_info=[parse_file_entities(stats_reject[i]) for i in range(len(stats_reject))]
   list_subjects=[info['subject'] for info in list_info]
   if group_regex:
@@ -179,8 +180,9 @@ def get_dataframe_reject(THE_DATASET):
     list_sessions=list_studies
   else:
     list_sessions=[info['session'] for info in list_info]
+
     
-  dataframesReject.append(get_metrics_reject(stats_reject,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
+  dataframesReject.append(get_metrics_reject(stats_reject,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_tasks=list_task))
         
   dataReject=pd.concat((dataframesReject))
   path_derivatives=os.path.join(layout.root,'derivatives')
@@ -207,6 +209,7 @@ def get_dataframe_wica(THE_DATASET):
   stats_wica = layout.get(extension='.txt', task=task,suffix='stats', return_type='filename')
   stats_wica = [x for x in stats_wica if f'desc-wica' in x]
   list_studies=[name]*len(stats_wica)
+  list_task=[task]*len(stats_wica)
   list_info=[parse_file_entities(stats_wica[i]) for i in range(len(stats_wica))]
   list_subjects=[info['subject'] for info in list_info]
   if group_regex:
@@ -218,7 +221,7 @@ def get_dataframe_wica(THE_DATASET):
   else:
     list_sessions=[info['session'] for info in list_info]
     
-  dataframesWica.append(get_metrics_wica(stats_wica,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions))
+  dataframesWica.append(get_metrics_wica(stats_wica,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_tasks=list_task))
         
   dataWica=pd.concat((dataframesWica))
   path_derivatives=os.path.join(layout.root,'derivatives')
@@ -245,6 +248,7 @@ def get_dataframe_prep(THE_DATASET):
   stats_prep = layout.get(extension='.txt', task=task,suffix='stats', return_type='filename')
   stats_prep = [x for x in stats_prep if f'desc-prep' in x]
   list_studies=[name]*len(stats_prep)
+  list_task=[task]*len(stats_prep)
   list_info=[parse_file_entities(stats_prep[i]) for i in range(len(stats_prep))]
   list_subjects=[info['subject'] for info in list_info]
   if group_regex:
@@ -255,7 +259,8 @@ def get_dataframe_prep(THE_DATASET):
     list_sessions=list_studies
   else:
     list_sessions=[info['session'] for info in list_info]
-  data_Prep=get_metrics_prep(stats_prep,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions)
+  
+  data_Prep=get_metrics_prep(stats_prep,list_studies=list_studies,list_subjects=list_subjects,list_groups=list_groups,list_sessions=list_sessions,list_tasks=list_task)
   dataframes.append(data_Prep)
 
   data_Prep=pd.concat(dataframes)

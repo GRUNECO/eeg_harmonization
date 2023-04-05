@@ -33,25 +33,25 @@ raw = mne.io.read_raw(filename,preload=True )
 raw2= mne.io.read_raw(filename2,preload=True )
 
 
-raw.pick_types(eeg=True, eog=True, stim=True).crop(tmax=60).load_data()
-report = mne.Report(title='Raw example')
-# This method also accepts a path, e.g., raw=raw_path
-report.add_raw(raw=raw, title='Raw 1', psd=True)  # omit PSD plot
-report.save(r'D:\XIMENA\report_raw_1.html', overwrite=True)
+# raw.pick_types(eeg=True, eog=True, stim=True).crop(tmax=60).load_data()
+# report = mne.Report(title='Raw')
+# # This method also accepts a path, e.g., raw=raw_path
+# report.add_raw(raw=raw, title='Raw 1', psd=True)  # omit PSD plot
+# report.save(r'C:\Users\Victoria\OneDrive - Universidad de Antioquia\GRUNECO\Doctorado Ximena\report_raw.html', overwrite=True)
 
-raw2.pick_types(eeg=True, eog=True, stim=True).crop(tmax=60).load_data()
-report2 = mne.Report(title='Raw example BIDS')
-report2.add_raw(raw=raw, title='Raw BDIS', psd=True)  # omit PSD plot
-report2.save(r'D:\XIMENA\report_raw_BIDS.html', overwrite=True)
+# raw2.pick_types(eeg=True, eog=True, stim=True).crop(tmax=60).load_data()
+# report2 = mne.Report(title='Raw in BIDS')
+# report2.add_raw(raw=raw, title='Raw BDIS', psd=True)  # omit PSD plot
+# report2.save(r'C:\Users\Victoria\OneDrive - Universidad de Antioquia\GRUNECO\Doctorado Ximena\report_raw_BIDS.html', overwrite=True)
 
-print('\nChannels whitout BIDS')
-print(raw.ch_names)
+# print('\nChannels whitout BIDS')
+# print(raw.ch_names)
 
-print('\nChannels whit BIDS')
-print(raw2.ch_names)
+# print('\nChannels whit BIDS')
+# print(raw2.ch_names)
 
-# raw.plot()
-# raw2.plot()
+raw.plot()
+
 #raw1 = read_raw(filename1,preload=True )
 #raw2 = read_raw(filename2,preload=True )
 #raw3 = read_raw(filename3,preload=True )

@@ -8,11 +8,13 @@ import joypy
 
 #Colors: https://coolors.co/b2abf2-89043d-2fe6de
 
-def graphics(data,type,path,name_band,id,id_cross=None,num_columns=4,save=True,plot=True,kind="box",palette='winter_r',x='group'):
+def graphics(data,type,path,name_band=None,id=None,id_cross=None,num_columns=4,save=True,plot=True,kind="box",palette='winter_r',x='group',hue='database',col_legend=4):
     '''Function to make graphs of the given data '''
-    data_max=data[data['Band']==name_band]
-
-    #fig1, axs1 = joypy.joyplot(data_max, by = "condition",column=type,color=["#FDAE61", "#FEE08B", "#FFFFBF", "#E6F598", "#ABDDA4"]) 
+    if name_band is not None:
+        data_max=data[data['Band']==name_band]
+    else:
+        data_max=data
+    fig1, axs1 = joypy.joyplot(data_max, by = "condition",column=type,color=["#FDAE61", "#FEE08B", "#FFFFBF", "#E6F598", "#ABDDA4"]) 
     
 
     max=data_max[type].max()
@@ -20,33 +22,42 @@ def graphics(data,type,path,name_band,id,id_cross=None,num_columns=4,save=True,p
     sns.set_theme(style="white")
     if id=='IC':
         col='Component'
-    else:
+    elif id =='ROI':
         col='ROI'
+    else:
+        col=id
     # sns.set(style="ticks")
     # sns.set_style("darkgrid")
-    axs=sns.catplot(x=x,y=type,data=data,hue='database',dodge=True, kind=kind,col=col,col_wrap=num_columns,palette=palette,fliersize=1.5,linewidth=0.5,legend=False)
-    plt.yticks(np.arange(0,round(max),0.1))
+    axs=sns.catplot(x=x,y=type,data=data,hue=hue,dodge=True, kind=kind,col=col,col_wrap=num_columns,palette=palette,fliersize=1.5,linewidth=0.5,legend=False)
+    
     axs.set(xlabel=None)
     axs.set(ylabel=None)
-    if id_cross==None:
-        axs.fig.suptitle(type+' in '+r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')
-        #fig1.title(type+' in '+r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')
-        
-    else:
-        axs.fig.suptitle(type+' in '+id_cross+' of ' +r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')
-        #fig1.title(type+' in '+id_cross+' of ' +r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')  
+    if name_band is not None:
+        if id_cross==None:
+            axs.fig.suptitle(type+' in '+r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')
+            #fig1.title(type+' in '+r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')
+            
+        else:
+            axs.fig.suptitle(type+' in '+id_cross+' of ' +r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')
+            #fig1.title(type+' in '+id_cross+' of ' +r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')  
     if id=='IC':
-        axs.add_legend(loc='upper right',bbox_to_anchor=(.59,.95),ncol=4,title="Database")
+        plt.yticks(np.arange(0,round(max),0.1))
+        axs.add_legend(loc='upper right',bbox_to_anchor=(.59,.95),ncol=col_legend,title="Database")
         axs.fig.subplots_adjust(top=0.85,bottom=0.121, right=0.986,left=0.05, hspace=0.138, wspace=0.062) 
         axs.fig.text(0.5, 0.04, 'Group', ha='center', va='center')
         axs.fig.text(0.01, 0.5,  type, ha='center', va='center',rotation='vertical')
 
-    else:
-        
-        axs.add_legend(loc='upper right',bbox_to_anchor=(.7,.95),ncol=4,title="Database")
+    elif id=='ROI':
+        plt.yticks(np.arange(0,round(max),0.1))
+        axs.add_legend(loc='upper right',bbox_to_anchor=(.7,.95),ncol=col_legend,title="Database")
         axs.fig.subplots_adjust(top=0.85,bottom=0.121, right=0.986,left=0.06, hspace=0.138, wspace=0.062) # adjust the Figure in rp
         axs.fig.text(0.5, 0.04, 'Group', ha='center', va='center')
         axs.fig.text(0.015, 0.5,  type, ha='center', va='center',rotation='vertical')
+    else:
+        axs.add_legend(loc='upper right',bbox_to_anchor=(.65,.97),ncol=col_legend,title="Database")
+        axs.fig.subplots_adjust(top=0.85,bottom=0.121, right=0.986,left=0.05, hspace=0.138, wspace=0.062) 
+        axs.fig.text(0.5, 0.04, 'Group', ha='center', va='center')
+        axs.fig.text(0.01, 0.5,  type, ha='center', va='center',rotation='vertical')
     if plot:
         plt.show()
     if save==True:
@@ -68,7 +79,7 @@ def graphics(data,type,path,name_band,id,id_cross=None,num_columns=4,save=True,p
             path_complete=path_complete+'\{name_band}_{id_cross}_{type}_{id}.png'.format(name_band=name_band,id=id,type=type,id_cross=id_cross)
         plt.savefig(path_complete)
     plt.close()
-    return path_complete
+    return axs
 
 def text_format(val,value):
     if value==0.2: #Cambie el 0.05 por 0.2 y el lightgreen por lightblue

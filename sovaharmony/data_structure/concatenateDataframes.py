@@ -61,19 +61,19 @@ s = ['IC']
 cont_row=0
 cont_columns=0
 
-for dataset in THE_DATASETS:
-    for space in s:
-        list_data=[]
-        for met in m:
-            path_='{path}/derivatives/data_columns/{space}/data_{task}_{metric}_columns_components_{name_db}.feather'.format(path=dataset['input_path'],space=space,task=dataset['layout']['task'],metric=met,name_db=dataset['name']).replace('\\','/')
-            paths.append(path_)
-            data=pd.read_feather(path_)
-            list_data.append(data)
-        merged_data = reduce(lambda left, right: pd.merge(left, right, on=['participant_id','visit','condition','group','database']), list_data)
-    pd_task.append(merged_data)
-data_concat=pd.concat(pd_task,axis=0)
-path_save=r'C:\Users\Victoria\OneDrive - Universidad de Antioquia\GRUNECO\Doctorado Ximena'
-new_name='data_columns_features_ic'
-print(data_concat)
-data_concat.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path_save,name=new_name))
-print(data_concat.shape)
+# for dataset in THE_DATASETS:
+#     for space in s:
+#         list_data=[]
+#         for met in m:
+#             path_='{path}/derivatives/data_columns/{space}/data_{task}_{metric}_columns_components_{name_db}.feather'.format(path=dataset['input_path'],space=space,task=dataset['layout']['task'],metric=met,name_db=dataset['name']).replace('\\','/')
+#             paths.append(path_)
+#             data=pd.read_feather(path_)
+#             list_data.append(data)
+#         merged_data = reduce(lambda left, right: pd.merge(left, right, on=['participant_id','visit','condition','group','database']), list_data)
+#     pd_task.append(merged_data)
+# data_concat=pd.concat(pd_task,axis=0)
+# path_save=r'C:\Users\Victoria\OneDrive - Universidad de Antioquia\GRUNECO\Doctorado Ximena'
+# new_name='data_columns_features_ic'
+# print(data_concat)
+# data_concat.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path_save,name=new_name))
+# print(data_concat.shape)

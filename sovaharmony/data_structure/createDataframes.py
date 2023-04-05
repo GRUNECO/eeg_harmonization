@@ -21,7 +21,7 @@ def feather2xlsx(path,name_file):
   file_feather.to_excel(path_xlsx)
   return 
 
-def get_metrics_prep(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
+def get_metrics_prep(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None,list_tasks=None):
   '''
 
   Parameters
@@ -46,6 +46,8 @@ def get_metrics_prep(files,list_studies=None,list_subjects=None,list_groups=None
     list_groups=["None"]*len(files)
   if list_sessions is None:
     list_sessions=["None"]*len(files)
+  if list_tasks is None:
+    list_tasks=["None"]*len(files)
   # 3 state (Original, after and before) *9 (different metrics)
   metrics=3*9
   df_prep={}
@@ -53,9 +55,11 @@ def get_metrics_prep(files,list_studies=None,list_subjects=None,list_groups=None
   df_prep['Subject']=list_subjects*metrics
   df_prep['Group']=list_groups*metrics
   df_prep['Session']=list_sessions*metrics
+  df_prep['task']=list_tasks*metrics
   df_prep['Metric']=[]
   df_prep['Metric_value']=[]
   df_prep['State']=[]
+  
   
 
   for file in files:
@@ -78,7 +82,7 @@ def get_metrics_prep(files,list_studies=None,list_subjects=None,list_groups=None
   df=pd.DataFrame((df_prep))
   return df
 
-def get_metrics_wica(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
+def get_metrics_wica(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None,list_tasks=None):
   '''
   Parameters
   ----------
@@ -100,7 +104,9 @@ def get_metrics_wica(files,list_studies=None,list_subjects=None,list_groups=None
   if list_groups is None:
     list_groups=["None"]*len(files)
   if list_sessions is None:
-    list_sessions=["None"]*len(files)   
+    list_sessions=["None"]*len(files)
+  if list_tasks is None:
+    list_tasks=["None"]*len(files)   
 
   sums=[]
   for file in files:
@@ -109,7 +115,7 @@ def get_metrics_wica(files,list_studies=None,list_subjects=None,list_groups=None
     sum=np.sum(mat.flatten())
     sums.append(sum/mat.size)
 
-  dfstats_wica=pd.DataFrame({'Study':list_studies,'Subject':list_subjects,'Group':list_groups,'Session':list_sessions,'Components':sums})
+  dfstats_wica=pd.DataFrame({'Study':list_studies,'Subject':list_subjects,'Group':list_groups,'Session':list_sessions,'Components':sums,'task':list_tasks})
   return dfstats_wica
 
 def channelsPowers(data,name_study="None",subject="None",group="None",session="None",stage="None"):
@@ -192,45 +198,9 @@ def get_powers_channels(powersFiles,list_studies=None,list_subjects=None,list_gr
   datosPowers=pd.concat((dataframesPowers))
   return datosPowers 
 
-def reject_thresholds(data,name_study="None",subject="None",group="None",session="None"):
-  '''
-  Function to extract the thresholds from the reject metric
 
-  Parameters
-  ----------
-    data:
-    name_study:"None"
-    subject:"None"
-    group:"None"
-    session:"None"
 
-  Returns
-  -------
-    df= dataframe 
-
-  '''
-  df= pd.DataFrame({
-  'Study':[name_study]*len(data['final_thresholds']['spectrum'][1]),
-  'Subject':[subject]*len(data['final_thresholds']['spectrum'][1]),
-  'Group':[group]*len(data['final_thresholds']['spectrum'][1]),
-  'Session':[session]*len(data['final_thresholds']['spectrum'][1]),
-  'i_kurtosis_min':data['initial_thresholds']['kurtosis'][0],
-  'i_kurtosis_max':data['initial_thresholds']['kurtosis'][1],
-  'i_amplitude_min': data['initial_thresholds']['amplitude'][0],
-  'i_amplitude_max':data['initial_thresholds']['amplitude'][1],
-  'i_trend':data['initial_thresholds']['trend'][0],
-  'f_kurtosis_min':data['final_thresholds']['kurtosis'][0],
-  'f_kurtosis_max':data['final_thresholds']['kurtosis'][1],
-  'f_amplitude_min': data['final_thresholds']['amplitude'][0],
-  'f_amplitude_max':data['final_thresholds']['amplitude'][1],
-  'f_trend':data['final_thresholds']['trend'][0],
-  'f_spectrum_min':data['final_thresholds']['spectrum'][0],
-  'f_spectrum_max':data['final_thresholds']['spectrum'][1]
-  
-  })
-  return df
-
-def reject_thresholds_format_long(data,name_study="None",subject="None",group="None",session="None"):
+def reject_thresholds_format_long(data,name_study=None,subject=None,group=None,session=None,task=None):
   '''
   Function to extract the thresholds from the reject metric
 
@@ -255,7 +225,8 @@ def reject_thresholds_format_long(data,name_study="None",subject="None",group="N
   'Study':[name_study]*len(data['final_thresholds']['spectrum'][1])*len(metrics),
   'Subject':[subject]*len(data['final_thresholds']['spectrum'][1])*len(metrics),
   'Group':[group]*len(data['final_thresholds']['spectrum'][1])*len(metrics),
-  'Session':[session]*len(data['final_thresholds']['spectrum'][1])*len(metrics)
+  'Session':[session]*len(data['final_thresholds']['spectrum'][1])*len(metrics),
+  'task':[task]*len(data['final_thresholds']['spectrum'][1])*len(metrics)
    })
   list_metrics=[]
   for pos,metric in enumerate(metrics):
@@ -265,7 +236,7 @@ def reject_thresholds_format_long(data,name_study="None",subject="None",group="N
   df['Metric_Value']=metrics_value
   return df 
 
-def get_metrics_reject(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None):
+def get_metrics_reject(files,list_studies=None,list_subjects=None,list_groups=None,list_sessions=None,list_tasks=None):
   '''
   
   Parameters
@@ -287,10 +258,13 @@ def get_metrics_reject(files,list_studies=None,list_subjects=None,list_groups=No
     list_groups=["None"]*len(files)
   if list_sessions is None:
     list_sessions=["None"]*len(files)  
+  if list_tasks is None:
+    list_tasks=["None"]*len(files)
+  
   dataframesReject=[]
-  for file,name_study,subject,group,session in zip(files,list_studies,list_subjects,list_groups,list_sessions):
+  for file,name_study,subject,group,session,task in zip(files,list_studies,list_subjects,list_groups,list_sessions,list_tasks):
     dataFile=load_txt(file)
-    statsReject=reject_thresholds_format_long(dataFile,name_study,subject,group,session)
+    statsReject=reject_thresholds_format_long(dataFile,name_study,subject,group,session,task)
     dataframesReject.append(statsReject)
   dataReject=pd.concat((dataframesReject))
   return dataReject
@@ -465,31 +439,9 @@ def get_data_mean_roi_sl_format_long(files,list_studies=None,list_subjects=None,
   df=pd.DataFrame(df_sl)
   return df
     
-def get_data_columns_ROI_sl(ROIs): 
-  '''Obtain data frames with SL of ROIs in different columns''' 
-  for f,file in enumerate(files):
-    dataFile=load_txt(file)
-    total_channels=np.array(dataFile['channels'])
-    bandas = dataFile['bands']
-    new_rois = []
-    potencias_roi_banda=[]
-
-    for roi in ROIs:
-        channels = set(dataFile['channels']).intersection(roi)
-        new_roi=[dataFile['channels'].index(channel) for channel in channels]
-        new_rois.append(new_roi)
-
-    for b,band in enumerate(bandas):
-      for r,roi in enumerate(new_rois):
-          datos_1_sujeto[f'SL_ROI_{roi_labels[r]}_{band.title()}']=np.average(np.array(dataFile['sl'][band])[roi])
-    list_subjects.append(datos_1_sujeto)
-  df = pd.DataFrame(list_subjects)
-  return df
 
 
 
-def get_data_coherence():
-  return
 
 # FILTROS
 def filter_nS_nG_1M(superdata,group_dict):

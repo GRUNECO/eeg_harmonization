@@ -14,7 +14,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import os
 import errno
-
+import glob 
 def load_txt(file):
   '''
   Function that reads txt files
@@ -31,6 +31,33 @@ def load_txt(file):
   with open(file, 'r') as f:
     data=json.load(f)
   return data
+
+def load_feather(path):
+    '''
+    Function to upload files with feather format
+
+    Parameters
+    ----------
+        path:str
+            Directory where the file with the extension .feather
+
+    Returns 
+    -------
+        data: dataframe
+            Data in dataframe format
+    '''
+    data=pd.read_feather(os.path.join(path).replace("\\","/"))
+    return data
+
+def concat_df(path):
+    path_df=glob.glob(path)
+    data=[]
+    for df in path_df:
+        d=load_feather(df)
+        
+        data.append(d)
+    data_concat=pd.concat((data))
+    return data_concat
 
 def _verify_epochs_axes(epochs_spaces_times,spaces_times_epochs,max_epochs=None):
     """

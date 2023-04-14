@@ -1,3 +1,21 @@
+import numpy as np
+from scipy.signal import butter, lfilter, freqz, filtfilt
+import matplotlib.pyplot as plt
+import mne
+from scipy import signal
+
+
+filename=r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-CTR001\ses-V0\eeg\sub-CTR001_ses-V0_task-CE_desc-prep_eeg.fif"
+raw = mne.io.read_raw(filename,preload=True )
+data = np.asarray(raw._data[0], dtype='float64')
+f1 = (2*21)/1000
+f2 = (2*30)/1000
+
+b, a = signal.butter(2, [f1,f2], fs = 1000, btype = 'bandpass', analog = False)   #Configuration filter 8 representa el orden del filtro
+filtedData = filtfilt(b, a, data)
+filtedData[np.isnan(filtedData)] = 0
+
+
 # Import numpy and matplotlib
 import numpy as np
 import matplotlib.pyplot as plt

@@ -1,6 +1,7 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from functionsImages import createCollage
 import os 
 import errno
 import numpy as np
@@ -13,9 +14,7 @@ def graphics(data,type,path,name_band=None,id=None,id_cross=None,num_columns=4,s
     if name_band is not None:
         data_max=data[data['Band']==name_band]
     else:
-        data_max=data
-    fig1, axs1 = joypy.joyplot(data_max, by = "condition",column=type,color=["#FDAE61", "#FEE08B", "#FFFFBF", "#E6F598", "#ABDDA4"]) 
-    
+        data_max=data 
 
     max=data_max[type].max()
     sns.set(rc={'figure.figsize':(18,14)})
@@ -230,3 +229,58 @@ def joinimages(paths):
         x_offset += im.size[0]
     new_im.save(paths[1])
     print('Done!')
+
+def distribution_graphics(data,name_img,id='ROI',metric=None ,filter='condition'):
+    import math
+    import joypy
+    import matplotlib.pyplot as plt
+
+    # Group the data by ROI and condition
+    if id =='ROI':
+        grouped_data = data.groupby(['ROI'])
+    elif id=='IC':
+        grouped_data = data.groupby(['IC'])
+
+    num_plots = len(grouped_data)
+    num_cols = int(math.sqrt(num_plots))
+    num_rows = math.ceil(num_plots / num_cols)
+
+    # Create the figure and subplots
+    fig, axs = plt.subplots(nrows=num_rows, ncols=num_cols, figsize=(8, 6))
+
+    # Flatten the axs array if necessary
+    if num_plots == 1:
+        axs = [axs]
+    # Loop through the subplots and plot the data
+    figures=[]
+    for i in range(num_rows):
+        for j in range(num_cols):
+            idx = i * num_cols + j
+            if idx < num_plots:
+                ax = axs[i, j]
+                
+                # Extract the current ROI and condition from the group name
+                group_name = list(grouped_data.groups.keys())[idx]
+                roi= group_name
+
+                # Get the subset of data for the current group
+                subset_data = grouped_data.get_group(group_name).reset_index()
+
+                # Generate the joyplot and plot it on the current subplot
+                # Generate the joyplot and plot it on the current subplot
+                ax.set_xlabel(metric)
+                f,a=joypy.joyplot(subset_data,
+                                by=filter,
+                                column=metric,
+                                color=["#FDAE61", "#FEE08B",  "#FFFFBF", "#E6F598", "#ABDDA4"],
+                                alpha=0.4,
+                                title=f'ROI {roi}',
+                                xlabels=True)
+                
+                figures.append(f)
+                
+    # Show the figure
+
+    plt.subplots_adjust()
+    figure=createCollage(figures, 800, 2,name_img,save=True)
+    

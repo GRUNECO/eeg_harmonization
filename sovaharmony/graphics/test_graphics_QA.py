@@ -1,30 +1,46 @@
 import pandas as pd 
+import os
+import errno
 from graphics_QA import create_check
 from graphics_QA import stats_pair
 from graphics_QA import graphics
 from graphics_QA import table_groups_DB
+from graphics_QA import distribution_graphics
 from sovaharmony.utils import concat_df
+
 import matplotlib.pyplot as plt
 
 path=r'C:\Users\Victoria\OneDrive - Universidad de Antioquia\GRUNECO\Doctorado Ximena' #Cambia dependieron de quien lo corra
 save_path=r'D:\XIMENA\BIDS\Residentes\derivatives'.replace('\\','/')
 #data loading
-data_ic=pd.read_feather(r'{path}\data_long_features_roi.feather'.format(path=path))
-bands=list(data_ic.Band.unique())
+#data_ic=pd.read_feather(r'{path}\data_long_features_ic.feather'.format(path=path))
+data_roi=pd.read_feather(r'{path}\data_long_features_roi.feather'.format(path=path))
+bands=list(data_roi.Band.unique())
 m = ['Coherence','Entropy','Power','SL']
-
-colors=['#eac435', '#345995', '#e40066']
-colors=['#89043D', '#2FE6DE', '#FF784F']
-colors=["#FF0022","#31B86B","#2FE6DE"]
-colors=['#eac000','#89043D',"#FF0000"]
 colors=["#FF784F","#2FE6DE","#31B86B"]
 
-for met in m:
-    for band in bands:
-        #graphics(data_ic,met,path,band,'IC',id_cross=None,num_columns=4,save=False,plot=True,kind='box',palette=colors,x='condition')
-        #graphics(data_ic,met,path,band,'IC',id_cross=None,num_columns=4,save=True,plot=False,kind='box',palette=colors,x='visit')
-        graphics(data_ic,met,path,band,'ROI',id_cross=None,num_columns=4,save=True,plot=False,kind='box',palette=colors,x='condition')
-        #graphics(data_ic,met,path,band,'ROI',id_cross=None,num_columns=4,save=True,plot=False,kind='box',palette=colors,x='visit')
+data_roi=data_roi.dropna()
+bands=list(data_roi.Band.unique())
+for b in bands: 
+    data=data_roi[data_roi['Band']==b]
+    id='ROI'
+    filter='condition'
+    metric='Power'
+    name_img='{path}/{filter}'.format(path=path,filter=filter)
+    try:
+       os.makedirs(name_img)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    name_img='{name_img}/{band}_{id}.png'.format(name_img=name_img,band=b,id=id)
+    distribution_graphics(data,name_img,id=id,metric=metric ,filter=filter)
+
+# for met in m:
+#     for band in bands:
+#         #graphics(data_ic,met,path,band,'IC',id_cross=None,num_columns=4,save=False,plot=True,kind='box',palette=colors,x='condition')
+#         #graphics(data_ic,met,path,band,'IC',id_cross=None,num_columns=4,save=True,plot=False,kind='box',palette=colors,x='visit')
+#         graphics(data_roi,met,path,band,'ROI',id_cross=None,num_columns=4,save=True,plot=False,kind='box',palette=colors,x='condition')
+#         graphics(data_roi,met,path,band,'ROI',id_cross=None,num_columns=4,save=True,plot=False,kind='box',palette=colors,x='visit')
 
 # database='Residentes'
 # data_prep=concat_df(save_path+'/*PREP.feather')
@@ -43,13 +59,13 @@ for met in m:
 #                         num_columns=3,
 #                         save=False,
 #                         plot=False,
-#                         kind='violin',
+#                         kind='box',
 #                         palette=colors,
 #                         hue='task',
 #                         x=x,
 #                         col_legend=len(list(data_prep.task.unique()))
 #                         )
-#                 fig_prep.savefig(path+'/QA/QA_S{i}_{database}_PREP.png'.format(database=database,i=i+1))
+#                 fig_prep.savefig(path+'/QA/{database}/QA_S{i}_{database}_PREP.png'.format(database=database,i=i+1))
 #         except:
 #                 print('la visita no existe'+visit)
 
@@ -65,20 +81,20 @@ for met in m:
 #          num_columns=4,
 #          save=False,
 #          plot=False,
-#          kind='violin',
+#          kind='box',
 #          palette=colors,
 #          hue=None,
 #          x=x,
 #          col_legend=len(list(data_wica.task.unique()))
 #          )
-# fig_prep.savefig(path+'/QA/QA_{database}_WICA.png'.format(database=database))
+# fig_prep.savefig(path+'/QA/{database}/QA_{database}_WICA.png'.format(database=database))
 
 # data_reject=concat_df(save_path+'/*reject.feather')
-# # import numpy as np
-# # list_metrics=list(data_reject.Metric.unique())
-# # for element in list_metrics:
-# #     if element[0]=='i':
-# #         data_reject.drop(data_reject[data_reject['Metric']==element].index,inplace=True)
+# import numpy as np
+# list_metrics=list(data_reject.Metric.unique())
+# for element in list_metrics:
+#     if element[0]=='i':
+#         data_reject.drop(data_reject[data_reject['Metric']==element].index,inplace=True)
 # data_reject.drop(data_reject[data_reject['Metric']=='f_spectrum_min'].index,inplace=True)
 # data_reject.drop(data_reject[data_reject['Metric']=='f_spectrum_max'].index,inplace=True)
 # type='Metric_Value'
@@ -95,10 +111,10 @@ for met in m:
 #                 num_columns=4,
 #                 save=False,
 #                 plot=False,
-#                 kind='violin',
+#                 kind='box',
 #                 palette=colors,
 #                 hue='task',
 #                 x=x,
 #                 col_legend=len(list(data_reject.task.unique()))
 #                 )
-#         fig_prep.savefig(path+'/QA/QA_S{i}_{database}_reject.png'.format(database=database,i=i+1))
+#         fig_prep.savefig(path+'/QA/{database}/QA_S{i}_{database}_reject.png'.format(database=database,i=i+1))

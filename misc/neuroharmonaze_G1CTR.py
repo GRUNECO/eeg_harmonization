@@ -11,21 +11,27 @@ import matplotlib.pyplot as plt
 from funtionsHarmonize import mapsDrop
 from funtionsHarmonize import negativeTest
 from funtionsHarmonize import select
-from funtionsHarmonize import renameModel
+from funtionsHarmonize import renameModel, renameDatabases
 from funtionsHarmonize import covars
 from funtionsHarmonize import extract_components_interes
 from funtionsHarmonize import rename_cols
 from paired_tests import MatchIt_R
 from funtionsHarmonize import organizarDataFrame
-from funtionsHarmonize import G1G2
+from funtionsHarmonize import graf, graf_DB
 from funtionsHarmonize import save_complete
+import tkinter as tk
+from tkinter.filedialog import askdirectory
 
 #m = ['power'] 
 #b = ['Gamma']
 m = ['power','sl','cohfreq','entropy','crossfreq'] 
-#m = ['crossfreq'] 
+# = ['crossfreq'] 
 b = ['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma'] 
+
+tk.Tk().withdraw() # part of the import if you are not using other tkinter functions
+#path = askdirectory() 
 path = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Graficos_Harmonize'
+print("user chose", path, "for save graphs")
 #filename = r"{path}\{m}_stats_G1G2.xlsx".format(path=path,m=m)
 #writer = pd.ExcelWriter(filename)
 #filename_trans = r"{path}\{m}_stats_trans.xlsx".format(path=path,m=m)
@@ -35,13 +41,15 @@ path = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis l
 #df_stats_trans = pd.DataFrame(columns=['Std_sovaharmony','Var_sovaharmony','Mean_sovaharmony','Min_sovaharmony','Max_sovaharmony','Values_close_to_zero_sovaharmony','Negative_sovaharmony','Var_neuroHarmonize','Std_neuroHarmonize','Mean_neuroHarmonize','Min_neuroHarmonize','Max_neuroHarmonize','Values_close_to_zero_neuroHarmonize','Negative__neuroHarmonize'])
 
 row=0
+#s=['ic']
 s=['roi','ic']
-
+#path_feather = askdirectory()
+path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
+print("user chose", path_feather, "for read feather")
 for space in s:
     for allm in m:  
     #    for allb in b:  
         #Tab
-        path_feather = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
         data_in = pd.read_feather(path_feather+r'\Data_complete_'+space+'.feather')
         data = MatchIt_R(data_in,'G1','Control')
         dd = data.copy()
@@ -54,6 +62,7 @@ for space in s:
 
         ######### eeg_harmonization ##########
         noGene,Gene = renameModel(dataAll)
+        B,D,S,C = renameDatabases(dataAll)
         noGene.drop(['database'],axis=1,inplace=True)
         nnoGene=negativeTest(np.array(noGene))
         Gene.drop(['database'],axis=1,inplace=True)
@@ -78,8 +87,8 @@ for space in s:
         sovaeeg = dataAll.copy()
 
         data_sovaeeg = organizarDataFrame(sovaeeg,database_database,allm,dd,space)
-        new_sovaname = 'Data_complete_'+space+'_sovaharmony_G1_'+allm
-        save_complete(new_sovaname,data_sovaeeg,dd,path_feather,'Control','G1')
+        #new_sovaname = 'Data_complete_'+space+'_sovaharmony_G1_'+allm
+        #save_complete(new_sovaname,data_sovaeeg,dd,path_feather,'Control','G1')
         
         #neuroHarmonize
         my_dataAll = np.array(dataAll)
@@ -96,13 +105,15 @@ for space in s:
 
         #save neuroHarmonize
         datacol = organizarDataFrame(new_dataAll,database_database,allm,dd,space) 
-        new_name = 'Data_complete_'+space+'_neuroHarmonize_G1_'+allm
-        save_complete(new_name,datacol,dd,path_feather,'Control','G1')
+        #new_name = 'Data_complete_'+space+'_neuroHarmonize_G1_'+allm
+        #save_complete(new_name,datacol,dd,path_feather,'Control','G1')
 
 
         #noGene_h,Gene_h = renameModel(new_All)
-        #noGene_ht,Gene_ht = renameModel(new_dataAll)
-        #graf(columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy_data_adjdataAll,title)
+        noGene_ht,Gene_ht = renameModel(new_dataAll)
+        BH,DH,SH,CH = renameDatabases(new_dataAll)
+        graf(path,columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy_data_adjdataAll,title,space)
+        graf_DB(path,columnasAll,B,D,S,C,BH,DH,SH,CH,title,space)
 
         #Tab
         #df_stats.to_excel(writer, startrow=row)

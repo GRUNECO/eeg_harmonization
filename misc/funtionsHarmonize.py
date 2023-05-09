@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import os
 
 def covars(data):
     covars = {'SITE':data['database'].to_numpy(),
@@ -367,18 +368,59 @@ def extract_components_interes(data_df, components):
     data_df.drop(list_difference,axis=1,inplace=True)
     return data_df
 
-def graf(columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy_data_adjdataAll,title):
+def graf(path,columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy_data_adjdataAll,title,space):
     for band in columnasAll:
-        sns.kdeplot(noGene[band], color='darkcyan', label='no Gene')
-        sns.kdeplot(Gene[band], color='#708090', label='Gene')
-        sns.kdeplot(noGene_ht[band], color='darkcyan', label='no Gene', linestyle='--')
-        sns.kdeplot(Gene_ht[band], color='#708090', label='Gene', linestyle='--')
-        plt.title(f'# negatives - sovaharmony(-): {nnoGene,nGene} and neuroHarmonize(--): {nmy_dataAll,nmy_data_adjdataAll}')
-        plt.suptitle(title)
-        plt.legend()
-        plt.show()
-        #plt.savefig(r'{path}\TransformadosG1G2\{name}_{title}_G1G2density.png'.format(path=path,name=band,title=title))
-        plt.close()
+        try: 
+            sns.kdeplot(noGene[band], color='darkcyan', label='Control')
+            sns.kdeplot(Gene[band], color='#708090', label='G1')
+            sns.kdeplot(noGene_ht[band], color='darkcyan', linestyle='--')
+            sns.kdeplot(Gene_ht[band], color='#708090', linestyle='--')
+            #plt.title(f'# negatives - sovaharmony(-): {nnoGene,nGene} and neuroHarmonize(--): {nmy_dataAll,nmy_data_adjdataAll}')
+            plt.title('Distribution of group effects')
+            #plt.suptitle(title)
+            #plt.legend()
+            lines = plt.gca().get_lines()
+            include = [0,1]
+            legend1 = plt.legend([lines[i] for i in include],[lines[i].get_label() for i in include], loc=1)
+            legend2 = plt.legend([lines[i] for i in [1,3]],['Before','After'], loc=2)
+            plt.gca().add_artist(legend1)
+            plt.xlabel(band.replace('-',''))
+            #plt.show()
+            s=band.split('_')[1]
+            os.makedirs(r'{path}\tesis\{space}\{s}'.format(path=path,s=s,space=space), exist_ok=True)
+            plt.savefig(r'{path}\tesis\{space}\{s}\{name}_{title}_density.png'.format(path=path,s=s,space=space,name=band,title=title))
+            plt.close()
+        except:
+            pass
+
+def graf_DB(path,columnasAll,B,D,S,C,BH,DH,SH,CH,title,space):
+    for band in columnasAll:
+        try: 
+            sns.kdeplot(B[band], color='#127369', label='UdeA 1')
+            sns.kdeplot(D[band], color='#10403B', label='UdeA 2')
+            sns.kdeplot(S[band], color='#8AA6A3', label='SRM')
+            sns.kdeplot(C[band], color='#45C4B0', label='CHBMP')
+            sns.kdeplot(BH[band], color='#127369', linestyle='--')
+            sns.kdeplot(DH[band], color='#10403B', linestyle='--')
+            sns.kdeplot(SH[band], color='#8AA6A3', linestyle='--')
+            sns.kdeplot(CH[band], color='#45C4B0', linestyle='--')
+            #plt.title(f'# negatives - sovaharmony(-): {nnoGene,nGene} and neuroHarmonize(--): {nmy_dataAll,nmy_data_adjdataAll}')
+            plt.title('Distribution of cohort effects')
+            #plt.suptitle(title)
+            #plt.legend()
+            lines = plt.gca().get_lines()
+            include = [0,1,2,3]
+            legend1 = plt.legend([lines[i] for i in include],[lines[i].get_label() for i in include], loc=1)
+            legend2 = plt.legend([lines[i] for i in [1,4]],['Before','After'], loc=2)
+            plt.gca().add_artist(legend1)
+            plt.xlabel(band.replace('-',''))
+            #plt.show()
+            s=band.split('_')[1]
+            os.makedirs(r'{path}\tesis\{space}\{s}'.format(path=path,s=s,space=space), exist_ok=True)
+            plt.savefig(r'{path}\tesis\{space}\{s}\{name}_{title}_BD_density.png'.format(path=path,s=s,space=space,name=band,title=title))
+            plt.close()
+        except:
+            pass
 
 def save_complete(new_name,data,dd,path_feather,group1,group2):
     data_eeg_dataAll = data.reset_index(drop=True) 

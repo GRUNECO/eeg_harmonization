@@ -51,7 +51,7 @@ def getSize(imageList):
         img_width, img_height = image.size
     return img_width, img_height
 
-def createCollage(imageList, frame_width, images_per_row,name_img,save=False):
+def createCollage(imageList, frame_width, images_per_row,name_img,title,save=False):
     imageList=[fig2img(x) for x in imageList] 
     img_width, img_height = getSize(imageList)
     #scaling factor
@@ -81,6 +81,12 @@ def createCollage(imageList, frame_width, images_per_row,name_img,save=False):
         j+=1
     # new_im.show()
     if save: 
+      from PIL import ImageDraw
+      draw = ImageDraw.Draw(new_im)
+      msg=title
+      w, h = draw.textsize(msg)
+      # specifying coordinates and colour of text
+      draw.text(((img_width-w)/2+80,10), msg, (0, 0, 0))
       new_im.save(name_img, "PNG")
     return new_im
     

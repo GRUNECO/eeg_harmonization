@@ -97,7 +97,7 @@ def remove_data_visits(path,name,ext):
             except:
                 continue
 
-def remove_condition(path,name,ext):
+def remove_condition(path,name,ext,task):
     '''
     function created to remove the paths to be deleted in databases with visits
 
@@ -120,8 +120,8 @@ def remove_condition(path,name,ext):
     for l in range(len(json_remove)):
         for n in range(len(json_remove[l])):
             try:       
-                if type(json_remove[l][n].index('OE')) == int:
-                    #print(json_remove[l][n])
+                if type(json_remove[l][n].index(task)) == int:
+                    print(json_remove[l][n])
                     os.remove(json_remove[l][n])
                 else:
                     pass
@@ -130,42 +130,43 @@ def remove_condition(path,name,ext):
     
 
 #path = r'D:\TDG\filesSaved\BIOMARCADORES\derivatives\sovaharmony'
-path = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\DUQUE\derivatives\sovaharmony'
+path = r'E:\PROYECTO_EEG_LAPSIM\ENTREGA_GRUNECO2GIBIC\BD_with_BIDS\Residentes\derivatives\sovaharmony'
 name = ['_powers','norm_eeg','powers_norm','sl_norm','band_norm','coherence_norm','entropy_norm','cross_frequency_norm','sl_band_norm']
 ext = ['.fif','.json','.txt']
 
-remove_data_without_visits(path,name[0],ext[0])
-remove_data_without_visits(path,name[0],ext[1])
-remove_data_without_visits(path,name[0],ext[2])
-remove_data_without_visits(path,name[1],ext[0])
-remove_data_without_visits(path,name[1],ext[1])
-remove_data_without_visits(path,name[1],ext[2])
-remove_data_without_visits(path,name[2],ext[0])
-remove_data_without_visits(path,name[2],ext[1])
-remove_data_without_visits(path,name[2],ext[2])
-remove_data_without_visits(path,name[3],ext[0])
-remove_data_without_visits(path,name[3],ext[1])
-remove_data_without_visits(path,name[3],ext[2])
-remove_data_without_visits(path,name[4],ext[0])
-remove_data_without_visits(path,name[4],ext[1])
-remove_data_without_visits(path,name[4],ext[2])
-remove_data_without_visits(path,name[5],ext[0])
-remove_data_without_visits(path,name[5],ext[1])
-remove_data_without_visits(path,name[5],ext[2])
-remove_data_without_visits(path,name[6],ext[0])
-remove_data_without_visits(path,name[6],ext[1])
-remove_data_without_visits(path,name[6],ext[2])
-remove_data_without_visits(path,name[7],ext[0])
-remove_data_without_visits(path,name[7],ext[1])
-remove_data_without_visits(path,name[7],ext[2])
-remove_data_without_visits(path,name[8],ext[0])
-remove_data_without_visits(path,name[8],ext[1])
-remove_data_without_visits(path,name[8],ext[2])
+tasks=['OE','CE','T1','T2','T3']
+metrics=['sl','crossfreq','cohfreq','entropy']
+for e in ext:
+    for t in tasks:
+        for m in metrics:
+            remove_condition(path,m,e,t)
+# remove_data_without_visits(path,name[0],ext[1])
+# remove_data_without_visits(path,name[0],ext[2])
+# remove_data_without_visits(path,name[1],ext[0])
+# remove_data_without_visits(path,name[1],ext[1])
+# remove_data_without_visits(path,name[1],ext[2])
+# remove_data_without_visits(path,name[2],ext[0])
+# remove_data_without_visits(path,name[2],ext[1])
+# remove_data_without_visits(path,name[2],ext[2])
+# remove_data_without_visits(path,name[3],ext[0])
+# remove_data_without_visits(path,name[3],ext[1])
+# remove_data_without_visits(path,name[3],ext[2])
+# remove_data_without_visits(path,name[4],ext[0])
+# remove_data_without_visits(path,name[4],ext[1])
+# remove_data_without_visits(path,name[4],ext[2])
+# remove_data_without_visits(path,name[5],ext[0])
+# remove_data_without_visits(path,name[5],ext[1])
+# remove_data_without_visits(path,name[5],ext[2])
+# remove_data_without_visits(path,name[6],ext[0])
+# remove_data_without_visits(path,name[6],ext[1])
+# remove_data_without_visits(path,name[6],ext[2])
+# remove_data_without_visits(path,name[7],ext[0])
+# remove_data_without_visits(path,name[7],ext[1])
+# remove_data_without_visits(path,name[7],ext[2])
+# remove_data_without_visits(path,name[8],ext[0])
+# remove_data_without_visits(path,name[8],ext[1])
+# remove_data_without_visits(path,name[8],ext[2])
 
-
-#remove_data_without_visits(path,name[4],ext[0])
-#remove_data_without_visits(path,name[4],ext[1])
-#remove_data_without_visits(path,name[4],ext[2])
 
 
 

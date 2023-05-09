@@ -1,6 +1,7 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from functionsImages import createCollage
 import os 
 import errno
 import numpy as np
@@ -8,14 +9,15 @@ import joypy
 
 #Colors: https://coolors.co/b2abf2-89043d-2fe6de
 
-def graphics(data,type,path,name_band=None,id=None,id_cross=None,num_columns=4,save=True,plot=True,kind="box",palette='winter_r',x='group',hue='database',col_legend=4):
+def graphics(data,type,path,name_band=None,id=None,id_cross=None,num_columns=4,save=True,plot=True,kind="box",palette='winter_r',x='group',hue='database',col_legend=4,title=None):
     '''Function to make graphs of the given data '''
+    data['Band'].replace({'Alpha-1':'Alpha1', 'Alpha-2':'Alpha2'}, inplace=True)
+    data['database'].replace({'BIOMARCADORES':'UdeA 1','DUQUE':'UdeA 2'}, inplace=True)
+    
     if name_band is not None:
         data_max=data[data['Band']==name_band]
     else:
-        data_max=data
-    fig1, axs1 = joypy.joyplot(data_max, by = "condition",column=type,color=["#FDAE61", "#FEE08B", "#FFFFBF", "#E6F598", "#ABDDA4"]) 
-    
+        data_max=data 
 
     max=data_max[type].max()
     sns.set(rc={'figure.figsize':(18,14)})
@@ -54,7 +56,7 @@ def graphics(data,type,path,name_band=None,id=None,id_cross=None,num_columns=4,s
         axs.fig.text(0.5, 0.04, 'Group', ha='center', va='center')
         axs.fig.text(0.015, 0.5,  type, ha='center', va='center',rotation='vertical')
     else:
-        axs.add_legend(loc='upper right',bbox_to_anchor=(.65,.97),ncol=col_legend,title="Database")
+        axs.add_legend(loc='upper right',bbox_to_anchor=(.65,.97),ncol=col_legend,title=title)
         axs.fig.subplots_adjust(top=0.85,bottom=0.121, right=0.986,left=0.05, hspace=0.138, wspace=0.062) 
         axs.fig.text(0.5, 0.04, 'Group', ha='center', va='center')
         axs.fig.text(0.01, 0.5,  type, ha='center', va='center',rotation='vertical')
@@ -230,3 +232,44 @@ def joinimages(paths):
         x_offset += im.size[0]
     new_im.save(paths[1])
     print('Done!')
+
+def distribution_graphics(data,name_img,title,id='ROI',metric=None ,filter='condition'):
+    import math
+    import joypy
+    import matplotlib.pyplot as plt
+
+    # Group the data by ROI and condition
+    if id =='ROI':
+        grouped_data = data.groupby(['ROI'])
+    elif id=='Component':
+        grouped_data = data.groupby(['Component'])
+
+    num_plots = len(grouped_data)
+    num_cols = int(math.sqrt(num_plots))
+    num_rows = math.ceil(num_plots / num_cols)
+    figures=[]
+    group_name = list(grouped_data.groups.keys())
+    for idx,group in enumerate(group_name):
+        g=group_name[idx]
+        g = list(grouped_data.groups.keys())[idx]
+        roi= g
+
+        # Get the subset of data for the current group
+        subset_data = grouped_data.get_group(g).reset_index()
+
+        # Generate the joyplot and plot it on the current subplot
+        f,a=joypy.joyplot(subset_data,
+                        by=filter,
+                        column=metric,
+                        color=["#FDAE61", "#FEE08B",  "#FFFFBF", "#E6F598", "#ABDDA4"],
+                        alpha=0.4,
+                        title=f'ROI {roi}',
+                        xlabels=True)
+        
+        figures.append(f)
+                
+    # Show the figure
+
+    plt.subplots_adjust()
+    figure=createCollage(figures, 800, num_cols,name_img,title,save=True)
+    

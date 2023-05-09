@@ -1,5 +1,4 @@
 import numpy as np
-import mne
 from sys import path
 import os
 #path.append(os.path.join(os.path.dirname(os.path.abspath(__file__))))
@@ -7,7 +6,7 @@ import sovaflow.utils as us
 import matplotlib.pyplot as plt
 
 #ch_names = [us.chn_name_mapping(x) for x in ch_names]
-montage_kind = 'standard_1020'
+montage_kind = 'standard_1010'
 A,W,ch_names = us.get_spatial_filter('58x25')
 
 #comp = 0

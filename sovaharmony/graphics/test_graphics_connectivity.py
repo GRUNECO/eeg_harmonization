@@ -1,19 +1,31 @@
 from graphics_QA import graphics
 import pandas as pd 
+import tkinter as tk
+from tkinter.filedialog import askdirectory
 
-path=r'C:\Users\Victoria\OneDrive - Universidad de Antioquia\GRUNECO\Doctorado Ximena' #Cambia dependieron de quien lo corra
+tk.Tk().withdraw() # part of the import if you are not using other tkinter functions
+path = askdirectory() 
+print("user chose", path, "for save graphs")
 
 #data loading
-data_ic=pd.read_feather(r'{path}\data_long_features_ic.feather'.format(path=path))
-data_roi=pd.read_feather(r'{path}\data_long_features_roi.feather'.format(path=path))
+data_ic=pd.read_feather(r'{path}\Data_long_complete_ic_sova_G1Control.feather'.format(path=path))
+data_roi=pd.read_feather(r'{path}\Data_long_complete_roi_sova_G1Control.feather'.format(path=path))
 # graphics connectivity and power in IC and ROI
-
-m = ['Coherence','Entropy','Power','SL']
+colors=["#127369","#10403B","#8AA6A3","#45C4B0"]
+#m = ['Coherence','Entropy','Power','SL']
+m = ['Cross Frequency']
 bands=list(data_roi.Band.unique())
-filters=['visit', 'condition']
-
+bandsm=list(data_roi.M_Band.unique())
 for met in m:
-    for band in bands:
-        for f in filters:
-            graphics(data_ic,met,path,band,'IC',id_cross=None,num_columns=4,save=False,plot=False,kind='box',palette=colors,x=f)
-            graphics(data_roi,met,path,band,'ROI',id_cross=None,num_columns=2,save=True,plot=False,kind='box',palette=colors,x=f)
+    if met!='Cross Frequency':
+        for band in bands:
+            graphics(data_ic,met,path,band,'IC',id_cross=None,num_columns=4,save=True,plot=False,kind='box',palette=colors)
+            graphics(data_roi,met,path,band,'ROI',id_cross=None,num_columns=2,save=True,plot=False,kind='box',palette=colors)
+    else:
+        for band in bands:
+            for mband in bandsm:
+                try:
+                    graphics(data_ic[data_ic['M_Band']==mband],met,path,band,'IC',id_cross=mband,num_columns=4,save=True,plot=False,kind='box',palette=colors)
+                    graphics(data_roi[data_roi['M_Band']==mband],met,path,band,'ROI',id_cross=mband,num_columns=2,save=True,plot=False,kind='box',palette=colors)
+                except:
+                    pass

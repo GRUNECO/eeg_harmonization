@@ -18,20 +18,22 @@ from funtionsHarmonize import rename_cols
 from paired_tests import MatchIt_R
 from funtionsHarmonize import organizarDataFrame
 from funtionsHarmonize import graf, graf_DB
-from funtionsHarmonize import save_complete
+from funtionsHarmonize import save_complete, selGamma
 import tkinter as tk
 from tkinter.filedialog import askdirectory
+import os
 
 #m = ['power'] 
 #b = ['Gamma']
 m = ['power','sl','cohfreq','entropy','crossfreq'] 
 # = ['crossfreq'] 
 b = ['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma'] 
+bm = ['Mdelta','Mtheta','Malpha-1','Malpha-2','Mbeta1','Mbeta2','Mbeta3','Mgamma']  
 
 tk.Tk().withdraw() # part of the import if you are not using other tkinter functions
 #path = askdirectory() 
-path = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Graficos_Harmonize'
-print("user chose", path, "for save graphs")
+#path = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Graficos_Harmonize'
+#print("user chose", path, "for save graphs")
 #filename = r"{path}\{m}_stats_G1G2.xlsx".format(path=path,m=m)
 #writer = pd.ExcelWriter(filename)
 #filename_trans = r"{path}\{m}_stats_trans.xlsx".format(path=path,m=m)
@@ -41,10 +43,10 @@ print("user chose", path, "for save graphs")
 #df_stats_trans = pd.DataFrame(columns=['Std_sovaharmony','Var_sovaharmony','Mean_sovaharmony','Min_sovaharmony','Max_sovaharmony','Values_close_to_zero_sovaharmony','Negative_sovaharmony','Var_neuroHarmonize','Std_neuroHarmonize','Mean_neuroHarmonize','Min_neuroHarmonize','Max_neuroHarmonize','Values_close_to_zero_neuroHarmonize','Negative__neuroHarmonize'])
 
 row=0
-#s=['ic']
-s=['roi','ic']
-#path_feather = askdirectory()
-path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
+s=['ic']
+#s=['roi','ic']
+path_feather = askdirectory()
+#path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
 print("user chose", path_feather, "for read feather")
 for space in s:
     for allm in m:  
@@ -87,8 +89,10 @@ for space in s:
         sovaeeg = dataAll.copy()
 
         data_sovaeeg = organizarDataFrame(sovaeeg,database_database,allm,dd,space)
-        #new_sovaname = 'Data_complete_'+space+'_sovaharmony_G1_'+allm
-        #save_complete(new_sovaname,data_sovaeeg,dd,path_feather,'Control','G1')
+        new_sovaname = 'Data_complete_'+space+'_sovaharmony_G1_'+allm
+        path_save_feather = path_feather + fr'\sovaharmony\complete\{space}\G1'
+        os.makedirs(path_save_feather,exist_ok=True)
+        #save_complete(new_sovaname,data_sovaeeg,dd,path_save_feather,'Control','G1')
         
         #neuroHarmonize
         my_dataAll = np.array(dataAll)
@@ -105,15 +109,17 @@ for space in s:
 
         #save neuroHarmonize
         datacol = organizarDataFrame(new_dataAll,database_database,allm,dd,space) 
-        #new_name = 'Data_complete_'+space+'_neuroHarmonize_G1_'+allm
-        #save_complete(new_name,datacol,dd,path_feather,'Control','G1')
+        new_name = 'Data_complete_'+space+'_neuroHarmonize_G1_'+allm
+        path_save_feather = path_feather + fr'\neuroHarmonize\complete\{space}\G1'
+        os.makedirs(path_save_feather,exist_ok=True)
+        #save_complete(new_name,datacol,dd,path_save_feather,'Control','G1')
 
 
         #noGene_h,Gene_h = renameModel(new_All)
         noGene_ht,Gene_ht = renameModel(new_dataAll)
         BH,DH,SH,CH = renameDatabases(new_dataAll)
-        graf(path,columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy_data_adjdataAll,title,space)
-        graf_DB(path,columnasAll,B,D,S,C,BH,DH,SH,CH,title,space)
+        graf(path_feather,columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy_data_adjdataAll,title,space)
+        graf_DB(path_feather,columnasAll,B,D,S,C,BH,DH,SH,CH,title,space)
 
         #Tab
         #df_stats.to_excel(writer, startrow=row)

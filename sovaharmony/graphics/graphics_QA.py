@@ -11,9 +11,8 @@ import joypy
 
 def graphics(data,type,path,name_band=None,id=None,id_cross=None,num_columns=4,save=True,plot=True,kind="box",palette='winter_r',x='group',hue='database',col_legend=4,title=None):
     '''Function to make graphs of the given data '''
-    data['Band'].replace({'Alpha-1':'Alpha1', 'Alpha-2':'Alpha2'}, inplace=True)
+    #data['Band'].replace({'Alpha-1':'Alpha1', 'Alpha-2':'Alpha2'}, inplace=True)
     data['database'].replace({'BIOMARCADORES':'UdeA 1','DUQUE':'UdeA 2'}, inplace=True)
-    
     if name_band is not None:
         data_max=data[data['Band']==name_band]
     else:
@@ -36,21 +35,21 @@ def graphics(data,type,path,name_band=None,id=None,id_cross=None,num_columns=4,s
     axs.set(ylabel=None)
     if name_band is not None:
         if id_cross==None:
-            axs.fig.suptitle(type+' in '+r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')
+            axs.fig.suptitle(type+' in '+r'$\bf{'+name_band.replace('-','')+r'}$'+ ' in the ICs of normalized data given by the databases')
             #fig1.title(type+' in '+r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')
             
         else:
-            axs.fig.suptitle(type+' in '+id_cross+' of ' +r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')
+            axs.fig.suptitle(type+' in '+id_cross.replace('-','')+' of ' +r'$\bf{'+name_band.replace('-','')+r'}$'+ ' in the ICs of normalized data given by the databases')
             #fig1.title(type+' in '+id_cross+' of ' +r'$\bf{'+name_band+r'}$'+ ' in the ICs of normalized data given by the databases')  
     if id=='IC':
-        plt.yticks(np.arange(0,round(max),0.1))
+        #plt.yticks(np.arange(0,round(max),0.1))
         axs.add_legend(loc='upper right',bbox_to_anchor=(.59,.95),ncol=col_legend,title="Database")
         axs.fig.subplots_adjust(top=0.85,bottom=0.121, right=0.986,left=0.05, hspace=0.138, wspace=0.062) 
         axs.fig.text(0.5, 0.04, 'Group', ha='center', va='center')
         axs.fig.text(0.01, 0.5,  type, ha='center', va='center',rotation='vertical')
 
     elif id=='ROI':
-        plt.yticks(np.arange(0,round(max),0.1))
+        #plt.yticks(np.arange(0,round(max),0.1))
         axs.add_legend(loc='upper right',bbox_to_anchor=(.7,.95),ncol=col_legend,title="Database")
         axs.fig.subplots_adjust(top=0.85,bottom=0.121, right=0.986,left=0.06, hspace=0.138, wspace=0.062) # adjust the Figure in rp
         axs.fig.text(0.5, 0.04, 'Group', ha='center', va='center')
@@ -65,19 +64,11 @@ def graphics(data,type,path,name_band=None,id=None,id_cross=None,num_columns=4,s
     if save==True:
         if id_cross==None:
             path_complete='{path}\Graficos_{type}\{id}\{x}'.format(path=path,id=id,type=type,x=x)  
-            try:
-                os.makedirs(path_complete)
-            except OSError as e:
-                if e.errno != errno.EEXIST:
-                    raise
+            os.makedirs(path_complete,exist_ok=True)
             path_complete=path_complete+'\{name_band}_{type}_{id}.png'.format(name_band=name_band,id=id,type=type)
         else:
             path_complete='{path}\Graficos_{type}\{id}\{x}'.format(path=path,id=id,type=type,x=x)
-            try:
-                os.makedirs(path_complete)
-            except OSError as e:
-                if e.errno != errno.EEXIST:
-                    raise
+            os.makedirs(path_complete,exist_ok=True)
             path_complete=path_complete+'\{name_band}_{id_cross}_{type}_{id}.png'.format(name_band=name_band,id=id,type=type,id_cross=id_cross)
         plt.savefig(path_complete)
     plt.close()

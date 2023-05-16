@@ -12,6 +12,15 @@ def covars(data):
     data.drop(['MM_total','FAS_F','FAS_S','FAS_A','education'],axis=1,inplace=True)
     return data,covars
 
+def covarsGen(data):
+    covars = {'SITE':data['database'].to_numpy(),
+        'gender':data['sex'].to_numpy(),
+        'age':data['age'].to_numpy(),
+        'group':data['group'].to_numpy()}
+    data.drop(['participant_id','visit','condition','group','sex','age'],axis=1,inplace=True)
+    data.drop(['MM_total','FAS_F','FAS_S','FAS_A','education'],axis=1,inplace=True)
+    return data,covars
+
 def labels(data):
     databases = {label:float(idx) for idx,label in enumerate(np.unique(data['database']))}
     print(databases)
@@ -387,8 +396,8 @@ def graf(path,columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAl
             plt.xlabel(band.replace('-',''))
             #plt.show()
             s=band.split('_')[1]
-            os.makedirs(r'{path}\tesis\{space}\{s}'.format(path=path,s=s,space=space), exist_ok=True)
-            plt.savefig(r'{path}\tesis\{space}\{s}\{name}_{title}_density.png'.format(path=path,s=s,space=space,name=band,title=title))
+            os.makedirs(r'{path}\{space}\{s}'.format(path=path,s=s,space=space), exist_ok=True)
+            plt.savefig(r'{path}\{space}\{s}\{name}_{title}_density.png'.format(path=path,s=s,space=space,name=band,title=title))
             plt.close()
         except:
             pass
@@ -416,8 +425,8 @@ def graf_DB(path,columnasAll,B,D,S,C,BH,DH,SH,CH,title,space):
             plt.xlabel(band.replace('-',''))
             #plt.show()
             s=band.split('_')[1]
-            os.makedirs(r'{path}\tesis\{space}\{s}'.format(path=path,s=s,space=space), exist_ok=True)
-            plt.savefig(r'{path}\tesis\{space}\{s}\{name}_{title}_BD_density.png'.format(path=path,s=s,space=space,name=band,title=title))
+            os.makedirs(r'{path}\{space}\{s}'.format(path=path,s=s,space=space), exist_ok=True)
+            plt.savefig(r'{path}\{space}\{s}\{name}_{title}_BD_density.png'.format(path=path,s=s,space=space,name=band,title=title))
             plt.close()
         except:
             pass

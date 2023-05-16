@@ -19,13 +19,16 @@ from paired_tests import MatchIt_R
 from funtionsHarmonize import organizarDataFrame
 from funtionsHarmonize import G1G2
 from funtionsHarmonize import save_complete
+import tkinter as tk
+from tkinter.filedialog import askdirectory
+import os
 
 #m = ['power'] 
 #b = ['Gamma']
 m = ['power','sl','cohfreq','entropy','crossfreq'] 
 #m = ['crossfreq'] 
 b = ['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma'] 
-path = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Graficos_Harmonize'
+#path = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Graficos_Harmonize'
 #filename = r"{path}\{m}_stats_G1G2.xlsx".format(path=path,m=m)
 #writer = pd.ExcelWriter(filename)
 #filename_trans = r"{path}\{m}_stats_trans.xlsx".format(path=path,m=m)
@@ -36,12 +39,12 @@ path = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis l
 
 row=0
 s=['roi','ic']
-
+path_feather = askdirectory()
+#path_feather = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
 for space in s:
     for allm in m:  
     #    for allb in b:  
         #Tab
-        path_feather = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
         data_in = pd.read_feather(path_feather+r'\Data_complete_'+space+'.feather')
         data = MatchIt_R(data_in,'DTA','Control')
         dd = data.copy()
@@ -79,7 +82,9 @@ for space in s:
 
         data_sovaeeg = organizarDataFrame(sovaeeg,database_database,allm,dd,space)
         new_sovaname = 'Data_complete_'+space+'_sovaharmony_DTA_'+allm
-        save_complete(new_sovaname,data_sovaeeg,dd,path_feather,'Control','DTA')
+        path_save_feather = path_feather + fr'\sovaharmony\complete\{space}\DTA'
+        os.makedirs(path_save_feather,exist_ok=True)
+        save_complete(new_sovaname,data_sovaeeg,dd,path_save_feather,'Control','DTA')
         
  
         #neuroHarmonize
@@ -99,7 +104,9 @@ for space in s:
 
         datacol = organizarDataFrame(new_dataAll,database_database,allm,dd,space) 
         new_name = 'Data_complete_'+space+'_neuroHarmonize_DTA_'+allm
-        save_complete(new_name,datacol,dd,path_feather,'Control','DTA')
+        path_save_feather = path_feather + fr'\neuroHarmonize\complete\{space}\DTA'
+        os.makedirs(path_save_feather,exist_ok=True)
+        save_complete(new_name,datacol,dd,path_save_feather,'Control','DTA')
 
 
         #noGene_h,Gene_h = renameModel(new_All)

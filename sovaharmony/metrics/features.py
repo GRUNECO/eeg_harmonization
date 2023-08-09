@@ -18,7 +18,7 @@ import mne
 #_get_[derivative_name]
 
 ### INTERNAL FEATURES FUNCTIONS ###
-def _get_power(signal_epoch,bands):
+def _get_power(signal_epoch,bands,normalized):
     signal = np.transpose(signal_epoch.get_data(),(1,2,0)) # epochs spaces times -> spaces times epochs
     _verify_epochs_axes(signal_epoch.get_data(),signal)
     space_names = signal_epoch.info['ch_names']
@@ -30,7 +30,7 @@ def _get_power(signal_epoch,bands):
     output['metadata']['axes']={'bands':bands_list,'spaces':space_names}
     for space in space_names:
         space_idx = space_names.index(space)
-        dummy = qeeg_psd_chronux(signal[space_idx,:,:],signal_epoch.info['sfreq'],bands)
+        dummy = qeeg_psd_chronux(signal[space_idx,:,:],signal_epoch.info['sfreq'],bands,normalized)
         for b in bands.keys():
             band_idx = bands_list.index(b)
             values[band_idx,space_idx]=dummy[b] #if there is an error in this line update sovachornux
@@ -103,6 +103,7 @@ def _get_entropy(signal_epoch,bands,D):
 #### generalizado#######
 
 foo_map={
+    'absPower':_get_power,
     'power':_get_power,
     'sl':_get_sl,
     'cohfreq':_get_coh,

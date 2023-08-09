@@ -67,7 +67,7 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    df.to_feather(r'{path}\data_{task}_{feature}_columns_components_{name}.feather'.format(name=name,path=path,task=task,feature=feature))
+    df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_components.feather'.format(name=name,path=path,task=task,feature=feature))
     print('Done!')
     return df 
 
@@ -148,6 +148,6 @@ def get_dataframe_columnsROI(THE_DATASET,feature):
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    df.to_feather(r'{path}\data_{task}_{feature}_columns_ROI_{name}.feather'.format(name=name,path=path,task=task,feature=feature))
+    df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_ROI.feather'.format(name=name,path=path,task=task,feature=feature))
     print('Done!')
     return df 

@@ -51,7 +51,8 @@ def features(THE_DATASET):
         json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
         
         features_tuples=[
-            ('power',{'bands':bands}),
+            ('absPower',{'bands':bands,'normalize':False}),
+            ('power',{'bands':bands,'normalize':True}),
             ('sl',{'bands':bands}),
             ('cohfreq',{'window':3,'bands':bands}),
             ('entropy',{'bands':bands,'D':3}),
@@ -62,8 +63,8 @@ def features(THE_DATASET):
             try:
                 for sf in [None, spatial_filter]: # Channels and Components
                 #for sf in [spatial_filter]: # Only components
-                    #for norm_ in [True,False]: # Only with huber and without huber
-                    for norm_ in [True]: # Only with without huber
+                    for norm_ in [True,False]: # Only with huber and without huber
+                    #for norm_ in [True]: # Only with without huber
                         if sf is not None:
                             sf_label = f'ics[{spatial_filter["name"]}]'
                         else:

@@ -90,21 +90,21 @@ def neurosovaHarmonize(m,b,bm,s,A,B,path_feather,path_input,path_graph,new_name,
             #save neuroHarmonize
             datacol = organizarDataFrame(new_dataAll,database_database,allm,dd,space) 
             os.makedirs(path_feather + fr'\neuroHarmonize\complete',exist_ok=True)
-            save_complete(new_name+space+rf'_neuroHarmonize_{A}_'+allm,datacol,dd,path_feather+fr'\neuroHarmonize\complete'+rf'\{space}\{A}',B,A)
+            #save_complete(new_name+space+rf'_neuroHarmonize_{A}_'+allm,datacol,dd,path_feather+fr'\neuroHarmonize\complete'+rf'\{space}\{A}',B,A)
 
 
             #noGene_h,Gene_h = renameModel(new_All)
             noGene_ht,Gene_ht = renameModel(new_dataAll)
             BH,DH,SH,CH = renameDatabases(new_dataAll)
-            graf(path_graph+ fr'\Gauss',columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy_data_adjdataAll,title,space)
-            graf_DB(path_graph+ fr'\Gauss',columnasAll,BS,DS,SS,CS,BH,DH,SH,CH,title,space)
+            #graf(path_graph+ fr'\Gauss',columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy_data_adjdataAll,title,space)
+            #graf_DB(path_graph+ fr'\Gauss',columnasAll,BS,DS,SS,CS,BH,DH,SH,CH,title,space)
 
 ## Lists
 m = ['power','sl','cohfreq','entropy','crossfreq'] 
 b = ['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma'] 
 bm = ['Mdelta','Mtheta','Malpha-1','Malpha-2','Mbeta1','Mbeta2','Mbeta3','Mgamma']  
-s=['roi','ic']
-#s=['ic']
+#s=['roi','ic']
+s=['ic']
 
 ## Groups
 #Portadores vs Controles

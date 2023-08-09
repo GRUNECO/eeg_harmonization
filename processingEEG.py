@@ -22,28 +22,37 @@ from sovaharmony.datasets import Estudiantes2021_OE
 from sovaharmony.datasets import Estudiantes2021_CE
 from sovaharmony.datasets import Estudiantes2021_T1
 from sovaharmony.datasets import Estudiantes2021_T2
-
+from sovaharmony.datasets import BIOMARCADORES_OE, BIOMARCADORES_CE, CHBMP, SRM, DUQUE
+#from .misc.neuroharmonaze import neurosovaHarmonize
 import time 
 
 
-THE_DATASETS=[
+#THE_DATASETS=[
             #   Estudiantes2021_OE,
             #   Estudiantes2021_CE,
             #   Estudiantes2021_T1,
             #   Estudiantes2021_T2,
             #   Estudiantes_CE,
             #   Estudiantes_OE,
-              Estudiantes_T1,# no da
+            #  Estudiantes_T1,# no da
             #   Estudiantes_T2,
             #   Estudiantes_T3,
             #   Residentes_CE,
             #   Residentes_OE,
             #   Residentes_T1,
             #   Residentes_T2,
-              Residentes_T3,
-              ]
+            #  Residentes_T3,
+#              ]
+#joblib para paralelizar flujos 
+ 
+THE_DATASETS=[
+    BIOMARCADORES_OE,
+    BIOMARCADORES_CE,
+    CHBMP,
+    SRM,
+    DUQUE,
+    ]
 
-#THE_DATASETS=[DATA]
 for dataset in THE_DATASETS:
     #Preprocessing pipeline
     start = time.perf_counter()
@@ -100,5 +109,5 @@ for dataset in THE_DATASETS:
             columns_cross_ic.remove('participant_id')
 
             dataframe_long_cross_roi(data_ROI,type='Cross Frequency',columns=columns_cross_roi,name="data_long_crossfreq_roi",path=path)
-            #dataframe_long_cross_ic(data_IC,type='Cross Frequency',columns=columns_cross_ic,name="data_long_crossfreq_components",path=path)
+            dataframe_long_cross_ic(data_IC,type='Cross Frequency',columns=columns_cross_ic,name="data_long_crossfreq_components",path=path)
 

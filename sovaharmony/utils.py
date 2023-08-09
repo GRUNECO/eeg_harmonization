@@ -202,7 +202,7 @@ def dataframe_long_cross_roi(data,type,columns,name,path):
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    data_new.reset_index(drop=True).to_feather('{path}\data_long_{task}_{metric}_{name}_roi.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
+    data_new.reset_index(drop=True).to_feather('{path}\data_{name}_{task}_long_{metric}_ROI.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 
 def dataframe_long_cross_ic(data,type='Cross Frequency',columns=None,name=None,path=None):
@@ -242,7 +242,7 @@ def dataframe_long_cross_ic(data,type='Cross Frequency',columns=None,name=None,p
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    data_new.reset_index(drop=True).to_feather('{path}\data_long_{task}_{metric}_{name}_ic.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
+    data_new.reset_index(drop=True).to_feather('{path}\data_{name}_{task}_long_{metric}_components.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 
 def dataframe_componentes_deseadas(data,columnas):

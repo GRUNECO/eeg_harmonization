@@ -29,8 +29,23 @@ import scipy as sy
 
 #filename1=r'E:\PROYECTO_EEG_LAPSIM\FORMATO_EDF\estudiantes_2021\TRLP28~ S1CE_b9bd277d-86d9-40a1-880a-3e334c68c7bb.edf'
 #filename2=r'D:\XIMENA\BIDS\Estudiantes2021\sub-28\ses-S1\eeg\sub-28_ses-S1_task-CE_eeg.vhdr'
-filename=r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-CTR001\ses-V0\eeg\sub-CTR001_ses-V0_task-CE_desc-prep_eeg.fif"
-raw = mne.io.read_raw(filename,preload=True )
+#filename=r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\derivatives\sovaharmony\sub-CTR001\ses-V0\eeg\sub-CTR001_ses-V0_task-CE_desc-prep_eeg.fif"
+
+
+Biomarcadores = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES\sub-CTR001\ses-V0\eeg\sub-CTR001_ses-V0_task-CE_eeg.vhdr"
+B = mne.io.read_raw(Biomarcadores, preload=True)
+print('UdeA 1:  \n Number of channels: ',len(B.ch_names),'Channels: ',B.ch_names)
+Duque=r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\DUQUE\sub-ALZCE001\eeg\sub-ALZCE001_task-resting_eeg.vhdr"
+D = mne.io.read_raw(Duque,preload=True )
+print('UdeA 2:  \n Number of channels: ',len(D.ch_names),'Channels: ',D.ch_names)
+SRM=r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\SRM\sub-001\ses-t1\eeg\sub-001_ses-t1_task-resteyesc_eeg.edf"
+S = mne.io.read_raw(SRM,preload=True )
+print('SRM:  \n Number of channels: ',len(S.ch_names),'Channels: ',S.ch_names)
+CHBMP=r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\CHBMP\sub-CBM00001\eeg\sub-CBM00001_task-protmap_eeg.edf"
+C = mne.io.read_raw(CHBMP,preload=True )
+print('CHBMP:  \n Number of channels: ',len(C.ch_names),'Channels: ',C.ch_names)
+print("Ok")
+#raw = mne.io.read_raw(filename,preload=True )
 #raw2= mne.io.read_raw(filename2,preload=True )
 
 
@@ -51,7 +66,7 @@ raw = mne.io.read_raw(filename,preload=True )
 # print('\nChannels whit BIDS')
 # print(raw2.ch_names)
 
-raw.plot()
+#raw.plot()
 
 #raw1 = read_raw(filename1,preload=True )
 #raw2 = read_raw(filename2,preload=True )
@@ -78,5 +93,5 @@ raw.plot()
 #raw2.plot()
 #raw3.plot()
 #raw4.plot()
-raw.plot_psd()
+#raw.plot_psd()
 

@@ -16,7 +16,7 @@ OVERWRITE = False # Ojo con esta variable, es para obligar a sobreescribir los a
 # en general deberia estar en False
 def features(THE_DATASET):
     # Inputs not dataset dependent
-    def_spatial_filter='58x25'
+    def_spatial_filter='54x10'
     bands ={'delta':(1.5,6),
             'theta':(6,8.5),
             'alpha-1':(8.5,10.5),

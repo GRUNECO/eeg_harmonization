@@ -38,7 +38,8 @@ def ch_roi(ch,raw):
     return raw
 
 def create_raw_ics(raw_epo):
-    def_spatial_filter='58x25'
+    #def_spatial_filter='58x25'
+    def_spatial_filter='54x10'
     spatial_filter = get_spatial_filter(def_spatial_filter)
     signal_epo = raw_epo.copy()
     bands_labels = ['delta', 'theta', 'alpha-1', 'alpha-2', 'beta1', 'beta2','beta3', 'gamma']
@@ -56,7 +57,8 @@ def create_raw_ics(raw_epo):
     return signal_ics,ics
 
 def create_raw_ics_c(raw_epo):
-    def_spatial_filter='58x25'
+    #def_spatial_filter='58x25'
+    def_spatial_filter='54x10'
     spatial_filter = get_spatial_filter(def_spatial_filter)
     signal_epo = raw_epo.copy()
     bands_labels = ['delta', 'theta', 'alpha-1', 'alpha-2', 'beta1', 'beta2','beta3', 'gamma']

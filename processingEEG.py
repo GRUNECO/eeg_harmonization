@@ -23,6 +23,7 @@ from sovaharmony.datasets import Estudiantes2021_CE
 from sovaharmony.datasets import Estudiantes2021_T1
 from sovaharmony.datasets import Estudiantes2021_T2
 from sovaharmony.datasets import BIOMARCADORES_OE, BIOMARCADORES_CE, CHBMP, SRM, DUQUE
+from sovaharmony.datasets import BIOMARCADORES_CE_54X10, CHBMP_54X10, SRM_54X10, DUQUE_54X10
 #from .misc.neuroharmonaze import neurosovaHarmonize
 import time 
 
@@ -44,13 +45,11 @@ import time
             #  Residentes_T3,
 #              ]
 #joblib para paralelizar flujos 
- 
+#BIOMARCADORES_CE_54X10,
 THE_DATASETS=[
-    BIOMARCADORES_OE,
-    BIOMARCADORES_CE,
-    CHBMP,
-    SRM,
-    DUQUE,
+    CHBMP_54X10,
+    SRM_54X10,
+    DUQUE_54X10,
     ]
 
 for dataset in THE_DATASETS:

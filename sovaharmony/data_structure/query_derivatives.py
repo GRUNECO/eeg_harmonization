@@ -21,7 +21,8 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
     layout = BIDSLayout(data_path,derivatives=True)
     layout.get(scope='derivatives', return_type='file')
     paths= layout.get(extension='.txt',task=task,suffix=feature, return_type='filename')
-    paths = [x for x in paths if f'space-ics[58x25]_norm-True' in x]
+    #paths = [x for x in paths if f'space-ics[58x25]_norm-True' in x]
+    paths = [x for x in paths if f'space-ics[54x10]_norm-True' in x]
     list_subjects = []
     print(paths)
     for i in range(len(paths)):

@@ -44,6 +44,7 @@ BIOMARCADORESYorguin = {
     'session':'V'
 }
 
+
 CHBMP = {
     'name':'CHBMP',
     'input_path':r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\CHBMP',
@@ -246,4 +247,49 @@ Residentes_T3={
     'events_to_keep':None,
     'run-label':'T3',
     'session':'V'
+}
+
+BIOMARCADORES_CE_54X10 = {
+    'name':'BIOMARCADORES',
+    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASEDEDATOS98\BIOMARCADORES',
+    'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename', 'session':'V0'},
+    'args':{'line_freqs':[60]},
+    'group_regex':'(.+).{3}',
+    'events_to_keep':None,
+    'run-label':'restCE',
+    'session':'V'
+   
+}
+
+CHBMP_54X10 = {
+    'name':'CHBMP',
+    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASEDEDATOS98\CHBMP',
+    'layout':{'extension':'.edf', 'task':'protmap','suffix':'eeg', 'return_type':'filename'},
+    'args':{'line_freqs':[60],},
+    'group_regex':None,
+    'events_to_keep':[65],
+    'run-label':'restCE',
+    'session':None
+}
+
+SRM_54X10 = {
+    'name':'SRM',
+    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASEDEDATOS98\SRM',
+    'layout':{'extension':'.edf', 'task':'resteyesc','suffix':'eeg', 'return_type':'filename', 'session':'t1'},
+    'args':{'line_freqs':[50]},
+    'group_regex':None,
+    'events_to_keep':None,
+    'run-label':'restCE',
+    'session':'V'
+    }
+
+DUQUE_54X10 = {
+    'name':'DUQUE',
+    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASEDEDATOS98\DUQUE',
+    'layout':{'extension':'.vhdr', 'task':'resting','suffix':'eeg', 'return_type':'filename'},
+    'args':{'line_freqs':[60]},
+    'group_regex':None,
+    'events_to_keep':None,
+    'run-label':'restCE',
+    'session':None
 }

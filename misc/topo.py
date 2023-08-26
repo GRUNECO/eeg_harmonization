@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 
 #ch_names = [us.chn_name_mapping(x) for x in ch_names]
 montage_kind = 'standard_1010'
-A,W,ch_names = us.get_spatial_filter('58x25')
+#A,W,ch_names = us.get_spatial_filter('58x25')
+A,W,ch_names = us.get_spatial_filter('54x10')
 
 #comp = 0
 

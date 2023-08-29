@@ -45,8 +45,8 @@ tk.Tk().withdraw() # part of the import if you are not using other tkinter funct
 row=0
 s=['ic']
 #s=['roi','ic']
-path_feather = askdirectory()
-#path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
+#path_feather = askdirectory()
+
 print("user chose", path_feather, "for read feather")
 for space in s:
     for allm in m:  

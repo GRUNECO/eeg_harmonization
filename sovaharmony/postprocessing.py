@@ -50,10 +50,9 @@ def features(THE_DATASET):
         norm_path = get_derivative_path(layout,eeg_file,'huber'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
 
         json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
-        
+        #('absPower',{'bands':bands,'normalize':False})
         features_tuples=[
-            ('absPower',{'bands':bands,'normalize':False}),
-            ('power',{'bands':bands,'normalize':True}),
+            ('power',{'bands':bands}),
             ('sl',{'bands':bands}),
             ('cohfreq',{'window':3,'bands':bands}),
             ('entropy',{'bands':bands,'D':3}),
@@ -62,10 +61,10 @@ def features(THE_DATASET):
         times_strings = []
         for feature,kwargs in features_tuples:
             try:
-                for sf in [None, spatial_filter]: # Channels and Components
-                #for sf in [spatial_filter]: # Only components
-                    for norm_ in [True,False]: # Only with huber and without huber
-                    #for norm_ in [True]: # Only with without huber
+                #for sf in [None, spatial_filter]: # Channels and Components
+                for sf in [spatial_filter]: # Only components
+                    #for norm_ in [True,False]: # Only with huber and without huber
+                    for norm_ in [True]: # Only with huber
                         if sf is not None:
                             sf_label = f'ics[{spatial_filter["name"]}]'
                         else:

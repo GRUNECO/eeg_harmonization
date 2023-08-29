@@ -18,7 +18,7 @@ from funtionsHarmonize import rename_cols
 from paired_tests import MatchIt_R
 from funtionsHarmonize import organizarDataFrame
 from funtionsHarmonize import graf, graf_DB
-from funtionsHarmonize import save_complete, selGamma
+from funtionsHarmonize import save_complete #selGamma
 import tkinter as tk
 from tkinter.filedialog import askdirectory
 import os
@@ -45,8 +45,9 @@ tk.Tk().withdraw() # part of the import if you are not using other tkinter funct
 row=0
 s=['ic']
 #s=['roi','ic']
-path_feather = askdirectory()
+#path_feather = askdirectory()
 #path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
+path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_54x10\Datosparaorganizardataframes/' 
 print("user chose", path_feather, "for read feather")
 for space in s:
     for allm in m:  
@@ -63,6 +64,7 @@ for space in s:
 
 
         ######### eeg_harmonization ##########
+        dataAll = dataAll.drop(columns=['visit_x','visit_y']) #Se agrega durante cambio a 54x10
         noGene,Gene = renameModel(dataAll)
         B,D,S,C = renameDatabases(dataAll)
         noGene.drop(['database'],axis=1,inplace=True)
@@ -79,7 +81,8 @@ for space in s:
         if space == 'ic':
             #dataAll = delcolumn(data,'Gamma',bm='Mgamma')
             #dataAll = delcolumn(data,'crossfreq',em=None)
-            components=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25' ]
+            #components=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25' ]
+            components=['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
             dataAll=extract_components_interes(dataAll,components)
             columnasAll = dataAll.columns
         else:
@@ -92,7 +95,7 @@ for space in s:
         new_sovaname = 'Data_complete_'+space+'_sovaharmony_G1_'+allm
         path_save_feather = path_feather + fr'\sovaharmony\complete\{space}\G1'
         os.makedirs(path_save_feather,exist_ok=True)
-        #save_complete(new_sovaname,data_sovaeeg,dd,path_save_feather,'Control','G1')
+        save_complete(new_sovaname,data_sovaeeg,dd,path_save_feather,'Control','G1')
         
         #neuroHarmonize
         my_dataAll = np.array(dataAll)
@@ -112,14 +115,14 @@ for space in s:
         new_name = 'Data_complete_'+space+'_neuroHarmonize_G1_'+allm
         path_save_feather = path_feather + fr'\neuroHarmonize\complete\{space}\G1'
         os.makedirs(path_save_feather,exist_ok=True)
-        #save_complete(new_name,datacol,dd,path_save_feather,'Control','G1')
+        save_complete(new_name,datacol,dd,path_save_feather,'Control','G1')
 
 
         #noGene_h,Gene_h = renameModel(new_All)
         noGene_ht,Gene_ht = renameModel(new_dataAll)
         BH,DH,SH,CH = renameDatabases(new_dataAll)
-        graf(path_feather,columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy_data_adjdataAll,title,space)
-        graf_DB(path_feather,columnasAll,B,D,S,C,BH,DH,SH,CH,title,space)
+        #graf(path_feather,columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy_data_adjdataAll,title,space)
+        #graf_DB(path_feather,columnasAll,B,D,S,C,BH,DH,SH,CH,title,space)
 
         #Tab
         #df_stats.to_excel(writer, startrow=row)

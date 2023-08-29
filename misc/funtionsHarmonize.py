@@ -98,7 +98,8 @@ def select(data,metric,OneBand=None,WithoutBand=None,Gamma=None,space='roi'):
     if space == 'roi':
         roi = ['F','C','T','PO']
     elif space == 'ic':
-        roi = ['C14','C15','C18','C20','C22','C23','C24','C25'] #ic
+        roi = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+        #roi = ['C14','C15','C18','C20','C22','C23','C24','C25'] #ic
     bm = ['Mdelta','Mtheta','Malpha-1','Malpha-2','Mbeta1','Mbeta2','Mbeta3','Mgamma']  # Pongo las que voy a eliminar
     if metric == 'All':
         if OneBand == None and WithoutBand == None:
@@ -241,7 +242,8 @@ def add_Gamma(new_All,space):
         for roi in s:
             new_All['power_'+roi+'_Gamma']=1-(new_All['power_'+roi+'_Delta']+new_All['power_'+roi+'_Theta']+new_All['power_'+roi+'_Alpha-1']+new_All['power_'+roi+'_Alpha-2']+new_All['power_'+roi+'_Beta1']+new_All['power_'+roi+'_Beta2']+new_All['power_'+roi+'_Beta3'])
     elif space == 'ic':
-        s = ['C14','C15','C18','C20','C22','C23','C24','C25'] #ic
+        s = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+        #s = ['C14','C15','C18','C20','C22','C23','C24','C25'] #ic
         for ic in s:
             new_All['power_'+ic+'_Gamma']=1-(new_All['power_'+ic+'_Delta']+new_All['power_'+ic+'_Theta']+new_All['power_'+ic+'_Alpha-1']+new_All['power_'+ic+'_Alpha-2']+new_All['power_'+ic+'_Beta1']+new_All['power_'+ic+'_Beta2']+new_All['power_'+ic+'_Beta3'])
     return new_All

@@ -293,3 +293,14 @@ DUQUE_54X10 = {
     'run-label':'restCE',
     'session':None
 }
+
+test_portables={
+    'name':'test_portables',
+    'input_path':r'D:\portables\Data',
+    'layout':{'extension':'.vhdr', 'task':'OE','suffix':'eeg', 'return_type':'filename', 'session':'V0'},
+    'args':{'line_freqs':[60]},
+    'group_regex':'(.+).{3}',
+    'events_to_keep':None,
+    'run-label':'restOE',
+    'session':'V'
+}

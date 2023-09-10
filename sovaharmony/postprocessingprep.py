@@ -48,7 +48,8 @@ def features(THE_DATASET):
         msg =f"File {i+1} of {num_files} ({(i+1)*100/num_files}%) : {eeg_file}"
         logger.info(msg)
 
-        prep_path = get_derivative_path(layout,eeg_file,'prep','eeg','.fif',bids_root,derivatives_root)
+        prep_path = get_deriva
+        tive_path(layout,eeg_file,'prep','eeg','.fif',bids_root,derivatives_root)
 
         json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
         

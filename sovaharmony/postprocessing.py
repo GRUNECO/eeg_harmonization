@@ -8,13 +8,12 @@ from sovaharmony.metrics.features import get_derivative
 from sovaharmony.spatial import get_spatial_filter
 import time
 import traceback
+
 OVERWRITE = False # Ojo con esta variable, es para obligar a sobreescribir los archivos
 # en general deberia estar en False
 
-def features(THE_DATASET):
+def features(THE_DATASET, def_spatial_filter='54x10',portables=False):
     # Inputs not dataset dependent
-    #def_spatial_filter='58x25'
-    def_spatial_filter='54x10'
     bands ={'delta':(1.5,6),
             'theta':(6,8.5),
             'alpha-1':(8.5,10.5),
@@ -24,7 +23,7 @@ def features(THE_DATASET):
             'beta3':(21,30),
             'gamma':(30,45)}
     if THE_DATASET.get('spatial_filter',def_spatial_filter):
-        spatial_filter = get_spatial_filter(THE_DATASET.get('spatial_filter',def_spatial_filter))
+        spatial_filter = get_spatial_filter(THE_DATASET.get('spatial_filter',def_spatial_filter),portables=portables)
     input_path = THE_DATASET.get('input_path',None)
     layout_dict = THE_DATASET.get('layout',None)
     e = 0
@@ -103,3 +102,4 @@ def features(THE_DATASET):
         [print(x) for x in times_strings]
         [logger.info(x) for x in times_strings]
     return
+

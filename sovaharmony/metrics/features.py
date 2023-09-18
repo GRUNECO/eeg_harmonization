@@ -10,6 +10,8 @@ from sovaflow.utils import createRaw
 from sovachronux.qeeg_psd_chronux import qeeg_psd_chronux
 from sovaharmony.utils import _verify_epoch_continuous,_verify_epochs_axes
 import mne
+import yasa
+import numpy as np
 
 ## USE PYTHON >3.7 , fundamental to guarantee dict order
 
@@ -31,6 +33,32 @@ def _get_power(signal_epoch,bands):
     for space in space_names:
         space_idx = space_names.index(space)
         dummy = qeeg_psd_chronux(signal[space_idx,:,:],signal_epoch.info['sfreq'],bands)
+        for b in bands.keys():
+            band_idx = bands_list.index(b)
+            values[band_idx,space_idx]=dummy[b] #if there is an error in this line update sovachornux
+    output['values'] = values
+    return output
+
+def _get_power_irasa(signal_epoch,bands):
+    signal = np.transpose(signal_epoch.get_data(),(1,2,0)) # epochs spaces times -> spaces times epochs
+    _verify_epochs_axes(signal_epoch.get_data(),signal)
+    space_names = signal_epoch.info['ch_names']
+    spaces,times,epochs = signal.shape
+    output = {}
+    output['metadata'] = {'type':'power_irasa','kwargs':{'bands':bands}}
+    bands_list = list(bands.keys())
+    values = np.empty((len(bands_list),spaces))
+    output['metadata']['axes']={'bands':bands_list,'spaces':space_names}
+    power = {}
+    for space in space_names:
+        space_idx = space_names.index(space)
+        freqs, psd_aperiodic, psd_osc = yasa.irasa(signal[space_idx,:,:], signal_epoch.info['sfreq'], ch_names=chan, band=(1, 30), win_sec=4, return_fit=False)
+        for band_label,vals in bands.items():
+            fmin,fmax = vals
+            idx_band = np.logical_and(fmin <= ffo, ffo < fmax)
+            pot_band = sum(ss[idx_band == True])
+            power[band_label]=pot_band
+        dummy 
         for b in bands.keys():
             band_idx = bands_list.index(b)
             values[band_idx,space_idx]=dummy[b] #if there is an error in this line update sovachornux

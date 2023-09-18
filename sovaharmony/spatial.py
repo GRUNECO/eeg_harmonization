@@ -2,6 +2,8 @@ from scipy.io import loadmat
 import sovaflow.utils as us
 import matplotlib.pyplot as plt
 import os
+import numpy as np
+
 F = ['FP1', 'FPZ', 'FP2', 'AF3', 'AF4', 'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8'] 
 T = ['FT7', 'FC5', 'FC6', 'FT8', 'T7', 'C5', 'C6', 'T8', 'TP7', 'CP5', 'CP6', 'TP8']
 C = ['FC3', 'FC1', 'FCZ', 'FC2', 'FC4', 'C3', 'C1', 'CZ', 'C2', 'C4', 'CP3', 'CP1', 'CPZ', 'CP2', 'CP4'] 
@@ -12,7 +14,7 @@ ROIs = [F,C,PO,T]
 
 # TODO: Pass spatial filters to sovaharmony
 
-def get_spatial_filter(name='62x19'):
+def get_spatial_filter(name='62x19',portables=False):
     """
     Returns the default spatial filter of the module.
     Parameters:
@@ -30,7 +32,24 @@ def get_spatial_filter(name='62x19'):
     A = mat_contents['A']
     ch_names = [x[0] for x in mat_contents['ch_names'][0,:].tolist()]
     sf = {'A':A,'W':W,'ch_names':ch_names,'name':name}
-    return sf
+    if portables:
+        channels_reduction={'cresta':['F3 ','F4 ','C3 ','C4 ','P3 ','P4 ','O1 ','O2 '],
+                            'openBCI':['F3 ','F4 ','P3 ','P4 ','T5 ','O1 ','O2 ','T6 '],
+                            'paper':['F3 ','F4 ','C3 ','C4 ','T3 ','T4 ','O1 ','O2 ']
+                            }
+        montage_select='cresta'
+        index_ch_portables=[sf['ch_names'].index(channels_reduction[montage_select][i]) for i in range(len(channels_reduction['cresta']))]
+        comp_select=[0,1,2,3,4,6,7,9]
+        A=sf['A'][index_ch_portables,:] # Select channels, rows
+        A=A[:,[comp_select]] # Select components, columns
+        A=np.squeeze(A)
+        W=sf['W'][:,index_ch_portables] # Select channels, rows
+        W=W[[comp_select],:] # Select components, columns
+        W=np.squeeze(W)
+        sf={'A':A,'W':W.T,'ch_names':channels_reduction[montage_select],'name':montage_select}
+        return sf
+    else:   
+        return sf
 
 def plot_spatial_filter(name='62x19'):
     #ch_names = [us.chn_name_mapping(x) for x in ch_names]

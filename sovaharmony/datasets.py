@@ -21,6 +21,7 @@ BIOMARCADORES_CE = {
    
 }
 
+
 BIOMARCADORESMini = {
     'name':'BIOMARCADORES',
     'input_path':r'C:\Users\Victoria\OneDrive - Universidad de Antioquia\Datos MsC Verónica\biomarcadoresprueba',
@@ -296,7 +297,7 @@ DUQUE_54X10 = {
 
 test_portables={
     'name':'test_portables',
-    'input_path':r'D:\portables\Data',
+    'input_path':r'C:\Users\Luisa\OneDrive - Universidad de Antioquia\Datos MsC Verónica\BIOMARCADORES',
     'layout':{'extension':'.vhdr', 'task':'OE','suffix':'eeg', 'return_type':'filename', 'session':'V0'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',

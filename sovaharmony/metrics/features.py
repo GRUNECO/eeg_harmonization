@@ -39,31 +39,31 @@ def _get_power(signal_epoch,bands):
     output['values'] = values
     return output
 
-def _get_power_irasa(signal_epoch,bands):
-    signal = np.transpose(signal_epoch.get_data(),(1,2,0)) # epochs spaces times -> spaces times epochs
-    _verify_epochs_axes(signal_epoch.get_data(),signal)
-    space_names = signal_epoch.info['ch_names']
-    spaces,times,epochs = signal.shape
-    output = {}
-    output['metadata'] = {'type':'power_irasa','kwargs':{'bands':bands}}
-    bands_list = list(bands.keys())
-    values = np.empty((len(bands_list),spaces))
-    output['metadata']['axes']={'bands':bands_list,'spaces':space_names}
-    power = {}
-    for space in space_names:
-        space_idx = space_names.index(space)
-        freqs, psd_aperiodic, psd_osc = yasa.irasa(signal[space_idx,:,:], signal_epoch.info['sfreq'], ch_names=chan, band=(1, 30), win_sec=4, return_fit=False)
-        for band_label,vals in bands.items():
-            fmin,fmax = vals
-            idx_band = np.logical_and(fmin <= ffo, ffo < fmax)
-            pot_band = sum(ss[idx_band == True])
-            power[band_label]=pot_band
-        dummy 
-        for b in bands.keys():
-            band_idx = bands_list.index(b)
-            values[band_idx,space_idx]=dummy[b] #if there is an error in this line update sovachornux
-    output['values'] = values
-    return output
+# def _get_power_irasa(signal_epoch,bands):
+#     signal = np.transpose(signal_epoch.get_data(),(1,2,0)) # epochs spaces times -> spaces times epochs
+#     _verify_epochs_axes(signal_epoch.get_data(),signal)
+#     space_names = signal_epoch.info['ch_names']
+#     spaces,times,epochs = signal.shape
+#     output = {}
+#     output['metadata'] = {'type':'power_irasa','kwargs':{'bands':bands}}
+#     bands_list = list(bands.keys())
+#     values = np.empty((len(bands_list),spaces))
+#     output['metadata']['axes']={'bands':bands_list,'spaces':space_names}
+#     power = {}
+#     for space in space_names:
+#         space_idx = space_names.index(space)
+#         freqs, psd_aperiodic, psd_osc = yasa.irasa(signal[space_idx,:,:], signal_epoch.info['sfreq'], ch_names=chan, band=(1, 30), win_sec=4, return_fit=False)
+#         for band_label,vals in bands.items():
+#             fmin,fmax = vals
+#             idx_band = np.logical_and(fmin <= ffo, ffo < fmax)
+#             pot_band = sum(ss[idx_band == True])
+#             power[band_label]=pot_band
+#         dummy 
+#         for b in bands.keys():
+#             band_idx = bands_list.index(b)
+#             values[band_idx,space_idx]=dummy[b] #if there is an error in this line update sovachornux
+#     output['values'] = values
+#     return output
 
 def _get_sl(signal_epoch,bands):
     space_names = signal_epoch.info['ch_names']

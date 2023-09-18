@@ -21,6 +21,30 @@ BIOMARCADORES_CE = {
    
 }
 
+BIOMARCADORES_OE_server= {
+    'name':'BIOMARCADORES',
+    'input_path':r'/media/gruneco-server/ADATA HD650/BIOMARCADORES',
+    'layout':{'extension':'.vhdr', 'task':'OE','suffix':'eeg', 'return_type':'filename', 'session':'V0'},
+    'args':{'line_freqs':[60]},
+    'group_regex':'(.+).{3}',
+    'events_to_keep':None,
+    'run-label':'restOE',
+    'session':'V'
+}
+
+BIOMARCADORES_CE_server= {
+    'name':'BIOMARCADORES',
+    'input_path':r'/media/gruneco-server/ADATA HD650/BIOMARCADORES',
+    'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename', 'session':'V0'},
+    'args':{'line_freqs':[60]},
+    'group_regex':'(.+).{3}',
+    'events_to_keep':None,
+    'run-label':'restCE',
+    'session':'V'
+   
+}
+
+
 
 BIOMARCADORESMini = {
     'name':'BIOMARCADORES',

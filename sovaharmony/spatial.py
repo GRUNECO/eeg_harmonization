@@ -14,7 +14,7 @@ ROIs = [F,C,PO,T]
 
 # TODO: Pass spatial filters to sovaharmony
 
-def get_spatial_filter(name='62x19',portables=False):
+def get_spatial_filter(name='62x19',portables=False,montage_select=None):
     """
     Returns the default spatial filter of the module.
     Parameters:
@@ -33,11 +33,13 @@ def get_spatial_filter(name='62x19',portables=False):
     ch_names = [x[0] for x in mat_contents['ch_names'][0,:].tolist()]
     sf = {'A':A,'W':W,'ch_names':ch_names,'name':name}
     if portables:
-        channels_reduction={'cresta':['F3 ','F4 ','C3 ','C4 ','P3 ','P4 ','O1 ','O2 '],
-                            'openBCI':['F3 ','F4 ','P3 ','P4 ','T5 ','O1 ','O2 ','T6 '],
-                            'paper':['F3 ','F4 ','C3 ','C4 ','T3 ','T4 ','O1 ','O2 ']
+        channels_reduction={'cresta':['F3','F4','C3','C4','P3','P4','O1','O2'],
+                            #'openBCI':['F3','F4','P3','P4','T5','O1','O2','T6'],
+                            'openBCI':['FP1','FP2','C3','C4','P7','P8','O2','O1'],
+                            'paper':['F3','F4','C3','C4','TP7','TP8','O1','O2'] # En el paper esta T3 y T4, lo cambiamos por TP7 y TP8
                             }
-        montage_select='cresta'
+        montage_select=montage_select
+        sf['ch_names']=[x.replace(' ','') for x in sf['ch_names']]
         index_ch_portables=[sf['ch_names'].index(channels_reduction[montage_select][i]) for i in range(len(channels_reduction['cresta']))]
         comp_select=[0,1,2,3,4,6,7,9]
         A=sf['A'][index_ch_portables,:] # Select channels, rows

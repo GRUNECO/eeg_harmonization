@@ -12,7 +12,7 @@ import traceback
 OVERWRITE = False # Ojo con esta variable, es para obligar a sobreescribir los archivos
 # en general deberia estar en False
 
-def features(THE_DATASET, def_spatial_filter='54x10',portables=False):
+def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_select=None):
     # Inputs not dataset dependent
     bands ={'delta':(1.5,6),
             'theta':(6,8.5),
@@ -23,7 +23,7 @@ def features(THE_DATASET, def_spatial_filter='54x10',portables=False):
             'beta3':(21,30),
             'gamma':(30,45)}
     if THE_DATASET.get('spatial_filter',def_spatial_filter):
-        spatial_filter = get_spatial_filter(THE_DATASET.get('spatial_filter',def_spatial_filter),portables=portables)
+        spatial_filter = get_spatial_filter(THE_DATASET.get('spatial_filter',def_spatial_filter),portables=portables,montage_select=montage_select)
     input_path = THE_DATASET.get('input_path',None)
     layout_dict = THE_DATASET.get('layout',None)
     e = 0
@@ -53,8 +53,8 @@ def features(THE_DATASET, def_spatial_filter='54x10',portables=False):
         features_tuples=[
             ('power',{'bands':bands}),
             ('sl',{'bands':bands}),
-            ('cohfreq',{'window':3,'bands':bands}),
-            ('entropy',{'bands':bands,'D':3}),
+            #('cohfreq',{'window':3,'bands':bands}),
+            #('entropy',{'bands':bands,'D':3}),
             ('crossfreq',{'bands':bands}),
         ]
         times_strings = []
@@ -63,11 +63,12 @@ def features(THE_DATASET, def_spatial_filter='54x10',portables=False):
                 #for sf in [None, spatial_filter]: # Channels and Components
                 for sf in [spatial_filter]: # Only components
                     #for norm_ in [True,False]: # Only with huber and without huber
-                    for norm_ in [True]: # Only with huber
+                    for norm_ in [False]: # Only without huber
                         if sf is not None:
                             sf_label = f'ics[{spatial_filter["name"]}]'
                         else:
                             sf_label = 'sensors'
+                        print(norm_)
                         feature_suffix = f'space-{sf_label}_norm-{norm_}_{feature}'
                         feature_path = get_derivative_path(layout,eeg_file,pipelabel,feature_suffix,'.txt',bids_root,derivatives_root)
                         os.makedirs(os.path.split(feature_path)[0], exist_ok=True)

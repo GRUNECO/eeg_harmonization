@@ -42,7 +42,7 @@ def path_to_remove_visits(path,sub,v,name,ext):
     '''
     path_def = path+'\\'+sub+'\\'+v+'\\eeg\\'+name+ext
     if name in path_def:
-        icpowers_json_files = glob.glob(path+'\\'+sub+'\\'+v+'\\eeg\\*'+name+ext) 
+        icpowers_json_files = glob.glob(path+'\\'+sub+'\\'+v+'\\eeg\\*'+name+ext)
     return icpowers_json_files
 
 def remove_data_without_visits(path,name,ext):
@@ -130,17 +130,17 @@ def remove_condition(path,name,ext,task):
     
 
 #path = r'D:\TDG\filesSaved\BIOMARCADORES\derivatives\sovaharmony'
-path = r'E:\PROYECTO_EEG_LAPSIM\ENTREGA_GRUNECO2GIBIC\BD_with_BIDS\Residentes\derivatives\sovaharmony'
+path = r'/media/gruneco-server/ADATA HD650/BIOMARCADORES/derivatives/sovaharmony'
 name = ['_powers','norm_eeg','powers_norm','sl_norm','band_norm','coherence_norm','entropy_norm','cross_frequency_norm','sl_band_norm']
 ext = ['.fif','.json','.txt']
 
-tasks=['OE','CE','T1','T2','T3']
-metrics=['sl','crossfreq','cohfreq','entropy']
+tasks=['OE','CE']
+metrics=['[cresta]_norm-True_sl','[cresta]_norm-True_crossfreq','[cresta]_norm-True_cohfreq','[cresta]_norm-True_entropy','reduce[restOE]_eeg']
 for e in ext:
     for t in tasks:
         for m in metrics:
             remove_condition(path,m,e,t)
-# remove_data_without_visits(path,name[0],ext[1])
+#remove_data_without_visits(path,name[0],ext[1])
 # remove_data_without_visits(path,name[0],ext[2])
 # remove_data_without_visits(path,name[1],ext[0])
 # remove_data_without_visits(path,name[1],ext[1])

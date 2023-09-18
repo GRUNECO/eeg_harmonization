@@ -66,7 +66,7 @@ def get_spatial_filter(name='62x19',portables=False,montage_select=None):
         W=sf['W'][:,index_ch_portables] # Select channels, rows
         W=W[[comp_select],:] # Select components, columns
         W=np.squeeze(W)
-        sf={'A':A,'W':W.T,'ch_names':channels_reduction[montage_select],'name':montage_select}
+        sf={'A':A,'W':W,'ch_names':channels_reduction[montage_select],'name':montage_select}
         return sf
     else:   
         return sf

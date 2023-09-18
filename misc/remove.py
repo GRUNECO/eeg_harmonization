@@ -135,7 +135,7 @@ name = ['_powers','norm_eeg','powers_norm','sl_norm','band_norm','coherence_norm
 ext = ['.fif','.json','.txt']
 
 tasks=['OE','CE']
-metrics=['[cresta]_norm-True_sl','[cresta]_norm-True_crossfreq','[cresta]_norm-True_cohfreq','[cresta]_norm-True_entropy','reduce[restOE]_eeg']
+metrics=['[openBCI]_norm-True_sl','[openBCI]_norm-True_crossfreq','[openBCI]_norm-True_cohfreq','[openBCI]_norm-True_entropy','reduce[restOE]_eeg']
 for e in ext:
     for t in tasks:
         for m in metrics:

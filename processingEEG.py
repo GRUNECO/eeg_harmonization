@@ -25,6 +25,7 @@ from sovaharmony.datasets import Estudiantes2021_T2
 from sovaharmony.datasets import BIOMARCADORES_OE, BIOMARCADORES_CE, CHBMP, SRM, DUQUE
 from sovaharmony.datasets import BIOMARCADORES_OE_server, BIOMARCADORES_CE_server
 from sovaharmony.datasets import BIOMARCADORES_CE_54X10, CHBMP_54X10, SRM_54X10, DUQUE_54X10
+from sovaharmony.datasets import test_portables
 #from .misc.neuroharmonaze import neurosovaHarmonize
 import time 
 
@@ -54,8 +55,9 @@ import time
 #     ]
 
 THE_DATASETS=[
-    BIOMARCADORES_CE_server,
-    BIOMARCADORES_OE_server
+    test_portables
+    #BIOMARCADORES_CE_server,
+    #BIOMARCADORES_OE_server
 ]
 for dataset in THE_DATASETS:
     #Preprocessing pipeline

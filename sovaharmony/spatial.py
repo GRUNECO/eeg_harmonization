@@ -17,12 +17,30 @@ ROIs = [F,C,PO,T]
 def get_spatial_filter(name='62x19',portables=False,montage_select=None):
     """
     Returns the default spatial filter of the module.
+    
     Parameters:
-        None
+        - name: str
+            Name of spatial matrix, for example:
+                62x19
+                54x25
+                54x10
+                
+        - portables: Bool
+            Use portables in False, when use use the high density, for example 54x10 or 54x25
+            If you need used the spatial matrix portatil, use portables in True
+            
+        - montage_select: str
+            string associate to the name montage reduction, for example:
+                cresta
+                openBCI
+                paper
+            If you need add other configuration, added to the dictionary 
     
     Returns:
-        A,W tuple of np.ndarrays
-        Mixing and Demixing Matrices of the default spatial filter of the module.
+        sf: dictionary 
+            A, W, Mixing and Demixing Matrices of the default spatial filter of the module.
+        
+    
     """
     if name is None:
         return None

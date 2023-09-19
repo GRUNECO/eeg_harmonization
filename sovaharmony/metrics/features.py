@@ -138,7 +138,7 @@ foo_map={
     'crossfreq':_get_pme,
     'entropy':_get_entropy
 }
-def get_derivative(in_signal,feature,kwargs,spatial_filter=None):
+def get_derivative(in_signal,feature,kwargs,spatial_filter=None,portables=False):
     """
     Returns derivative
     If spatial_filter is not None, it will be computed over ics, otherwise over channels
@@ -160,9 +160,18 @@ def get_derivative(in_signal,feature,kwargs,spatial_filter=None):
         nchans,points,epochs = signal2.shape
         signalCont = np.reshape(signal2,(nchans,points*epochs),order='F')
         _verify_epoch_continuous(signal.get_data(),signalCont,('epochs','spaces','times'))
-        ics = W_adapted @ signalCont
-        comps = ics.shape[0]
-        ics_epoch = np.reshape(ics,(comps,points,epochs),order='F')
+        if portables:
+            resample= signal.info['sfreq']/4 
+            signal_resample=signalCont[:,::4] # Signal chx resample- continue
+            ics = W_adapted @ signal_resample
+            comps = ics.shape[0]
+            ics_epoch = np.reshape(ics,(comps,int(points/4),epochs),order='F')
+            
+        else:
+            ics = W_adapted @ signalCont
+            comps = ics.shape[0]
+            ics_epoch = np.reshape(ics,(comps,points,epochs),order='F')
+        
         _verify_epoch_continuous(ics_epoch,ics,('spaces','times','epochs'))
         ics_epoch2 = np.transpose(ics_epoch,(2,0,1))
         _verify_epochs_axes(ics_epoch2,ics_epoch)

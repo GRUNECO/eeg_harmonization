@@ -34,9 +34,9 @@ def get_spatial_filter(name='62x19',portables=False,montage_select=None):
     sf = {'A':A,'W':W,'ch_names':ch_names,'name':name}
     if portables:
         channels_reduction={'cresta':['F3','F4','C3','C4','P3','P4','O1','O2'],
-                            #'openBCI':['F3','F4','P3','P4','T5','O1','O2','T6'],
-                            'openBCI':['FP1','FP2','C3','C4','P7','P8','O2','O1'],
+                            'openBCI':['FP1','FP2','C3','C4','P7','P8','O2','O1'],# #https://docs.openbci.com/Deprecated/UltracortexMark3_NovaDep/
                             'paper':['F3','F4','C3','C4','TP7','TP8','O1','O2'] # En el paper esta T3 y T4, lo cambiamos por TP7 y TP8
+                            # Quantitative electroencephalography in mild cognitive impairment: longitdinal changes and possible prediction of ALzheimer's disease
                             }
         montage_select=montage_select
         sf['ch_names']=[x.replace(' ','') for x in sf['ch_names']]

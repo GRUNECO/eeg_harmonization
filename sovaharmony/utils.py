@@ -127,7 +127,7 @@ def dataframe_long_roi(data,type,columns,name,path):
     data_new.reset_index(drop=True).to_feather('{path}\data_long_{task}_{metric}_{name}_roi.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 
-def dataframe_long_components(data,type,columns,name,path):
+def dataframe_long_components(data,type,columns,name,path,spatial_matrix='54x10'):
     '''Function used to convert a wide dataframe into a long one to be used for graphing by IC'''
     #demographic data and neuropsychological test columns
     #data_dem=['participant_id', 'visit', 'group', 'condition', 'database','age', 'sex', 'education', 'MM_total', 'FAS_F', 'FAS_A', 'FAS_S']
@@ -137,8 +137,13 @@ def dataframe_long_components(data,type,columns,name,path):
     #Frequency bands
     bandas=['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma']
     #Components
-    #componentes=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25']
-    componentes=['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+    if spatial_matrix=='58x25':
+        componentes =['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25']
+    elif spatial_matrix=='54x10':
+        componentes =['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+    elif spatial_matrix=='cresta' or spatial_matrix=='openBCI' or spatial_matrix=='paper':
+        componentes =['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8']
+    
     for i in columns:
         '''The column of interest is taken with its respective demographic data and added to the new dataframe'''
         data_x=data_dem.copy()
@@ -153,14 +158,15 @@ def dataframe_long_components(data,type,columns,name,path):
         d_sep['Band']=[band]*len(d_sep)
         d_sep['Component']=[componente]*len(d_sep)
         d_sep= d_sep.rename(columns={i:type})
-        data_new=data_new.append(d_sep,ignore_index = True) #Uno el dataframe 
+        data_new=pd.concat((data_new,d_sep),ignore_index = True)
+        #data_new=data_new.append(d_sep,ignore_index = True) #Uno el dataframe 
     try:
         path="{input_path}\data_long\IC".format(input_path=path).replace('\\','/')
         os.makedirs(path)
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    data_new.reset_index(drop=True).to_feather('{path}\data_{task}_{metric}_long_{name}_components.feather'.format(path=path,name=data_new['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
+    data_new.reset_index(drop=True).to_feather('{path}\data_{task}_{metric}_long_{name}_{spatial_matrix}_components.feather'.format(path=path,name=data_new['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type,spatial_matrix=spatial_matrix).replace('\\','/'))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 
 def dataframe_long_cross_roi(data,type,columns,name,path):
@@ -384,28 +390,7 @@ def estadisticos_demograficos(data,name,path):
 #       'power_C24_Gamma', 'power_C25_Delta', 'power_C25_Theta',
 #       'power_C25_Alpha-1', 'power_C25_Alpha-2', 'power_C25_Beta1',
 #       'power_C25_Beta2', 'power_C25_Beta3', 'power_C25_Gamma']
-columns_powers_ic=['power_C1_Delta', 'power_C2_Delta', 'power_C3_Delta', 'power_C4_Delta',
-       'power_C5_Delta', 'power_C6_Delta', 'power_C7_Delta', 'power_C8_Delta',
-       'power_C9_Delta', 'power_C10_Delta', 'power_C1_Theta', 'power_C2_Theta',
-       'power_C3_Theta', 'power_C4_Theta', 'power_C5_Theta', 'power_C6_Theta',
-       'power_C7_Theta', 'power_C8_Theta', 'power_C9_Theta', 'power_C10_Theta',
-       'power_C1_Alpha-1', 'power_C2_Alpha-1', 'power_C3_Alpha-1',
-       'power_C4_Alpha-1', 'power_C5_Alpha-1', 'power_C6_Alpha-1',
-       'power_C7_Alpha-1', 'power_C8_Alpha-1', 'power_C9_Alpha-1',
-       'power_C10_Alpha-1', 'power_C1_Alpha-2', 'power_C2_Alpha-2',
-       'power_C3_Alpha-2', 'power_C4_Alpha-2', 'power_C5_Alpha-2',
-       'power_C6_Alpha-2', 'power_C7_Alpha-2', 'power_C8_Alpha-2',
-       'power_C9_Alpha-2', 'power_C10_Alpha-2', 'power_C1_Beta1',
-       'power_C2_Beta1', 'power_C3_Beta1', 'power_C4_Beta1', 'power_C5_Beta1',
-       'power_C6_Beta1', 'power_C7_Beta1', 'power_C8_Beta1', 'power_C9_Beta1',
-       'power_C10_Beta1', 'power_C1_Beta2', 'power_C2_Beta2', 'power_C3_Beta2',
-       'power_C4_Beta2', 'power_C5_Beta2', 'power_C6_Beta2', 'power_C7_Beta2',
-       'power_C8_Beta2', 'power_C9_Beta2', 'power_C10_Beta2', 'power_C1_Beta3',
-       'power_C2_Beta3', 'power_C3_Beta3', 'power_C4_Beta3', 'power_C5_Beta3',
-       'power_C6_Beta3', 'power_C7_Beta3', 'power_C8_Beta3', 'power_C9_Beta3',
-       'power_C10_Beta3', 'power_C1_Gamma', 'power_C2_Gamma', 'power_C3_Gamma',
-       'power_C4_Gamma', 'power_C5_Gamma', 'power_C6_Gamma', 'power_C7_Gamma',
-       'power_C8_Gamma', 'power_C9_Gamma', 'power_C10_Gamma']
+
 
 columns_powers_rois=['power_F_Delta','power_C_Delta', 'power_PO_Delta', 'power_T_Delta', 'power_F_Theta',
        'power_C_Theta', 'power_PO_Theta', 'power_T_Theta', 'power_F_Alpha-1',

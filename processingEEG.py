@@ -65,12 +65,12 @@ for dataset in THE_DATASETS:
     # print('TIME PREPROCESSING:::::::::::::::::::'+ dataset['input_path']+ dataset['layout']['task'], final-start)
 
     #Postprocessing pipeline (extraction of features)
-    # montages_portatil=['openBCI','paper','cresta']
-    # for tmontage in montages_portatil:
-    #     start = time.perf_counter()
-    #     postprocess=features(dataset,def_spatial_filter='54x10',portables=True,montage_select=tmontage)
-    #     final = time.perf_counter()
-    #     print('TIME POSTPROCESSING:::::::::::::::::::'+ dataset['input_path']+ dataset['layout']['task'], final-start)
+    montages_portatil=['openBCI','paper','cresta']
+    for tmontage in montages_portatil:
+        start = time.perf_counter()
+        postprocess=features(dataset,def_spatial_filter='54x10',portables=True,montage_select=tmontage)
+        final = time.perf_counter()
+        print('TIME POSTPROCESSING:::::::::::::::::::'+ dataset['input_path']+ dataset['layout']['task'], final-start)
     #postprocess=features(dataset,def_spatial_filter='54x10',portables=False,montage_select=N)
     # # Preprocessing files 
     # start = time.perf_counter()
@@ -81,7 +81,7 @@ for dataset in THE_DATASETS:
     path=dataset['input_path']+'/derivatives'
     #metricas=['cohfreq','entropy','power','sl','crossfreq']
     spatial_matrix=['cresta','paper','openBCI'] 
-    metricas=['power']
+    metricas=['sl']
     for i in metricas:
         for j in spatial_matrix:
             start = time.perf_counter()
@@ -93,11 +93,11 @@ for dataset in THE_DATASETS:
             #final = time.perf_counter()
             #print('TIME FEATHER ROI:::::::::::::::::::'+ dataset['input_path']+ i + dataset['layout']['task'], final-start)
             #"""Conversion of dataframes to perform the different SL, coherence, entropy, cross frequency, etc. graphs"""
-            if i=='power':
-            #     #dataframe_long_roi(data_ROI,'Power',columns=columns_powers_rois,name="data_long_power_roi",path=path)
-                columns_powers_ic = [palabra for palabra in list(data_IC.keys()) if palabra.startswith("power")]
-                dataframe_long_components(data_IC,'Power',columns=columns_powers_ic,name="data_long_power_components",path=path,spatial_matrix=j)
-            print('done!')
+            # if i=='power':
+            # #     #dataframe_long_roi(data_ROI,'Power',columns=columns_powers_rois,name="data_long_power_roi",path=path)
+            #     columns_powers_ic = [palabra for palabra in list(data_IC.keys()) if palabra.startswith("power")]
+            #     dataframe_long_components(data_IC,'Power',columns=columns_powers_ic,name="data_long_power_components",path=path,spatial_matrix=j)
+            # print('done!')
             # elif i == 'entropy':
             #     columns_entropy_ic = [palabra for palabra in list(data_IC.keys()) if palabra.startswith("entropy")]
             #     #dataframe_long_roi(data_ROI,type='Entropy',columns=columns_entropy_rois,name="data_long_entropy_roi",path=path)
@@ -108,9 +108,10 @@ for dataset in THE_DATASETS:
             #     #dataframe_long_roi(data_ROI,type='Coherence',columns=columns_coherence_roi,name="data_long_coherence_roi",path=path)
             #     dataframe_long_components(data_IC,type='Coherence',columns=columns_coherence_ic,name="data_long_coherence_components",path=path)
             
-            # elif i == 'sl':
-            #     #dataframe_long_roi(data_ROI,type='SL',columns=columns_SL_roi,name="data_long_sl_roi",path=path)
-            #     dataframe_long_components(data_IC,type='SL',columns=columns_SL_ic,name="data_long_sl_components",path=path)
+            if i == 'sl':
+                #dataframe_long_roi(data_ROI,type='SL',columns=columns_SL_roi,name="data_long_sl_roi",path=path)
+                columns_SL_ic = [palabra for palabra in list(data_IC.keys()) if palabra.startswith("sl")]
+                dataframe_long_components(data_IC,type='SL',columns=columns_SL_ic,name="data_long_sl_components",path=path,spatial_matrix=j)
             
             # elif i== 'crossfreq':
             #     #columns_cross_roi=data_ROI.columns.tolist()

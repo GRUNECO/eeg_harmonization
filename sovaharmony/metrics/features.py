@@ -20,7 +20,20 @@ import numpy as np
 #_get_[derivative_name]
 
 ### INTERNAL FEATURES FUNCTIONS ###
-def _get_power(signal_epoch,bands):
+def qeeg_psd_irasa(data, sf,bands,ch_names,fmin=1,fmax=45):
+    power = {}
+    freqs, psd_aperiodic, psd_osc = yasa.irasa(data, sf, ch_names=ch_names, band=(fmin, fmax), win_sec=4, return_fit=False)
+    psd_combined = psd_aperiodic + psd_osc
+    for band_label,vals in bands.items():
+        for i in range(len((ch_names))):
+            fmin,fmax = vals
+            idx_band = np.logical_and(fmin <= freqs, freqs < fmax)
+            pot_band = sum(psd_combined[i,:][idx_band == True])
+            power[band_label]=pot_band
+    return power 
+
+
+def _get_power(signal_epoch,bands,irasa=False):
     signal = np.transpose(signal_epoch.get_data(),(1,2,0)) # epochs spaces times -> spaces times epochs
     _verify_epochs_axes(signal_epoch.get_data(),signal)
     space_names = signal_epoch.info['ch_names']
@@ -30,40 +43,28 @@ def _get_power(signal_epoch,bands):
     bands_list = list(bands.keys())
     values = np.empty((len(bands_list),spaces))
     output['metadata']['axes']={'bands':bands_list,'spaces':space_names}
-    for space in space_names:
-        space_idx = space_names.index(space)
-        dummy = qeeg_psd_chronux(signal[space_idx,:,:],signal_epoch.info['sfreq'],bands)
-        for b in bands.keys():
-            band_idx = bands_list.index(b)
-            values[band_idx,space_idx]=dummy[b] #if there is an error in this line update sovachornux
-    output['values'] = values
+    nchans,points,epochs = signal.shape
+    signalCont = np.reshape(signal,(nchans,points*epochs),order='F')
+    if irasa:
+        for space in space_names:
+            space_idx = space_names.index(space)
+            dummy = qeeg_psd_irasa(signalCont, signal_epoch.info['sfreq'],bands,signal_epoch.ch_names,fmin=1,fmax=45)
+            for b in bands.keys():
+                band_idx = bands_list.index(b)
+                values[band_idx,space_idx]=dummy[b] #if there is an error in this line update sovachornux
+        output['values'] = values
+        
+    else:
+        for space in space_names:
+            space_idx = space_names.index(space)
+            dummy = qeeg_psd_chronux(signal[space_idx,:,:],signal_epoch.info['sfreq'],bands)
+            for b in bands.keys():
+                band_idx = bands_list.index(b)
+                values[band_idx,space_idx]=dummy[b] #if there is an error in this line update sovachornux
+        output['values'] = values
     return output
 
-# def _get_power_irasa(signal_epoch,bands):
-#     signal = np.transpose(signal_epoch.get_data(),(1,2,0)) # epochs spaces times -> spaces times epochs
-#     _verify_epochs_axes(signal_epoch.get_data(),signal)
-#     space_names = signal_epoch.info['ch_names']
-#     spaces,times,epochs = signal.shape
-#     output = {}
-#     output['metadata'] = {'type':'power_irasa','kwargs':{'bands':bands}}
-#     bands_list = list(bands.keys())
-#     values = np.empty((len(bands_list),spaces))
-#     output['metadata']['axes']={'bands':bands_list,'spaces':space_names}
-#     power = {}
-#     for space in space_names:
-#         space_idx = space_names.index(space)
-#         freqs, psd_aperiodic, psd_osc = yasa.irasa(signal[space_idx,:,:], signal_epoch.info['sfreq'], ch_names=chan, band=(1, 30), win_sec=4, return_fit=False)
-#         for band_label,vals in bands.items():
-#             fmin,fmax = vals
-#             idx_band = np.logical_and(fmin <= ffo, ffo < fmax)
-#             pot_band = sum(ss[idx_band == True])
-#             power[band_label]=pot_band
-#         dummy 
-#         for b in bands.keys():
-#             band_idx = bands_list.index(b)
-#             values[band_idx,space_idx]=dummy[b] #if there is an error in this line update sovachornux
-#     output['values'] = values
-#     return output
+
 
 def _get_sl(signal_epoch,bands):
     space_names = signal_epoch.info['ch_names']
@@ -133,6 +134,7 @@ def _get_entropy(signal_epoch,bands,D):
 foo_map={
     'absPower':_get_power,
     'power':_get_power,
+    'power_irasa':_get_power,
     'sl':_get_sl,
     'cohfreq':_get_coh,
     'crossfreq':_get_pme,

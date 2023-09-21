@@ -65,13 +65,13 @@ for dataset in THE_DATASETS:
     # print('TIME PREPROCESSING:::::::::::::::::::'+ dataset['input_path']+ dataset['layout']['task'], final-start)
 
     #Postprocessing pipeline (extraction of features)
-    montages_portatil=['openBCI','paper','cresta']
-    for tmontage in montages_portatil:
-        start = time.perf_counter()
-        postprocess=features(dataset,def_spatial_filter='54x10',portables=True,montage_select=tmontage)
-        final = time.perf_counter()
-        print('TIME POSTPROCESSING:::::::::::::::::::'+ dataset['input_path']+ dataset['layout']['task'], final-start)
-
+    # montages_portatil=['openBCI','paper','cresta']
+    # for tmontage in montages_portatil:
+    #     start = time.perf_counter()
+    #     postprocess=features(dataset,def_spatial_filter='54x10',portables=True,montage_select=tmontage)
+    #     final = time.perf_counter()
+    #     print('TIME POSTPROCESSING:::::::::::::::::::'+ dataset['input_path']+ dataset['layout']['task'], final-start)
+    postprocess=features(dataset,def_spatial_filter='54x10',portables=False,montage_select=None)
     # # Preprocessing files 
     # start = time.perf_counter()
     # get_dataframe_prep(dataset)

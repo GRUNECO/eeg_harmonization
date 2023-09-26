@@ -27,11 +27,7 @@ def graphics(data,type,path,name_band=None,id=None,id_cross=None,num_columns=4,s
         col='ROI'
     else:
         col=id
-    # sns.set(style="ticks")
-    # sns.set_style("darkgrid")
-    axs=sns.catplot(x=x,y=type,data=data,hue=hue,dodge=True, kind=kind,col=col,col_wrap=num_columns,palette=palette,fliersize=1.5,linewidth=0.5,legend=False)
-    
-    axs.set(xlabel=None)
+#%% Todas las componentes
     axs.set(ylabel=None)
     if name_band is not None:
         if id_cross==None:

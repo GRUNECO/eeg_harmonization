@@ -10,7 +10,7 @@ from bids.layout import parse_file_entities
 #from sovaharmony.datasets import DUQUEVHI 
 from sovaharmony.utils import load_txt
 
-def get_dataframe_columnsIC(THE_DATASET,feature):  
+def get_dataframe_columnsIC(THE_DATASET,feature,spatial_matrix='54x10',norm='False'):  
     '''Obtain data frames with powers of Components in different columns'''
     input_path = THE_DATASET.get('input_path',None)
     task = THE_DATASET.get('layout',None).get('task',None)
@@ -21,10 +21,28 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
     layout = BIDSLayout(data_path,derivatives=True)
     layout.get(scope='derivatives', return_type='file')
     paths= layout.get(extension='.txt',task=task,suffix=feature, return_type='filename')
-    #paths = [x for x in paths if f'space-ics[58x25]_norm-True' in x]
-    paths = [x for x in paths if f'space-ics[54x10]_norm-True' in x]
+    if spatial_matrix=='54x10' and norm=='False':
+        paths = [x for x in paths if f'space-ics[54x10]_norm-False' in x]
+    elif spatial_matrix=='54x10' and norm=='True':
+        paths = [x for x in paths if f'space-ics[54x10]_norm-True' in x]
+    elif spatial_matrix=='58x25' and norm=='False':
+        paths = [x for x in paths if f'space-ics[58x25]_norm-False' in x]
+    elif spatial_matrix=='58x25' and norm=='True':
+        paths = [x for x in paths if f'space-ics[58x25]_norm-True' in x]
+    elif spatial_matrix=='cresta' and norm=='False':
+        paths = [x for x in paths if f'space-ics[cresta]_norm-False' in x]
+    elif spatial_matrix=='cresta' and norm=='True':
+        paths = [x for x in paths if f'space-ics[cresta]_norm-True' in x]
+    elif spatial_matrix=='paper' and norm=='False':
+        paths = [x for x in paths if f'space-ics[paper]_norm-False' in x]
+    elif spatial_matrix=='paper' and norm=='True':
+        paths = [x for x in paths if f'space-ics[paper]_norm-True' in x]
+    elif spatial_matrix=='openBCI' and norm=='False':
+        paths = [x for x in paths if f'space-ics[openBCI]_norm-False' in x]
+    elif spatial_matrix=='openBCI' and norm=='True':
+        paths = [x for x in paths if f'space-ics[openBCI]_norm-True' in x]
+
     list_subjects = []
-    print(paths)
     for i in range(len(paths)):
         data=load_txt(paths[i])
         # if 'spaces' in data['metadata']['axes'].keys():
@@ -32,8 +50,12 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
             
         # elif 'spaces1' in data['metadata']['axes'].keys():
         #     comp_labels = data['metadata']['axes']['spaces1']
-        #comp_labels =['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18', 'C19', 'C20', 'C21', 'C22', 'C23', 'C24', 'C25']
-        comp_labels =['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+        if spatial_matrix=='58x25':
+            comp_labels =['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18', 'C19', 'C20', 'C21', 'C22', 'C23', 'C24', 'C25']
+        elif spatial_matrix=='54x10':
+            comp_labels =['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+        elif spatial_matrix=='cresta' or spatial_matrix=='openBCI' or spatial_matrix=='paper':
+            comp_labels =['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8']
 
         icvalues = np.array(data['values'])
         bandas = data['metadata']['axes']['bands']
@@ -69,7 +91,7 @@ def get_dataframe_columnsIC(THE_DATASET,feature):
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_components.feather'.format(name=name,path=path,task=task,feature=feature))
+    df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_{spatial_matrix}_components.feather'.format(name=name,path=path,task=task,feature=feature,spatial_matrix=spatial_matrix).replace('\\','/'))
     print('Done!')
     return df 
 

@@ -23,7 +23,8 @@ def path_to_remove_without_visits(path,sub,name,ext):
     '''
     path_def = path+'\\'+sub+'\\eeg\\'+name+ext 
     if name in path_def:
-        icpowers_json_files = glob.glob(path+'\\'+sub+'\\eeg\\*'+name+ext)    
+        icpowers_json_files = glob.glob(path+'\\'+sub+'\\eeg\\*'+name+ext)
+
     return icpowers_json_files
 
 def path_to_remove_visits(path,sub,v,name,ext):    
@@ -40,9 +41,11 @@ def path_to_remove_visits(path,sub,v,name,ext):
     Output:
         icpowers_json_files: path to delete
     '''
-    path_def = path+'\\'+sub+'\\'+v+'\\eeg\\'+name+ext
-    if name in path_def:
-        icpowers_json_files = glob.glob(path+'\\'+sub+'\\'+v+'\\eeg\\*'+name+ext)
+    #path_def = path+'\\'+sub+'\\'+v+'\\eeg\\'+name+ext
+    #if name in path_def:
+    path=path+'/'+sub+'/'+v+'/eeg/'
+    patron=os.path.join(path,f'*{name}{ext}')
+    icpowers_json_files = glob.glob(patron)
     return icpowers_json_files
 
 def remove_data_without_visits(path,name,ext):
@@ -59,6 +62,7 @@ def remove_data_without_visits(path,name,ext):
     for sub in subjects:
         suffix = "sub"
         if sub.endswith(suffix,0,3) == True:
+            #print(path_to_remove_without_visits(path,sub,name,ext))
             json_remove.append(path_to_remove_without_visits(path,sub,name,ext))
     for i in json_remove:
         for j in range(0,2):
@@ -96,7 +100,7 @@ def remove_data_visits(path,name,ext):
                 os.remove(i[j])
             except:
                 continue
-
+    print(json_remove)
 def remove_condition(path,name,ext,task):
     '''
     function created to remove the paths to be deleted in databases with visits
@@ -132,14 +136,17 @@ def remove_condition(path,name,ext,task):
 #path = r'D:\TDG\filesSaved\BIOMARCADORES\derivatives\sovaharmony'
 path = r'/media/gruneco-server/ADATA HD650/BIOMARCADORES/derivatives/sovaharmony'
 name = ['_powers','norm_eeg','powers_norm','sl_norm','band_norm','coherence_norm','entropy_norm','cross_frequency_norm','sl_band_norm']
-ext = ['.fif','.json','.txt']
+ext = ['.json','.txt']
 
 tasks=['OE','CE']
-metrics=['[openBCI]_norm-True_sl','[openBCI]_norm-True_crossfreq','[openBCI]_norm-True_cohfreq','[openBCI]_norm-True_entropy','reduce[restOE]_eeg']
+#sub-CTR001_ses-V0_task-CE_desc-[restCE]_space-ics[cresta]_norm-True_power
+#metrics=['I]_norm-False_sl','I]_norm-False_crossfreq','I]_norm-False_cohfreq','I]_norm-False_entropy','I]_norm-False_power']
+metrics=['norm-False_power_irasa']
 for e in ext:
     for t in tasks:
         for m in metrics:
-            remove_condition(path,m,e,t)
+            remove_data_visits(path,m,e)
+
 #remove_data_without_visits(path,name[0],ext[1])
 # remove_data_without_visits(path,name[0],ext[2])
 # remove_data_without_visits(path,name[1],ext[0])

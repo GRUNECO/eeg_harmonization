@@ -9,7 +9,7 @@ from sovaharmony.spatial import get_spatial_filter
 import time
 import traceback
 
-OVERWRITE = False # Ojo con esta variable, es para obligar a sobreescribir los archivos
+OVERWRITE = True # Ojo con esta variable, es para obligar a sobreescribir los archivos
 # en general deberia estar en False
 
 def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_select=None):
@@ -51,11 +51,12 @@ def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_sel
         json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
         #('absPower',{'bands':bands,'normalize':False})
         features_tuples=[
-            ('power',{'bands':bands}),
-            ('sl',{'bands':bands}),
+            #('power',{'bands':bands,'irasa':False})
+            ('power_irasa',{'bands':bands,'irasa':True}),
+            #('sl',{'bands':bands}),
             #('cohfreq',{'window':3,'bands':bands}),
             #('entropy',{'bands':bands,'D':3}),
-            ('crossfreq',{'bands':bands}),
+            #('crossfreq',{'bands':bands}),
         ]
         times_strings = []
         for feature,kwargs in features_tuples:
@@ -79,7 +80,7 @@ def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_sel
                             else:
                                 signal = mne.read_epochs(reject_path)
                             start = time.perf_counter()
-                            val_dict = get_derivative(signal,feature=feature,kwargs=kwargs,spatial_filter=sf)
+                            val_dict = get_derivative(signal,feature=feature,kwargs=kwargs,spatial_filter=sf,portables=portables)
                             final = time.perf_counter()
                             tstring = f'TIME {feature_suffix}:::::::::::::::::::{final-start}'
                             times_strings.append(tstring)

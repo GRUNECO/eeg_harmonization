@@ -21,8 +21,9 @@ bands ={'delta':(1.5,6),
         'gamma':(30,45)
         }
 channels_reduction={'cresta':['F3 ','F4 ','C3 ','C4 ','P3 ','P4 ','O1 ','O2 '],
-                    'openBCI':['F3 ','F4 ','P3 ','P4 ','T5 ','O1 ','O2 ','T6 '],
-                    'paper':['F3 ','F4 ','C3 ','C4 ','T3 ','T4 ','O1 ','O2 ']}
+                    'openBCI':['F3 ','F4 ','P3 ','P4 ','T5 ','O1 ','O2 ','T6 '], 
+                    'paper':['F3 ','F4 ','C3 ','C4 ','T3 ','T4 ','O1 ','O2 '] #
+                    } 
 #Quantitative electroencephalography in mild cognitive impairment:
 #longitudinal changes and possible prediction of Alzheimer’s disease
 

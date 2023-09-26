@@ -22,14 +22,14 @@ import numpy as np
 ### INTERNAL FEATURES FUNCTIONS ###
 def qeeg_psd_irasa(data, sf,bands,ch_names,fmin=1,fmax=45):
     power = {}
-    freqs, psd_aperiodic, psd_osc = yasa.irasa(data, sf, ch_names=ch_names, band=(fmin, fmax), win_sec=4, return_fit=False)
+    freqs, psd_aperiodic, psd_osc = yasa.irasa(data, sf, ch_names=None, band=(fmin, fmax), win_sec=4, return_fit=False)
     psd_combined = psd_aperiodic + psd_osc
     for band_label,vals in bands.items():
-        for i in range(len((ch_names))):
-            fmin,fmax = vals
-            idx_band = np.logical_and(fmin <= freqs, freqs < fmax)
-            pot_band = sum(psd_combined[i,:][idx_band == True])
-            power[band_label]=pot_band
+        #for i in range(len((ch_names))):
+        fmin,fmax = vals
+        idx_band = np.logical_and(fmin <= freqs, freqs < fmax)
+        pot_band = sum(psd_combined.T[idx_band == True])
+        power[band_label]=pot_band
     return power 
 
 
@@ -48,7 +48,7 @@ def _get_power(signal_epoch,bands,irasa=False):
     if irasa:
         for space in space_names:
             space_idx = space_names.index(space)
-            dummy = qeeg_psd_irasa(signalCont, signal_epoch.info['sfreq'],bands,signal_epoch.ch_names,fmin=1,fmax=45)
+            dummy = qeeg_psd_irasa(signalCont[space_idx,:], signal_epoch.info['sfreq'],bands,signal_epoch.ch_names,fmin=1,fmax=45)
             for b in bands.keys():
                 band_idx = bands_list.index(b)
                 values[band_idx,space_idx]=dummy[b] #if there is an error in this line update sovachornux

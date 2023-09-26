@@ -212,7 +212,7 @@ def dataframe_long_cross_roi(data,type,columns,name,path):
     data_new.reset_index(drop=True).to_feather('{path}\data_{name}_{task}_long_{metric}_ROI.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 
-def dataframe_long_cross_ic(data,type='Cross Frequency',columns=None,name=None,path=None):
+def dataframe_long_cross_ic(data,type='Cross Frequency',columns=None,name=None,path=None,spatial_matrix='54x10'):
     '''Function used to convert a dataframe to be used for graphing.'''
     #demographic data and neuropsychological test columns
     #data_dem=['participant_id', 'visit', 'group', 'condition', 'database','age', 'sex', 'education', 'MM_total', 'FAS_F', 'FAS_A', 'FAS_S']
@@ -222,8 +222,12 @@ def dataframe_long_cross_ic(data,type='Cross Frequency',columns=None,name=None,p
     #Frequency bands
     bandas=['_Delta','_Theta','_Alpha-1','_Alpha-2','_Beta1','_Beta2','_Beta3','_Gamma']
     m_bandas=['Mdelta','Mtheta','Malpha-1','Malpha-2','Mbeta1','Mbeta2','Mbeta3','Mgamma']
-    #componentes=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25']
-    componentes=['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+    if spatial_matrix=='58x25':
+        componentes =['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25']
+    elif spatial_matrix=='54x10':
+        componentes =['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+    elif spatial_matrix=='cresta' or spatial_matrix=='openBCI' or spatial_matrix=='paper':
+        componentes =['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8']
     for i in columns:
         '''The column of interest is taken with its respective demographic data and added to the new dataframe'''
         data_x=data_dem.copy()
@@ -243,7 +247,7 @@ def dataframe_long_cross_ic(data,type='Cross Frequency',columns=None,name=None,p
         d_sep['M_Band']=[bandm]*len(d_sep)
         d_sep['Component']=[componente]*len(d_sep)
         d_sep= d_sep.rename(columns={i:type})
-        data_new=data_new.append(d_sep,ignore_index = True) #Uno el dataframe 
+        data_new=data_new._append(d_sep,ignore_index = True) #Uno el dataframe 
     data_new['Band']=data_new['Band'].replace({'_':''}, regex=True)#Quito el _ y lo reemplazo con ''
     try:
         path="{input_path}\data_long\IC".format(input_path=path).replace('\\','/')
@@ -251,7 +255,7 @@ def dataframe_long_cross_ic(data,type='Cross Frequency',columns=None,name=None,p
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    data_new.reset_index(drop=True).to_feather('{path}\data_{name}_{task}_long_{metric}_components.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
+    data_new.reset_index(drop=True).to_feather('{path}\data_{name}_{task}_long_{metric}_{spatial_matrix}_components.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type,spatial_matrix=spatial_matrix).replace('\\','/'))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 
 def dataframe_componentes_deseadas(data,columnas):

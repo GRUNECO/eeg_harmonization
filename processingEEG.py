@@ -55,9 +55,9 @@ import time
 #     ]
 
 THE_DATASETS=[
-    test_portables
-    #BIOMARCADORES_CE_server,
-    #BIOMARCADORES_OE_server
+    #test_portables
+    BIOMARCADORES_CE_server,
+    BIOMARCADORES_OE_server
 ]
 for dataset in THE_DATASETS:
     #Preprocessing pipeline
@@ -83,7 +83,7 @@ for dataset in THE_DATASETS:
     path=dataset['input_path']+'/derivatives'
     #metricas=['cohfreq','entropy','power','sl','crossfreq']
     spatial_matrix=['54x10']#,'cresta','paper','openBCI'] 
-    metricas=['irasa','power']
+    metricas=['osc','irasa','power']
     for i in metricas:
         for j in spatial_matrix:
             start = time.perf_counter()

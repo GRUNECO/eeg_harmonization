@@ -134,14 +134,15 @@ def remove_condition(path,name,ext,task):
     
 
 #path = r'D:\TDG\filesSaved\BIOMARCADORES\derivatives\sovaharmony'
-path = r'/media/gruneco-server/ADATA HD650/BIOMARCADORES/derivatives/sovaharmony'
+#path = r'/media/gruneco-server/ADATA HD650/BIOMARCADORES/derivatives/sovaharmony'
+path=r'E:\BIOMARCADORES\derivatives\sovaharmony'
 name = ['_powers','norm_eeg','powers_norm','sl_norm','band_norm','coherence_norm','entropy_norm','cross_frequency_norm','sl_band_norm']
 ext = ['.json','.txt']
 
 tasks=['OE','CE']
 #sub-CTR001_ses-V0_task-CE_desc-[restCE]_space-ics[cresta]_norm-True_power
 #metrics=['I]_norm-False_sl','I]_norm-False_crossfreq','I]_norm-False_cohfreq','I]_norm-False_entropy','I]_norm-False_power']
-metrics=['norm-False_power_irasa']
+metrics=['norm-False_power_osc']
 for e in ext:
     for t in tasks:
         for m in metrics:

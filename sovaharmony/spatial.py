@@ -3,6 +3,7 @@ import sovaflow.utils as us
 import matplotlib.pyplot as plt
 import os
 import numpy as np
+from sovaharmony.metrics.features import channels_reduction
 
 F = ['FP1', 'FPZ', 'FP2', 'AF3', 'AF4', 'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8'] 
 T = ['FT7', 'FC5', 'FC6', 'FT8', 'T7', 'C5', 'C6', 'T8', 'TP7', 'CP5', 'CP6', 'TP8']
@@ -51,11 +52,6 @@ def get_spatial_filter(name='62x19',portables=False,montage_select=None):
     ch_names = [x[0] for x in mat_contents['ch_names'][0,:].tolist()]
     sf = {'A':A,'W':W,'ch_names':ch_names,'name':name}
     if portables:
-        channels_reduction={'cresta':['F3','F4','C3','C4','P3','P4','O1','O2'],
-                            'openBCI':['FP1','FP2','C3','C4','P7','P8','O2','O1'],# #https://docs.openbci.com/Deprecated/UltracortexMark3_NovaDep/
-                            'paper':['F3','F4','C3','C4','TP7','TP8','O1','O2'] # En el paper esta T3 y T4, lo cambiamos por TP7 y TP8
-                            # Quantitative electroencephalography in mild cognitive impairment: longitdinal changes and possible prediction of ALzheimer's disease
-                            }
         montage_select=montage_select
         sf['ch_names']=[x.replace(' ','') for x in sf['ch_names']]
         index_ch_portables=[sf['ch_names'].index(channels_reduction[montage_select][i]) for i in range(len(channels_reduction['cresta']))]

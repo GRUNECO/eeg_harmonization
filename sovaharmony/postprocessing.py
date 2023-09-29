@@ -1,9 +1,9 @@
+import mne
+import os
 from sovaflow.utils import cfg_logger
 from sovaharmony.preprocessing import get_derivative_path
 from sovaharmony.preprocessing import write_json
 from bids import BIDSLayout
-import mne
-import os
 from sovaharmony.metrics.features import get_derivative
 from sovaharmony.spatial import get_spatial_filter
 import time
@@ -11,6 +11,7 @@ import traceback
 
 OVERWRITE = True # Ojo con esta variable, es para obligar a sobreescribir los archivos
 # en general deberia estar en False
+
 
 def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_select=None):
     # Inputs not dataset dependent
@@ -51,8 +52,8 @@ def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_sel
         json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
         #('absPower',{'bands':bands,'normalize':False})
         features_tuples=[
-            #('power',{'bands':bands,'irasa':False})
-            ('power_irasa',{'bands':bands,'irasa':True}),
+            #('power',{'bands':bands,'irasa':False}),
+            ('power_osc',{'bands':bands,'irasa':True,'descomposition':True}),
             #('sl',{'bands':bands}),
             #('cohfreq',{'window':3,'bands':bands}),
             #('entropy',{'bands':bands,'D':3}),
@@ -61,6 +62,7 @@ def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_sel
         times_strings = []
         for feature,kwargs in features_tuples:
             try:
+                #for sf in [None]: #Channels
                 #for sf in [None, spatial_filter]: # Channels and Components
                 for sf in [spatial_filter]: # Only components
                     #for norm_ in [True,False]: # Only with huber and without huber

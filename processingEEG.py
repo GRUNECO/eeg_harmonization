@@ -73,7 +73,7 @@ for dataset in THE_DATASETS:
     #     postprocess=features(dataset,def_spatial_filter='54x10',portables=True,montage_select=tmontage)
     #     final = time.perf_counter()
     #     print('TIME POSTPROCESSING:::::::::::::::::::'+ dataset['input_path']+ dataset['layout']['task'], final-start)
-    postprocess=features(dataset,def_spatial_filter='54x10',portables=False,montage_select=None)
+    postprocess=features(dataset,def_spatial_filter='58x25',portables=False,montage_select=None)
     # # Preprocessing files 
     # start = time.perf_counter()
     # get_dataframe_prep(dataset)
@@ -82,8 +82,8 @@ for dataset in THE_DATASETS:
     
     path=dataset['input_path']+'/derivatives'
     #metricas=['cohfreq','entropy','power','sl','crossfreq']
-    spatial_matrix=['54x10']#,'cresta','paper','openBCI'] 
-    metricas=['osc','irasa','power']
+    spatial_matrix=['58x25']#,'cresta','paper','openBCI'] 
+    metricas=['osc']#,'irasa','power']
     for i in metricas:
         for j in spatial_matrix:
             start = time.perf_counter()
@@ -101,6 +101,9 @@ for dataset in THE_DATASETS:
                 dataframe_long_components(data_IC,i,columns=columns_powers_ic,name="data_long_power_components",path=path,spatial_matrix=j)
             if i=='irasa':
                 columns_powers_ic = [palabra for palabra in list(data_IC.keys()) if palabra.startswith("irasa")]
+                dataframe_long_components(data_IC,i,columns=columns_powers_ic,name="data_long_power_components",path=path,spatial_matrix=j)
+            if i=='osc':
+                columns_powers_ic = [palabra for palabra in list(data_IC.keys()) if palabra.startswith("osc")]
                 dataframe_long_components(data_IC,i,columns=columns_powers_ic,name="data_long_power_components",path=path,spatial_matrix=j)
             print('done!')
             # elif i == 'entropy':

@@ -174,8 +174,7 @@ def get_derivative(in_signal,feature,kwargs,spatial_filter=None,portables=False)
     spatial_filter: tuple (A,W,spatial_filter_chs)
     """
     signal = in_signal.copy()
-    if spatial_filter==None and portables:
-       signal.get_data()[2][channels_reduction]
+    
     if spatial_filter is not None:
         # ICs powers
         A,W,spatial_filter_chs,sf_name = spatial_filter['A'],spatial_filter['W'],spatial_filter['ch_names'],spatial_filter['name']
@@ -208,6 +207,10 @@ def get_derivative(in_signal,feature,kwargs,spatial_filter=None,portables=False)
         del signal2
         info_epochs=mne.create_info(['C'+str(x+1) for x in range(comps)], in_signal.info['sfreq'], ch_types='eeg')
         signal = mne.EpochsArray(ics_epoch2,info_epochs)
+    
+    if spatial_filter==None and portables:
+       signal.get_data()[2][channels_reduction]
+    
     output=foo_map[feature](signal,**kwargs)
 
     if spatial_filter is not None:

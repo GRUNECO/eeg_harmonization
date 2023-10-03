@@ -9,20 +9,16 @@ from sovaharmony.spatial import get_spatial_filter
 import time
 import traceback
 
-OVERWRITE = True # Ojo con esta variable, es para obligar a sobreescribir los archivos
-# en general deberia estar en False
-
-
-def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_select=None):
-    # Inputs not dataset dependent
-    bands ={'delta':(1.5,6),
-            'theta':(6,8.5),
-            'alpha-1':(8.5,10.5),
-            'alpha-2':(10.5,12.5),
-            'beta1':(12.5,18.5),
-            'beta2':(18.5,21),
-            'beta3':(21,30),
-            'gamma':(30,45)}
+def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_select=None,OVERWRITE = False,bands=dict):
+    '''
+     - THE_DATASET
+     - def_spatial_filter: str
+     - portables: boolean
+     - montage_select: str
+     - OVERWRITE: boolean
+        Ojo con esta variable, es para obligar a sobreescribir los archivos en general deberia estar en False
+    '''
+    
     if THE_DATASET.get('spatial_filter',def_spatial_filter):
         spatial_filter = get_spatial_filter(THE_DATASET.get('spatial_filter',def_spatial_filter),portables=portables,montage_select=montage_select)
     input_path = THE_DATASET.get('input_path',None)

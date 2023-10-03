@@ -8,10 +8,20 @@ from sovaharmony.data_structure.query_derivatives import get_dataframe_columnsRO
 from sovaharmony.utils import * 
 import time 
 
-def pipeline (THE_DATASETS,portables=False, prepdf=False,propdf=False,spatial_matrix=list,metrics=list,IC=False, Sensors=False):
+def pipeline (THE_DATASETS=list,portables=False, prepdf=False,propdf=False,spatial_matrix=list,metrics=list,IC=False, Sensors=False,OVERWRITE= False,bands=dict):
     '''
-    spatial_matrix=['58x25']
-    metricas=['cohfreq','entropy','power','sl','crossfreq','osc','irasa']
+    
+    Input
+        - THE_DATASETS: list
+        - portables: boolean 
+        - prepdf: boolean
+        - propdf: boolean
+        - spatial_matrix: list
+            ['58x25']
+        - metricas:list
+            ['cohfreq','entropy','power','sl','crossfreq','osc','irasa']
+        - IC: boolean 
+        - Sensors: boolean
     '''
     for dataset in THE_DATASETS:
         path=dataset['input_path']+'/derivatives'
@@ -26,11 +36,11 @@ def pipeline (THE_DATASETS,portables=False, prepdf=False,propdf=False,spatial_ma
             montages_portatil=['openBCI','paper','cresta']
             for tmontage in montages_portatil:
                 start = time.perf_counter()
-                postprocess=features(dataset,def_spatial_filter='54x10',portables=portables,montage_select=tmontage)
+                features(dataset,def_spatial_filter='54x10',portables=portables,montage_select=tmontage,OVERWRITE = OVERWRITE,bands=bands)
                 final = time.perf_counter()
                 print('TIME POSTPROCESSING:::::::::::::::::::'+ dataset['input_path']+ dataset['layout']['task'], final-start)
         else:
-            postprocess=features(dataset,def_spatial_filter='58x25',portables=portables,montage_select=None)
+            features(dataset,def_spatial_filter='58x25',portables=portables,montage_select=None,OVERWRITE = OVERWRITE,bands=bands)
         
         if prepdf:
             ## Preprocessing dataframes 
@@ -47,12 +57,12 @@ def pipeline (THE_DATASETS,portables=False, prepdf=False,propdf=False,spatial_ma
                         start = time.perf_counter()
                         data_IC=get_dataframe_columnsIC(dataset,feature=i,spatial_matrix=j ,norm='False')
                         final = time.perf_counter()
-                        print('TIME FEATHER IC:::::::::::::::::::'+ dataset['input_path']+ i + dataset['layout']['task'], final-start)
+                        print('TIME FEATHER IC:::::::::::::::::::'+ dataset['input_path']+ m + dataset['layout']['task'], final-start)
                     if Sensors:
                         start = time.perf_counter()
                         data_ROI=get_dataframe_columnsROI(dataset,feature=i)
                         final = time.perf_counter()
-                        print('TIME FEATHER ROI:::::::::::::::::::'+ dataset['input_path']+ i + dataset['layout']['task'], final-start)
+                        print('TIME FEATHER ROI:::::::::::::::::::'+ dataset['input_path']+ m + dataset['layout']['task'], final-start)
                    
                     if m!='crossfreq':
                         if Sensors:

@@ -20,7 +20,7 @@ df_filtrado['Diferencia'] = df_filtrado['sova'] - df_filtrado['neuro']
 max_abs_diff = abs(df_filtrado['Diferencia']).max()
 
 # Reorganizar los datos para que las bandas estén en el orden deseado
-band_order = ['Alpha-1', 'Alpha-2', 'Beta1', 'Beta2', 'Beta3', 'Delta', 'Gamma', 'Theta']
+band_order = ['Delta', 'Theta', 'Alpha-1', 'Alpha-2', 'Beta1', 'Beta2', 'Beta3', 'Gamma']
 df_filtrado['Band'] = pd.Categorical(df_filtrado['Band'], categories=band_order, ordered=True)
 
 # Usar pivot_table para reorganizar los datos
@@ -47,7 +47,7 @@ plt.show()
 
 
 # Ruta al archivo Excel
-ruta_archivo = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_54x10\Tamaño del efecto\Controles\tabla_effectsize_Control_Comparacion.xlsx"
+ruta_archivo = r"C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_Paper\Datosparaorganizardataframes\Tamaño de efecto\tabla_effectsize_ic_G1.xlsx"
 
 # Leer la hoja 'Power' en un DataFrame
 df = pd.read_excel(ruta_archivo, sheet_name='Power')
@@ -57,22 +57,22 @@ column_order = ['Component', 'Band', 'neuro', 'sova']
 df_filtrado = df[column_order]
 
 # Usar pivot_table para reorganizar los datos
-heatmap_data = df_filtrado.pivot_table(index='Component', columns='Band', values=['sova', 'neuro'])
+heatmap_data = df_filtrado.pivot_table(index='Component', columns='Band', values=['sova'])
 
 # Crear un heatmap
 plt.figure(figsize=(10, 6))
-heatmap = sns.heatmap(heatmap_data, annot=True, cmap="coolwarm", fmt=".2f")
+heatmap = sns.heatmap(heatmap_data, annot=True, cmap = "seismic", fmt=".2f")
 
 # Configuración de etiquetas en el eje x
 #column_labels = [f"{col[1]}-{col[0]}" for col in heatmap_data.columns]
-column_labels = ['Alpha-1-sova','Alpha-1-neuro', 'Alpha-2-sova', 'Alpha-2-neuro', 'Beta1-sova', 'Beta1-neuro', 'Beta2-sova', 'Beta2-neuro', 'Beta3-sova', 'Beta3-neuro', 'Delta-sova', 'Delta-neuro', 'Gamma-sova', 'Gamma-neuro', 'Theta-sova', 'Theta-neuro']
+column_labels = ['Delta', 'Theta', 'Alpha-1', 'Alpha-2', 'Beta1', 'Beta2', 'Beta3', 'Gamma']
 plt.xticks(range(len(column_labels)), column_labels, rotation=45)
-plt.xlabel("Variable")
+plt.xlabel("Bands")
 
 # Configuración de etiquetas en el eje y y título
 plt.yticks(rotation=0)
 plt.ylabel("Component")
-plt.title("Sova vs Neuro")
+plt.title("Effect Size (Sova)")
 
 # Mostrar el heatmap
 plt.show()

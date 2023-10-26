@@ -32,7 +32,8 @@ def qeeg_psd_irasa(data, sf,bands,ch_names,descomposition,fmin=1,fmax=45,win_sec
     power = {}
     freqs, psd_aperiodic, psd_osc,fit_params = yasa.irasa(data, sf, ch_names=None, band=(fmin, fmax), win_sec=win_sec, return_fit=True)
     if descomposition:
-        psd=psd_osc
+        # Para evitar los valores negativos que saca yasa, empleamos lo siguiente:
+        psd=psd_osc-np.min(psd_osc)
     else: 
         psd = psd_aperiodic + psd_osc
     for band_label,vals in bands.items():
@@ -163,7 +164,7 @@ foo_map={
     'crossfreq':_get_pme,
     'entropy':_get_entropy
 }
-def get_derivative(in_signal,feature,kwargs,spatial_filter=None,portables=False):
+def get_derivative(in_signal,feature,kwargs,spatial_filter=None,portables=False, montage_select=str):
     """
     Returns derivative
     If spatial_filter is not None, it will be computed over ics, otherwise over channels
@@ -209,7 +210,8 @@ def get_derivative(in_signal,feature,kwargs,spatial_filter=None,portables=False)
         signal = mne.EpochsArray(ics_epoch2,info_epochs)
     
     if spatial_filter==None and portables:
-       signal.get_data()[2][channels_reduction]
+        intersection_chs =list(set(channels_reduction[montage_select]).intersection(signal.ch_names))
+        signal.reorder_channels(intersection_chs)
     
     output=foo_map[feature](signal,**kwargs)
 

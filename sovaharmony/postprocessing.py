@@ -11,16 +11,36 @@ import traceback
 
 def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_select=None,OVERWRITE = False,bands=dict):
     '''
-     - THE_DATASET
+    
+    Inputs:
+    
+    -THE_DATASET: dictionary with the following keys:
+        {
+        'name': str, Name of the dataset
+        'input_path': str, Path of the bids input dataset,
+        'layout': dict, Arguments of the filter to apply for querying eegs to be processed. See pybids BIDSLayout arguments.
+        'args': dict, Arguments of the sovaflow.preflow function in dictionary form.
+        'group_regex': str, regex string to obtain the group from the subject id (if applicable) else None
+        'events_to_keep': list, list of events to keep for the analysis
+        'run-label': str, label associated with the run of the algorithm so that the derivatives are not overwritten.
+        'channels': list, channel labels to keep for analysis in the order wanted. Use standard 1005 names in UPPER CASE
+        'L_FREQ' : high-pass frequency for detrending (def 1)
+        'H_FREQ' : low-pass frequency (def 50)
+        'epoch_length': length of epoching in seconds (def 5)
+        }
+        
      - def_spatial_filter: str
      - portables: boolean
      - montage_select: str
      - OVERWRITE: boolean
         Ojo con esta variable, es para obligar a sobreescribir los archivos en general deberia estar en False
+    
     '''
     
     if THE_DATASET.get('spatial_filter',def_spatial_filter):
         spatial_filter = get_spatial_filter(THE_DATASET.get('spatial_filter',def_spatial_filter),portables=portables,montage_select=montage_select)
+    else:
+        spatial_filter=None
     input_path = THE_DATASET.get('input_path',None)
     layout_dict = THE_DATASET.get('layout',None)
     e = 0
@@ -78,7 +98,7 @@ def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_sel
                             else:
                                 signal = mne.read_epochs(reject_path)
                             start = time.perf_counter()
-                            val_dict = get_derivative(signal,feature=feature,kwargs=kwargs,spatial_filter=sf,portables=portables)
+                            val_dict = get_derivative(signal,feature=feature,kwargs=kwargs,spatial_filter=sf,portables=portables,montage_select=montage_select)
                             final = time.perf_counter()
                             tstring = f'TIME {feature_suffix}:::::::::::::::::::{final-start}'
                             times_strings.append(tstring)

@@ -136,6 +136,7 @@ def dataframe_long_components(data,type,columns,name,path,spatial_matrix='54x10'
     data_new=pd.DataFrame(columns=columns_df)
     #Frequency bands
     bandas=['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma']
+    fit_params=["Intercept", "Slope","R^2","std(osc)"]
     #Components
     if spatial_matrix=='58x25':
         componentes =['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25']
@@ -151,14 +152,29 @@ def dataframe_long_components(data,type,columns,name,path,spatial_matrix='54x10'
         d_sep=data.loc[:,data_x] 
         for j in bandas:
             if j in i:
+                
                 band=j
+        for params in fit_params:
+            if params in i:
+                fparams=params
         for c in componentes:
             if c in i:
                 componente=c
-        d_sep['Band']=[band]*len(d_sep)
-        d_sep['Component']=[componente]*len(d_sep)
-        d_sep= d_sep.rename(columns={i:type})
-        data_new=pd.concat((data_new,d_sep),ignore_index = True)
+                d_sep['Component']=[componente]*len(d_sep)
+                try:
+                    if band: 
+                        d_sep['Band']=[band]*len(d_sep)
+                except:
+                    pass
+                
+                try:
+                    if fparams:
+                        d_sep['Fit_params']=[fparams]*len(d_sep)
+                except:
+                    pass
+
+                d_sep= d_sep.rename(columns={i:type})
+                data_new=pd.concat((data_new,d_sep),ignore_index = True)
         #data_new=data_new.append(d_sep,ignore_index = True) #Uno el dataframe 
     try:
         path="{input_path}\data_long\IC".format(input_path=path).replace('\\','/')
@@ -166,6 +182,11 @@ def dataframe_long_components(data,type,columns,name,path,spatial_matrix='54x10'
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
+        
+    print(data_new['Band'].isnull().sum())
+    if data_new['Band'].isnull().sum()!=0 or data_new['Band'].isna().sum()!=0:
+        data_new.drop(['Band'],axis=1,inplace=True)
+        type='ape_fit_params'
     data_new.reset_index(drop=True).to_feather('{path}\data_{task}_{metric}_long_{name}_{spatial_matrix}_components.feather'.format(path=path,name=data_new['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type,spatial_matrix=spatial_matrix).replace('\\','/'))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 

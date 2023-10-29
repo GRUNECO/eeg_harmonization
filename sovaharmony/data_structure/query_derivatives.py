@@ -8,7 +8,7 @@ from bids.layout import parse_file_entities
 #from sovaharmony.datasets import DUQUEVHI 
 from sovaharmony.utils import load_txt
 
-def get_dataframe_columnsIC(THE_DATASET,feature,spatial_matrix='54x10',norm='False'):  
+def get_dataframe_columnsIC(THE_DATASET,feature,spatial_matrix='54x10',fit_params=False,norm='False'):  
     '''Obtain data frames with powers of Components in different columns'''
     input_path = THE_DATASET.get('input_path',None)
     task = THE_DATASET.get('layout',None).get('task',None)
@@ -65,16 +65,25 @@ def get_dataframe_columnsIC(THE_DATASET,feature,spatial_matrix='54x10',norm='Fal
         except:
             datos_1_sujeto['visit']='V0'
         datos_1_sujeto['condition'] = info_bids_sujeto['task']
-
-        for b,band in enumerate(bandas):
-            for c in range(len(comp_labels)):
-                if data['metadata']['type']=='crossfreq':
-                    for b1,band1 in enumerate(bandas):
-                        datos_1_sujeto[f'{feature}_{comp_labels[c]}_M{band1}_{band.title()}']=icvalues[c][b][b1]
-                elif data['metadata']['type']=='sl' or data['metadata']['type']=='coherence-bands':
-                    datos_1_sujeto[f'{feature}_{comp_labels[c]}_{band.title()}']=np.mean(icvalues[b][c])
-                elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power':
-                    datos_1_sujeto[f'{feature}_{comp_labels[c]}_{band.title()}']=icvalues[b,c]
+        
+        if data['metadata']['type']=='power' and fit_params:
+            for a, ax in enumerate(data['fit_params']['axes']):
+                for c in range(len(comp_labels)):
+                    datos_1_sujeto[f'{feature}_{comp_labels[c]}_{ax}']=icvalues[a,c]
+            
+        else:
+            for b,band in enumerate(bandas):
+                for c in range(len(comp_labels)):
+                    if data['metadata']['type']=='crossfreq':
+                        for b1,band1 in enumerate(bandas):
+                            datos_1_sujeto[f'{feature}_{comp_labels[c]}_M{band1}_{band.title()}']=icvalues[c][b][b1]
+                    elif data['metadata']['type']=='sl' or data['metadata']['type']=='coherence-bands':
+                        datos_1_sujeto[f'{feature}_{comp_labels[c]}_{band.title()}']=np.mean(icvalues[b][c])
+                    elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power':
+                        datos_1_sujeto[f'{feature}_{comp_labels[c]}_{band.title()}']=icvalues[b,c]
+                
+                    
+                   
         list_subjects.append(datos_1_sujeto)
     df = pd.DataFrame(list_subjects)
     df['database']=[name]*len(list_subjects)
@@ -84,6 +93,8 @@ def get_dataframe_columnsIC(THE_DATASET,feature,spatial_matrix='54x10',norm='Fal
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
+    if feature=='ape':
+        feature= 'ape_fit_params'
     df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_{spatial_matrix}_components.feather'.format(name=name,path=path,task=task,feature=feature,spatial_matrix=spatial_matrix).replace('\\','/'))
     print('Done!')
     return df 

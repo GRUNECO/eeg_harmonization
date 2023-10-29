@@ -1,7 +1,6 @@
 from sovaharmony.metrics.coh import get_coherence
 from sovaharmony.metrics.sl import get_sl_1band
 from sovaharmony.metrics.p_entropy import get_entropy_freq
-
 #from sovaharmony.metrics.pme import get_pme_freq
 #from sovaharmony.metrics.pme import Modulation_Bands_Decomposition,Modulation_Bands_Spectrum,Modulation_Bands_Decomposition_Hamming
 from sovaharmony.metrics.pme import Amplitude_Modulation_Analysis
@@ -28,22 +27,50 @@ channels_reduction={'cresta':['F3','F4','C3','C4','P3','P4','O1','O2'],
 #_get_[derivative_name]
 
 ### INTERNAL FEATURES FUNCTIONS ###
-def qeeg_psd_irasa(data, sf,bands,ch_names,descomposition,fmin=1,fmax=45,win_sec=5):
+def qeeg_psd_irasa(data, sf,bands,ch_names,osc=True, aperiodic=True,fmin=1,fmax=45,win_sec=5):
+    '''
+    Function responsible for calculating PSD distribution at specific frequency intervals, using YASA library.
+    
+    Input parameters:
+        - data:
+            numpy array, required.
+            2-D matrix [samples, trials]. It contains the data to process.
+        - sf: int
+            Sample frequencie 
+        - bands:
+
+        - ch_names
+        - osc
+        - aperiodic
+        - fmin
+        - fmax
+        - win_sec
+        
+    Output:
+        - power_normalized 
+        - fit_params
+    '''
+    
     power = {}
+    # PSD using YASA
     freqs, psd_aperiodic, psd_osc,fit_params = yasa.irasa(data, sf, ch_names=None, band=(fmin, fmax), win_sec=win_sec, return_fit=True)
-    if descomposition:
-        # Para evitar los valores negativos que saca yasa, empleamos lo siguiente:
+    if osc:
+        # To avoid the negative values that YASA gets, we use the following:
         psd=psd_osc-np.min(psd_osc)
+    if aperiodic:
+         # To avoid the negative values that YASA gets, we use the following:
+        psd=psd_aperiodic-np.min(psd_aperiodic)
     else: 
         psd = psd_aperiodic + psd_osc
     for band_label,vals in bands.items():
-        #for i in range(len((ch_names))):
         fmin,fmax = vals
         idx_band = np.logical_and(fmin <= freqs, freqs < fmax)
         pot_band = sum(psd.T[idx_band == True])
         power[band_label]=pot_band
+        
     total_pot = sum(list(power.values()))
     power_normalized = {}
+    
     #Calculate the density power for each interval.
     for band_label,pot_band in power.items():
         power_normalized[band_label]=pot_band/total_pot
@@ -51,7 +78,7 @@ def qeeg_psd_irasa(data, sf,bands,ch_names,descomposition,fmin=1,fmax=45,win_sec
     return power_normalized,fit_params
 
 
-def _get_power(signal_epoch,bands,irasa=False,descomposition=True):
+def _get_power(signal_epoch,bands,irasa=False,osc=False, aperiodic=False):
     signal = np.transpose(signal_epoch.get_data(),(1,2,0)) # epochs spaces times -> spaces times epochs
     _verify_epochs_axes(signal_epoch.get_data(),signal)
     space_names = signal_epoch.info['ch_names']
@@ -65,13 +92,15 @@ def _get_power(signal_epoch,bands,irasa=False,descomposition=True):
     signalCont = np.reshape(signal,(nchans,points*epochs),order='F')
     
     if irasa:
-        output['fit_params']={}
-        output['fit_params']['values']=[]
+        if aperiodic:
+            output['fit_params']={}
+            output['fit_params']['values']=[]
         for space in space_names:
             space_idx = space_names.index(space)
-            dummy,fit_params = qeeg_psd_irasa(signalCont[space_idx,:], signal_epoch.info['sfreq'],bands,signal_epoch.ch_names,descomposition,fmin=1,fmax=45)
-            output['fit_params']['axes']=list(fit_params.keys())[1:]
-            output['fit_params']['values']+=[[fit_params['Intercept'][0],fit_params['Slope'][0],fit_params['R^2'][0],fit_params['std(osc)'][0]]]
+            dummy,fit_params = qeeg_psd_irasa(signalCont[space_idx,:], signal_epoch.info['sfreq'],bands,signal_epoch.ch_names,osc=osc, aperiodic=aperiodic,fmin=1,fmax=45)
+            if aperiodic:
+                output['fit_params']['axes']=list(fit_params.keys())[1:]
+                output['fit_params']['values']+=[[fit_params['Intercept'][0],fit_params['Slope'][0],fit_params['R^2'][0],fit_params['std(osc)'][0]]]
             for b in bands.keys():
                 band_idx = bands_list.index(b)
                 values[band_idx,space_idx]=dummy[b] #if there is an error in this line update sovachornux
@@ -159,6 +188,7 @@ foo_map={
     'power':_get_power,
     'power_irasa':_get_power,
     'power_osc':_get_power,
+    'power_ape':_get_power,
     'sl':_get_sl,
     'cohfreq':_get_coh,
     'crossfreq':_get_pme,

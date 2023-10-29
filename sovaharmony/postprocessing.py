@@ -68,12 +68,13 @@ def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_sel
         json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
         #('absPower',{'bands':bands,'normalize':False})
         features_tuples=[
-            #('power',{'bands':bands,'irasa':False}),
-            ('power_osc',{'bands':bands,'irasa':True,'descomposition':True}),
-            #('sl',{'bands':bands}),
+            ('power',{'bands':bands,'irasa':False}),
+            #('power_osc',{'bands':bands,'irasa':True,'osc':True, 'aperiodic':False}),
+            #('power_ape',{'bands':bands,'irasa':True,'osc':False,'aperiodic':True}),
+            ('sl',{'bands':bands}),
             #('cohfreq',{'window':3,'bands':bands}),
             #('entropy',{'bands':bands,'D':3}),
-            #('crossfreq',{'bands':bands}),
+            ('crossfreq',{'bands':bands}),
         ]
         times_strings = []
         for feature,kwargs in features_tuples:

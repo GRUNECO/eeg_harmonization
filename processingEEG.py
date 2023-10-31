@@ -18,10 +18,8 @@ THE_DATASETS=[
     #BIOMARCADORES_OE_server
 ]
 
-spatial=['58x25']
-metrics=['ape']
-
-
+# spatial=['58x25']
+# metrics=['ape']
 # Inputs not dataset dependent
 bands ={'delta':(1.5,6),
         'theta':(6,8.5),
@@ -33,37 +31,37 @@ bands ={'delta':(1.5,6),
         'gamma':(30,45)
         }
 
-pipeline(THE_DATASETS,
-         prep=False,
-         post=False,
-         portables=False,
-         tmontage='openBCI',
-         prepdf=False,
-         propdf=True,
-         spatial_matrix=spatial,
-         metrics=metrics,
-         IC=True, 
-         Sensors=False,
-         OVERWRITE=True,
-         bands=bands,
-         fit_params=False,
-         norm='False'
-        )
-
-# spatial=[None]
-# metrics=['power','crossfreq','sl']
 # pipeline(THE_DATASETS,
-#          prep=False, # if you need preprocessing 
-#          post=False, # if you need postprocessing
-#          portables=True, # if you need reduce the number of the sensors
-#          tmontage='openBCI', # select reductor montage 
-#          prepdf=False, # If you need the dataframe in preprocessing
-#          propdf=True, # If you need the dataframe in postprocessing
-#          spatial_matrix=spatial, # Select the spatial matrix  or None in case not aplied
-#          metrics=metrics, # List with the metrics extract
-#          IC=False, # Select the 
-#          Sensors=True,
+#          prep=False,
+#          post=False,
+#          portables=False,
+#          tmontage='openBCI',
+#          prepdf=False,
+#          propdf=True,
+#          spatial_matrix=spatial,
+#          metrics=metrics,
+#          IC=True, 
+#          Sensors=False,
 #          OVERWRITE=True,
 #          bands=bands,
+#          fit_params=False,
 #          norm='False'
 #         )
+
+spatial=[None]
+metrics=['sl','crossfreq']
+pipeline(THE_DATASETS,
+         prep=False, # if you need preprocessing 
+         post=False, # if you need postprocessing
+         portables=True, # if you need reduce the number of the sensors
+         tmontage='openBCI', # select reductor montage 
+         prepdf=False, # If you need the dataframe in preprocessing
+         propdf=True, # If you need the dataframe in postprocessing
+         spatial_matrix=spatial, # Select the spatial matrix  or None in case not aplied
+         metrics=metrics, # List with the metrics extract
+         IC=False, # Select the 
+         Sensors=True,
+         OVERWRITE=True,
+         bands=bands,
+         norm='False'
+        )

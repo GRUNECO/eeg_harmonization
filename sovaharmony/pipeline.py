@@ -74,11 +74,11 @@ def pipeline (THE_DATASETS=list,prep=False,post=False,portables=False,tmontage=s
                    
                     if m!='crossfreq':
                         if Sensors:
-                            columns_powers_rois = [palabra for palabra in list(data_IC.keys()) if palabra.startswith(m)]
-                            dataframe_long_roi(data_ROI,m,columns=columns_powers_rois,name="data_long_{i}_roi",path=path)
+                            columns_powers_rois = [palabra for palabra in list(data_ROI.keys()) if palabra.startswith(m)]
+                            dataframe_long_sensors(data_ROI,m,columns=columns_powers_rois,name=f"data_long_{m}_roi",path=path,roi=False)
                         if IC:
                             columns_powers_ic = [palabra for palabra in list(data_IC.keys()) if palabra.startswith(m)]
-                            dataframe_long_components(data_IC,m,columns=columns_powers_ic,name="data_long_{i}_components",path=path,spatial_matrix=j)
+                            dataframe_long_components(data_IC,m,columns=columns_powers_ic,name=f"data_long_{m}_components",path=path,spatial_matrix=j)
                             print(f'Done! {m}')
 
                     # if m== 'crossfreq':

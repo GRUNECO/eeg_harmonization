@@ -135,7 +135,6 @@ def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False):
             
         elif 'spaces2' in data['metadata']['axes'].keys():
             sensors = data['metadata']['axes']['spaces2']
-        print(sensors)
         if roi:
             for roi_ in rois:
                 channels = set(sensors).intersection(roi_)
@@ -161,7 +160,7 @@ def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False):
         except:
             datos_1_sujeto['visit']='V0'
         datos_1_sujeto['condition'] = info_bids_sujeto['task']
-        if new_rois:
+        if len(new_rois)!=0:
             for b,band in enumerate(bandas):
                 for r,roi in enumerate(new_rois):
                     if data['metadata']['type']=='crossfreq':
@@ -171,18 +170,18 @@ def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False):
                         datos_1_sujeto[f'{feature}_{roi_labels[r]}_{band.title()}']=np.mean(icvalues[b][roi])
                     elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power':
                         datos_1_sujeto[f'{feature}_{roi_labels[r]}_{band.title()}']=np.mean(icvalues[b,roi])
-                    list_subjects.append(datos_1_sujeto)
+            list_subjects.append(datos_1_sujeto)
         else:
             for b,band in enumerate(bandas):
                 for s,sensor in enumerate(sensors):
                     if data['metadata']['type']=='crossfreq':
                         for b1,band1 in enumerate(bandas):
-                            datos_1_sujeto[f'{feature}_{sensors[b]}_M{band1}_{band.title()}']= icvalues[s][b][b1][np.nonzero(icvalues[s][b][b1])]
+                            datos_1_sujeto[f'{feature}_{sensor}_M{band1}_{band.title()}']= icvalues[s][b][b1][np.nonzero(icvalues[s][b][b1])].mean()
                     elif data['metadata']['type']=='sl' or data['metadata']['type']=='coherence-bands':
-                        datos_1_sujeto[f'{feature}_{sensors[b]}_{band.title()}']=icvalues[b][s]
+                        datos_1_sujeto[f'{feature}_{sensor}_{band.title()}']=np.mean(icvalues[b][s])
                     elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power':
-                        datos_1_sujeto[f'{feature}_{sensors[b]}_{band.title()}']=icvalues[b][s]
-
+                        datos_1_sujeto[f'{feature}_{sensor}_{band.title()}']=icvalues[b,s]
+                    
             list_subjects.append(datos_1_sujeto)
     df = pd.DataFrame(list_subjects)
     df['database']=[name]*len(list_subjects)

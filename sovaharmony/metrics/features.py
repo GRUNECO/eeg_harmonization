@@ -50,7 +50,7 @@ def qeeg_psd_irasa(data, sf,bands,ch_names,osc=True, aperiodic=True,fmin=1,fmax=
         - power_normalized 
         - fit_params
     '''
-    
+   
     power = {}
     # PSD using YASA
     freqs, psd_aperiodic, psd_osc,fit_params = yasa.irasa(data, sf, ch_names=None, band=(fmin, fmax), win_sec=win_sec, return_fit=True)
@@ -62,6 +62,7 @@ def qeeg_psd_irasa(data, sf,bands,ch_names,osc=True, aperiodic=True,fmin=1,fmax=
         psd=psd_aperiodic-np.min(psd_aperiodic)
     else: 
         psd = psd_aperiodic + psd_osc
+    
     for band_label,vals in bands.items():
         fmin,fmax = vals
         idx_band = np.logical_and(fmin <= freqs, freqs < fmax)
@@ -75,7 +76,7 @@ def qeeg_psd_irasa(data, sf,bands,ch_names,osc=True, aperiodic=True,fmin=1,fmax=
     for band_label,pot_band in power.items():
         power_normalized[band_label]=pot_band/total_pot
 
-    return power_normalized,fit_params
+    return power_normalized,fit_params,psd,freqs
 
 
 def _get_power(signal_epoch,bands,irasa=False,osc=False, aperiodic=False):
@@ -95,9 +96,11 @@ def _get_power(signal_epoch,bands,irasa=False,osc=False, aperiodic=False):
         if aperiodic:
             output['fit_params']={}
             output['fit_params']['values']=[]
+        welch_matrix=[]
         for space in space_names:
             space_idx = space_names.index(space)
-            dummy,fit_params = qeeg_psd_irasa(signalCont[space_idx,:], signal_epoch.info['sfreq'],bands,signal_epoch.ch_names,osc=osc, aperiodic=aperiodic,fmin=1,fmax=45)
+            dummy,fit_params,psd,freqs = qeeg_psd_irasa(signalCont[space_idx,:], signal_epoch.info['sfreq'],bands,signal_epoch.ch_names,osc=osc, aperiodic=aperiodic,fmin=1,fmax=45)
+            welch_matrix.append(psd)
             if aperiodic:
                 output['fit_params']['axes']=list(fit_params.keys())[1:]
                 output['fit_params']['values']+=[[fit_params['Intercept'][0],fit_params['Slope'][0],fit_params['R^2'][0],fit_params['std(osc)'][0]]]
@@ -114,7 +117,10 @@ def _get_power(signal_epoch,bands,irasa=False,osc=False, aperiodic=False):
                 band_idx = bands_list.index(b)
                 values[band_idx,space_idx]=dummy[b] #if there is an error in this line update sovachornux
         output['values'] = values
-    return output
+    if irasa==False and osc==False and aperiodic==False: 
+        return output
+    else:
+        return output, welch_matrix
 
 
 
@@ -243,7 +249,10 @@ def get_derivative(in_signal,feature,kwargs,spatial_filter=None,portables=False,
         intersection_chs =list(set(channels_reduction[montage_select]).intersection(signal.ch_names))
         signal.reorder_channels(intersection_chs)
     
-    output=foo_map[feature](signal,**kwargs)
+    if feature is 'power_ape' or 'power_osc' or 'power_irasa':
+        output,psd=foo_map[feature](signal,**kwargs)
+    else:
+        output=foo_map[feature](signal,**kwargs)
 
     if spatial_filter is not None:
         output['metadata']['space']='ics'

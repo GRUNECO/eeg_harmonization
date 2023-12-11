@@ -67,9 +67,10 @@ def get_dataframe_columnsIC(THE_DATASET,feature,spatial_matrix='54x10',fit_param
         datos_1_sujeto['condition'] = info_bids_sujeto['task']
         
         if data['metadata']['type']=='power' and fit_params:
+            icvalues = np.array(data['fit_params']['values'])
             for a, ax in enumerate(data['fit_params']['axes']):
                 for c in range(len(comp_labels)):
-                    datos_1_sujeto[f'{feature}_{comp_labels[c]}_{ax}']=icvalues[a,c]
+                    datos_1_sujeto[f'{feature}_{comp_labels[c]}_{ax}']=icvalues[c,a]
             
         else:
             for b,band in enumerate(bandas):
@@ -93,9 +94,9 @@ def get_dataframe_columnsIC(THE_DATASET,feature,spatial_matrix='54x10',fit_param
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    if feature=='ape':
+    if feature=='ape' and fit_params:
         feature= 'ape_fit_params'
-    df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_{spatial_matrix}_components.feather'.format(name=name,path=path,task=task,feature=feature,spatial_matrix=spatial_matrix).replace('\\','/'))
+    df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_{spatial_matrix}_{norm}_components.feather'.format(name=name,path=path,task=task,feature=feature,spatial_matrix=spatial_matrix,norm=norm).replace('\\','/'))
     print('Done!')
     return df 
 
@@ -192,7 +193,7 @@ def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False):
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
-        df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_roi.feather'.format(name=name,path=path,task=task,feature=feature))
+        df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_{norm}_roi.feather'.format(name=name,path=path,task=task,feature=feature,norm=norm))
     else:
         try:
             path="{input_path}\derivatives\data_columns\SENSORS".format(input_path=input_path).replace('\\','/')
@@ -200,6 +201,6 @@ def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False):
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
-        df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_sensors.feather'.format(name=name,path=path,task=task,feature=feature))
+        df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_{norm}_sensors.feather'.format(name=name,path=path,task=task,feature=feature,norm=norm))
     print('Done!')
     return df 

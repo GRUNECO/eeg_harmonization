@@ -1,6 +1,7 @@
 BIOMARCADORES_OE = {
     'name':'BIOMARCADORES',
-    'input_path':r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES',
+    #'input_path':r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES',
+    'input_path':r'C:\Users\Luisa\OneDrive - Universidad de Antioquia\Datos MsC Verónica\BIOMARCADORES',
     'layout':{'extension':'.vhdr', 'task':'OE','suffix':'eeg', 'return_type':'filename', 'session':'V0'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',

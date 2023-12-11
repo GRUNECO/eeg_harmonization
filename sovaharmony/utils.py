@@ -91,7 +91,7 @@ def _verify_epoch_continuous(data,spaces_times,data_axes,max_epochs=None):
 
 "Functions to save dataframes for graphics"
 
-def dataframe_long_sensors(data,type,columns,name,path,roi=False):
+def dataframe_long_sensors(data,type,columns,name,path,roi=False,norm=False):
     '''Function used to convert a dataframe to be used for graphing by ROIs'''
     #demographic data and neuropsychological test columns
     #data_dem=['participant_id', 'visit', 'group', 'condition', 'database','age', 'sex', 'education', 'MM_total', 'FAS_F', 'FAS_A', 'FAS_S']
@@ -138,7 +138,7 @@ def dataframe_long_sensors(data,type,columns,name,path,roi=False):
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
-        data_new.reset_index(drop=True).to_feather('{path}\data_long_{task}_{metric}_{name}_roi.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
+        data_new.reset_index(drop=True).to_feather('{path}\data_long_{task}_{metric}_{name}_{norm}_roi.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type,norm=norm))
     else:
         try:
             path="{input_path}\data_long\SENSORS".format(input_path=path).replace('\\','/')
@@ -146,10 +146,10 @@ def dataframe_long_sensors(data,type,columns,name,path,roi=False):
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
-        data_new.reset_index(drop=True).to_feather('{path}\data_long_{task}_{metric}_{name}_sensors.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
+        data_new.reset_index(drop=True).to_feather('{path}\data_long_{task}_{metric}_{name}_{norm}_sensors.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type,norm=norm))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 
-def dataframe_long_components(data,type,columns,name,path,spatial_matrix='54x10'):
+def dataframe_long_components(data,type,columns,name,path,spatial_matrix='54x10',norm=False):
     '''Function used to convert a wide dataframe into a long one to be used for graphing by IC'''
     #demographic data and neuropsychological test columns
     #data_dem=['participant_id', 'visit', 'group', 'condition', 'database','age', 'sex', 'education', 'MM_total', 'FAS_F', 'FAS_A', 'FAS_S']
@@ -209,7 +209,7 @@ def dataframe_long_components(data,type,columns,name,path,spatial_matrix='54x10'
     if data_new['Band'].isnull().sum()!=0 or data_new['Band'].isna().sum()!=0:
         data_new.drop(['Band'],axis=1,inplace=True)
         type='ape_fit_params'
-    data_new.reset_index(drop=True).to_feather('{path}\data_{task}_{metric}_long_{name}_{spatial_matrix}_components.feather'.format(path=path,name=data_new['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type,spatial_matrix=spatial_matrix).replace('\\','/'))
+    data_new.reset_index(drop=True).to_feather('{path}\data_{task}_{metric}_long_{name}_{spatial_matrix}_{norm}_components.feather'.format(path=path,name=data_new['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type,spatial_matrix=spatial_matrix,norm=norm).replace('\\','/'))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 
 def dataframe_long_cross_roi(data,type,columns,name,path):

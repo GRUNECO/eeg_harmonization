@@ -85,7 +85,11 @@ def _get_power(signal_epoch,bands,irasa=False,osc=False, aperiodic=False):
     space_names = signal_epoch.info['ch_names']
     spaces,times,epochs = signal.shape
     output = {}
-    output['metadata'] = {'type':'power','kwargs':{'bands':bands}}
+    if osc==False and aperiodic==False:
+        type='power'
+    else:
+        type='irasa'
+    output['metadata'] = {'type':type,'kwargs':{'bands':bands}}
     bands_list = list(bands.keys())
     values = np.empty((len(bands_list),spaces))
     output['metadata']['axes']={'bands':bands_list,'spaces':space_names}
@@ -192,7 +196,6 @@ def _get_entropy(signal_epoch,bands,D):
 foo_map={
     'absPower':_get_power,
     'power':_get_power,
-    'power_irasa':_get_power,
     'power_osc':_get_power,
     'power_ape':_get_power,
     'sl':_get_sl,
@@ -249,10 +252,9 @@ def get_derivative(in_signal,feature,kwargs,spatial_filter=None,portables=False,
         intersection_chs =list(set(channels_reduction[montage_select]).intersection(signal.ch_names))
         signal.reorder_channels(intersection_chs)
     
-    if feature is 'power_ape' or 'power_osc' or 'power_irasa':
+    if feature in ('power_ape', 'power_osc', 'power_irasa','power'):
         output,psd=foo_map[feature](signal,**kwargs)
-    else:
-        output=foo_map[feature](signal,**kwargs)
+    
 
     if spatial_filter is not None:
         output['metadata']['space']='ics'

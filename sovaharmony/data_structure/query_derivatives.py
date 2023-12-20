@@ -5,11 +5,30 @@ import numpy as np
 import re
 import pandas as pd
 from bids.layout import parse_file_entities
-#from sovaharmony.datasets import DUQUEVHI 
 from sovaharmony.utils import load_txt
 
-def get_dataframe_columnsIC(THE_DATASET,feature,spatial_matrix='54x10',fit_params=False,norm='False'):  
-    '''Obtain data frames with powers of Components in different columns'''
+def get_dataframe_columnsIC(THE_DATASET,feature=str,spatial_matrix='54x10',fit_params=False,norm='False'):  
+    '''
+    Generate dataframes with powers of components in separate columns.
+
+    Parameters:
+        THE_DATASET (dict): The dataset containing the relevant information about database.
+        feature (str): The specific feature for which the dataframe is generated.
+        spatial_matrix (str, optional): The spatial matrix identifier. Default is '54x10'.
+        fit_params (bool, optional): Whether to include fit parameters when using toolbox irasa. Default is False.
+        norm (str, optional): Normalization option. Default is 'False'. If you need generate the df using the data normalice. 
+
+    Returns:
+        pandas.DataFrame: A dataframe containing the metric of components in separate columns.
+
+    Example:
+        df = get_dataframe_columnsIC(my_dataset, 'power', spatial_matrix='54x10', fit_params=True, norm='True')
+
+    Note:
+        This function extracts relevant information from the dataset and organizes it into a dataframe,
+        with each component's power in a separate column. The columns may include spatial information,
+        fit parameters, and normalization factors based on the specified parameters.
+    '''
     input_path = THE_DATASET.get('input_path',None)
     task = THE_DATASET.get('layout',None).get('task',None)
     group_regex = THE_DATASET.get('group_regex',None)
@@ -66,7 +85,7 @@ def get_dataframe_columnsIC(THE_DATASET,feature,spatial_matrix='54x10',fit_param
             datos_1_sujeto['visit']='V0'
         datos_1_sujeto['condition'] = info_bids_sujeto['task']
         
-        if data['metadata']['type']=='power' and fit_params:
+        if data['metadata']['type']=='irasa' and fit_params:
             icvalues = np.array(data['fit_params']['values'])
             for a, ax in enumerate(data['fit_params']['axes']):
                 for c in range(len(comp_labels)):
@@ -80,11 +99,8 @@ def get_dataframe_columnsIC(THE_DATASET,feature,spatial_matrix='54x10',fit_param
                             datos_1_sujeto[f'{feature}_{comp_labels[c]}_M{band1}_{band.title()}']=icvalues[c][b][b1]
                     elif data['metadata']['type']=='sl' or data['metadata']['type']=='coherence-bands':
                         datos_1_sujeto[f'{feature}_{comp_labels[c]}_{band.title()}']=np.mean(icvalues[b][c])
-                    elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power':
+                    elif (data['metadata']['type']=='entropy' or data['metadata']['type']=='power' or data['metadata']['type']=='irasa') and fit_params==False:
                         datos_1_sujeto[f'{feature}_{comp_labels[c]}_{band.title()}']=icvalues[b,c]
-                
-                    
-                   
         list_subjects.append(datos_1_sujeto)
     df = pd.DataFrame(list_subjects)
     df['database']=[name]*len(list_subjects)
@@ -100,7 +116,7 @@ def get_dataframe_columnsIC(THE_DATASET,feature,spatial_matrix='54x10',fit_param
     print('Done!')
     return df 
 
-def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False):  
+def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False,fit_params=False):  
     '''Obtain data frames with powers of Components in different columns'''
     input_path = THE_DATASET.get('input_path',None)
     task = THE_DATASET.get('layout',None).get('task',None)
@@ -123,19 +139,13 @@ def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False):
         roi_labels = ['F','C','PO','T']
 
     for i in range(len(paths)):
-        # with open(paths[i],'r', encoding='utf-8', errors='ignore') as f:
-        #     data=ast.literal_eval(f.read())
         data=load_txt(paths[i])
         new_rois = []
 
-        if 'spaces' in data['metadata']['axes'].keys():
-            sensors = data['metadata']['axes']['spaces']
-
-        elif 'spaces1' in data['metadata']['axes'].keys():
-            sensors = data['metadata']['axes']['spaces1']
-            
-        elif 'spaces2' in data['metadata']['axes'].keys():
-            sensors = data['metadata']['axes']['spaces2']
+        key_prefixes = ['spaces', 'spaces1', 'spaces2']
+        for key_prefix in key_prefixes:
+            if key_prefix in data['metadata']['axes'].keys():
+                sensors = data['metadata']['axes'][key_prefix]
         if roi:
             for roi_ in rois:
                 channels = set(sensors).intersection(roi_)
@@ -144,7 +154,7 @@ def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False):
                     index=sensors.index(channel)
                     new_roi.append(index)
                 new_rois.append(new_roi)
-
+                
         icvalues = np.array(data['values'])
         bandas = data['metadata']['axes']['bands']
         
@@ -161,6 +171,7 @@ def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False):
         except:
             datos_1_sujeto['visit']='V0'
         datos_1_sujeto['condition'] = info_bids_sujeto['task']
+        
         if len(new_rois)!=0:
             for b,band in enumerate(bandas):
                 for r,roi in enumerate(new_rois):
@@ -169,23 +180,31 @@ def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False):
                             datos_1_sujeto[f'{feature}_{roi_labels[r]}_M{band1}_{band.title()}']= icvalues[roi][b][b1][np.nonzero(icvalues[roi][b][b1])].mean()
                     elif data['metadata']['type']=='sl' or data['metadata']['type']=='coherence-bands':
                         datos_1_sujeto[f'{feature}_{roi_labels[r]}_{band.title()}']=np.mean(icvalues[b][roi])
-                    elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power':
+                    elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power' or data['metadata']['type']=='irasa':
                         datos_1_sujeto[f'{feature}_{roi_labels[r]}_{band.title()}']=np.mean(icvalues[b,roi])
             list_subjects.append(datos_1_sujeto)
         else:
-            for b,band in enumerate(bandas):
-                for s,sensor in enumerate(sensors):
-                    if data['metadata']['type']=='crossfreq':
-                        for b1,band1 in enumerate(bandas):
-                            datos_1_sujeto[f'{feature}_{sensor}_M{band1}_{band.title()}']= icvalues[s][b][b1][np.nonzero(icvalues[s][b][b1])].mean()
-                    elif data['metadata']['type']=='sl' or data['metadata']['type']=='coherence-bands':
-                        datos_1_sujeto[f'{feature}_{sensor}_{band.title()}']=np.mean(icvalues[b][s])
-                    elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power':
-                        datos_1_sujeto[f'{feature}_{sensor}_{band.title()}']=icvalues[b,s]
-                    
+            if data['metadata']['type']=='irasa' and fit_params:
+                icvalues = np.array(data['fit_params']['values'])
+                for a, ax in enumerate(data['fit_params']['axes']):
+                    for s,sensor in enumerate(sensors):
+                        datos_1_sujeto[f'{feature}_{sensor}_{ax}']=icvalues[s,a]
+            else:
+                for b,band in enumerate(bandas):
+                    for s,sensor in enumerate(sensors):
+                        if data['metadata']['type']=='crossfreq':
+                            for b1,band1 in enumerate(bandas):
+                                datos_1_sujeto[f'{feature}_{sensor}_M{band1}_{band.title()}']= icvalues[s][b][b1][np.nonzero(icvalues[s][b][b1])].mean()
+                        elif data['metadata']['type']=='sl' or data['metadata']['type']=='coherence-bands':
+                            datos_1_sujeto[f'{feature}_{sensor}_{band.title()}']=np.mean(icvalues[b][s])
+                        elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power' or data['metadata']['type']=='irasa':
+                            datos_1_sujeto[f'{feature}_{sensor}_{band.title()}']=icvalues[b,s]
+                        
             list_subjects.append(datos_1_sujeto)
     df = pd.DataFrame(list_subjects)
     df['database']=[name]*len(list_subjects)
+    if feature=='ape' and fit_params:
+        feature= 'ape_fit_params'
     if roi:
         try:
             path="{input_path}\derivatives\data_columns\ROI".format(input_path=input_path).replace('\\','/')

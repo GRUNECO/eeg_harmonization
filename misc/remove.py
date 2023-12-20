@@ -142,7 +142,7 @@ ext = ['.json','.txt']
 tasks=['OE','CE']
 #sub-CTR001_ses-V0_task-CE_desc-[restCE]_space-ics[cresta]_norm-True_power
 #metrics=['I]_norm-False_sl','I]_norm-False_crossfreq','I]_norm-False_cohfreq','I]_norm-False_entropy','I]_norm-False_power']
-metrics=['sensors_norm-False_sl']
+metrics=['irasa']
 for e in ext:
     for t in tasks:
         for m in metrics:

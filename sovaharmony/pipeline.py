@@ -8,7 +8,7 @@ from sovaharmony.data_structure.query_derivatives import get_dataframe_columns_s
 from sovaharmony.utils import * 
 import time 
 
-def pipeline (THE_DATASETS=list,prep=False,post=False,portables=False,tmontage=str,prepdf=False,propdf=False,spatial_matrix=list,metrics=list,IC=False, Sensors=False,OVERWRITE= False,bands=dict,fit_params=False,norm='False'):
+def pipeline (THE_DATASETS=list,prep=False,post=False,portables=False,tmontage=str,prepdf=False,propdf=False,spatial_matrix=list,metrics=list,IC=False, Sensors=False,OVERWRITE= False,bands=dict):
     '''
     Input
         - THE_DATASETS: list
@@ -59,26 +59,27 @@ def pipeline (THE_DATASETS=list,prep=False,post=False,portables=False,tmontage=s
             final = time.perf_counter()
 
         if propdf:
-            for m in metrics:
+            for i,m in enumerate(list(metrics.keys())):
                 for j in spatial_matrix:
                     if IC: 
                         start = time.perf_counter()
-                        data_IC=get_dataframe_columnsIC(dataset,feature=m,spatial_matrix=j ,fit_params=fit_params,norm=norm)
+                        data_IC=get_dataframe_columnsIC(dataset,feature=m,spatial_matrix=j ,fit_params=metrics[m][0],norm=metrics[m][1])
                         final = time.perf_counter()
                         print('TIME FEATHER IC:::::::::::::::::::'+ dataset['input_path']+ m + dataset['layout']['task'], final-start)
                     if Sensors:
                         start = time.perf_counter()
-                        data_ROI=get_dataframe_columns_sensors(dataset,feature=m,norm=norm,roi=False)
+                        data_ROI=get_dataframe_columns_sensors(dataset,feature=m,norm=metrics[m][1],roi=False,fit_params=metrics[m][0])
                         final = time.perf_counter()
                         print('TIME FEATHER ROI:::::::::::::::::::'+ dataset['input_path']+ m + dataset['layout']['task'], final-start)
                    
                     if m!='crossfreq':
                         if Sensors:
                             columns_powers_rois = [palabra for palabra in list(data_ROI.keys()) if palabra.startswith(m)]
-                            dataframe_long_sensors(data_ROI,m,columns=columns_powers_rois,name=f"data_long_{m}_roi",path=path,roi=False,norm=norm)
+                            dataframe_long_sensors(data_ROI,m,columns=columns_powers_rois,path=path,roi=False,norm=metrics[m][1],bandas=list(bands.keys()))
+                            print(f'Done! {m}')
                         if IC:
                             columns_powers_ic = [palabra for palabra in list(data_IC.keys()) if palabra.startswith(m)]
-                            dataframe_long_components(data_IC,m,columns=columns_powers_ic,name=f"data_long_{m}_components",path=path,spatial_matrix=j,norm=norm)
+                            dataframe_long_components(data_IC,m,columns=columns_powers_ic,path=path,spatial_matrix=j,norm=metrics[m][1],metric=m,bandas=list(bands.keys()))
                             print(f'Done! {m}')
 
                     # if m== 'crossfreq':

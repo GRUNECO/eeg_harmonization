@@ -18,17 +18,22 @@ THE_DATASETS=[
     #BIOMARCADORES_OE_server
 ]
 
-spatial=[None]
-metrics=['power_osc','power_ape']
+spatial=['54x10']
+# metrica: (Fit_params,norm)
+metrics={#'power':(False,'True'),
+         # 'osc': (False,'False'),
+         'ape': (True,'False'),
+         #'ape':(False,'False')
+         }
 # Inputs not dataset dependent
-bands ={'delta':(1.5,6),
-        'theta':(6,8.5),
-        'alpha-1':(8.5,10.5),
-        'alpha-2':(10.5,12.5),
-        'beta1':(12.5,18.5),
-        'beta2':(18.5,21),
-        'beta3':(21,30),
-        'gamma':(30,45)
+bands ={'Delta':(1.5,6),
+        'Theta':(6,8.5),
+        'Alpha-1':(8.5,10.5),
+        'Alpha-2':(10.5,12.5),
+        'Beta1':(12.5,18.5),
+        'Beta2':(18.5,21),
+        'Beta3':(21,30),
+        'Gamma':(30,45)
         }
 
 pipeline(THE_DATASETS,
@@ -42,10 +47,8 @@ pipeline(THE_DATASETS,
          metrics=metrics,
          IC=False, 
          Sensors=True,
-         OVERWRITE=True,
+         OVERWRITE=False,
          bands=bands,
-         fit_params=False,
-         norm='True'
         )
 
 # spatial=[None]
@@ -63,5 +66,4 @@ pipeline(THE_DATASETS,
 #          Sensors=True,
 #          OVERWRITE=True,
 #          bands=bands,
-#          norm='False'
 #         )

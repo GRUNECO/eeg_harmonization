@@ -7,7 +7,8 @@ BIOMARCADORES_OE = {
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
     'run-label':'restOE',
-    'session':'V'
+    'session':'V',
+    'demographic':'eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
 }
 
 BIOMARCADORES_CE = {
@@ -18,7 +19,8 @@ BIOMARCADORES_CE = {
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
     'run-label':'restCE',
-    'session':'V'
+    'session':'V',
+    'demographic':'eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
    
 }
 
@@ -31,7 +33,8 @@ BIOMARCADORES_OE_server= {
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
     'run-label':'restOE',
-    'session':'V'
+    'session':'V',
+    'demographic':r'D:\flujo_portables\eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
 }
 
 BIOMARCADORES_CE_server= {
@@ -43,8 +46,8 @@ BIOMARCADORES_CE_server= {
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
     'run-label':'restCE',
-    'session':'V'
-   
+    'session':'V',
+    'demographic':r'D:\flujo_portables\eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
 }
 
 
@@ -58,7 +61,8 @@ BIOMARCADORESMini = {
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
     'run-label':'restCE',
-    'session':'V'
+    'session':'V',
+    'demographic':r'eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
 }
 
 BIOMARCADORESYorguin = {
@@ -69,7 +73,8 @@ BIOMARCADORESYorguin = {
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
     'run-label':'restCE',
-    'session':'V'
+    'session':'V',
+    'demographic':r'eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
 }
 
 
@@ -115,7 +120,8 @@ DUQUE = {
     'group_regex':None,
     'events_to_keep':None,
     'run-label':'restCE',
-    'session':None
+    'session':None,
+    'demographic':r'eeg_harmonization\demographic\dem_DUQUE.csv' 
 }
 
 Estudiantes2021_OE={

@@ -59,8 +59,6 @@ def get_metrics_prep(files,list_studies=None,list_subjects=None,list_groups=None
   df_prep['Metric']=[]
   df_prep['Metric_value']=[]
   df_prep['State']=[]
-  
-  
 
   for file in files:
     dataFile=load_txt(file)

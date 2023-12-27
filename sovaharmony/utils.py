@@ -33,28 +33,44 @@ def load_txt(file):
     data=json.load(f)
   return data
 
-def load_feather(path):
-    '''
-    Function to upload files with feather format
+def load_file(file_path):
+    """
+    Load a file into a Pandas DataFrame based on its format (Excel, CSV, or Feather).
 
-    Parameters
+    Parameters:
     ----------
-        path:str
-            Directory where the file with the extension .feather
+        - file_path (str): The path to the file to be loaded.
 
-    Returns 
-    -------
-        data: dataframe
-            Data in dataframe format
-    '''
-    data=pd.read_feather(os.path.join(path).replace("\\","/"))
-    return data
+    Returns:
+    ----------
+        - pd.DataFrame or None: A DataFrame containing the loaded data if successful, or None if the file format is not supported.
+    """
+    file_path=file_path.replace("\\","/")
+    # Check if the file is an Excel file
+    if file_path.endswith('.xlsx'):
+        # Load an Excel file
+        df = pd.read_excel(file_path)
+    # Check if the file is a CSV file
+    elif file_path.endswith('.csv'):
+        # Load a CSV file
+        df = pd.read_csv(file_path)
+    # Check if the file is a Feather file
+    elif file_path.endswith('.feather'):
+        # Load a Feather file
+        df = pd.read_feather(file_path)
+    else:
+        # Print an error message for unsupported file formats
+        print("Unsupported file format. Supported formats: Excel (.xlsx), CSV (.csv), or Feather (.feather)")
+        return None
+    
+    return df
+
 
 def concat_df(path):
     path_df=glob.glob(path)
     data=[]
     for df in path_df:
-        d=load_feather(df)
+        d=load_file(df)
         
         data.append(d)
     data_concat=pd.concat((data))

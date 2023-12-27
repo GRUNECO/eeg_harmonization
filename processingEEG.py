@@ -18,12 +18,12 @@ THE_DATASETS=[
     #BIOMARCADORES_OE_server
 ]
 
-spatial=['54x10']
+spatial=['openBCI']#['54x10']
 # metrica: (Fit_params,norm)
-metrics={#'power':(False,'True'),
-         'osc': (False,'False'),
-         'ape': (True,'False'),
-         'ape':(False,'False')
+metrics={'power':{'fit_params':False,'norm':'False','demographic':True},
+         #'osc': {'fit_params':False,'norm':'False','demographic':True},
+         #'ape': {'fit_params':True,''norm':False' ,'demographic':True},
+         #'ape': {'fit_params':False,'norm':'False','demographic':True}
          }
 # Inputs not dataset dependent
 bands ={'Delta':(1.5,6),
@@ -38,15 +38,15 @@ bands ={'Delta':(1.5,6),
 
 pipeline(THE_DATASETS,
          prep=False,
-         post=True,
+         post=False,
          portables=False,
          tmontage='openBCI',
          prepdf=False,
-         propdf=False,
+         propdf=True,
          spatial_matrix=spatial,
          metrics=metrics,
-         IC=False, 
-         Sensors=True,
+         IC=True, 
+         Sensors=False,
          OVERWRITE=False,
          bands=bands,
         )

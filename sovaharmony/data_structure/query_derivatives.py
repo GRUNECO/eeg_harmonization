@@ -5,9 +5,9 @@ import numpy as np
 import re
 import pandas as pd
 from bids.layout import parse_file_entities
-from sovaharmony.utils import load_txt
+from sovaharmony.utils import load_txt, load_file
 
-def get_dataframe_columnsIC(THE_DATASET,feature=str,spatial_matrix='54x10',fit_params=False,norm='False'):  
+def get_dataframe_columnsIC(THE_DATASET,feature=str,spatial_matrix='54x10',fit_params=False,norm='False',demographic=False):  
     '''
     Generate dataframes with metrics of components in separate columns.
 
@@ -30,6 +30,7 @@ def get_dataframe_columnsIC(THE_DATASET,feature=str,spatial_matrix='54x10',fit_p
         fit parameters, and normalization factors based on the specified parameters.
     '''
     input_path = THE_DATASET.get('input_path',None)
+    demographic_path= THE_DATASET.get('demographic',None)
     task = THE_DATASET.get('layout',None).get('task',None)
     group_regex = THE_DATASET.get('group_regex',None)
     name = THE_DATASET.get('name',None)
@@ -112,13 +113,24 @@ def get_dataframe_columnsIC(THE_DATASET,feature=str,spatial_matrix='54x10',fit_p
             raise
     if feature=='ape' and fit_params:
         feature= 'ape_fit_params'
-    df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_{spatial_matrix}_{norm}_components.feather'.format(name=name,path=path,task=task,feature=feature,spatial_matrix=spatial_matrix,norm=norm).replace('\\','/'))
-    print('Done!')
+    if demographic:
+        demograficos=load_file(demographic_path)
+        demograficos.rename(columns={'subject':'participant_id'},inplace=True)
+        demograficos['participant_id']='sub-' + demograficos['participant_id'].astype(str)
+        df_merge=pd.merge(df,demograficos,how='outer',on=["participant_id",'visit','group'])
+        df_merge.dropna(inplace=True)
+        df_merge.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_{spatial_matrix}_{norm}_components_dem.feather'.format(name=name,path=path,task=task,feature=feature,spatial_matrix=spatial_matrix,norm=norm).replace('\\','/'))
+        print('Done df with demographic data!')
+        
+    else:
+        df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_{spatial_matrix}_{norm}_components.feather'.format(name=name,path=path,task=task,feature=feature,spatial_matrix=spatial_matrix,norm=norm).replace('\\','/'))
+        print('Done!')
     return df 
 
-def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False,fit_params=False):  
+def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False,fit_params=False,demographic=False):  
     '''Obtain data frames with powers of Components in different columns'''
     input_path = THE_DATASET.get('input_path',None)
+    demographic_path= THE_DATASET.get('demographic',None)
     task = THE_DATASET.get('layout',None).get('task',None)
     group_regex = THE_DATASET.get('group_regex',None)
     name = THE_DATASET.get('name',None)
@@ -205,21 +217,27 @@ def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False,fit
     df['database']=[name]*len(list_subjects)
     if feature=='ape' and fit_params:
         feature= 'ape_fit_params'
-    if roi:
-        try:
-            path="{input_path}\derivatives\data_columns\ROI".format(input_path=input_path).replace('\\','/')
-            os.makedirs(path)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise
-        df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_{norm}_roi.feather'.format(name=name,path=path,task=task,feature=feature,norm=norm))
+    data_type = "ROI" if roi else "SENSORS"
+    
+    try:
+        path = os.path.join(input_path, "derivatives", "data_columns", data_type)
+        os.makedirs(path, exist_ok=True)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    
+    # Handle demographic data if specified
+    if demographic:
+        demograficos = load_file(demographic_path)
+        demograficos.rename(columns={'subject': 'participant_id'}, inplace=True)
+        demograficos['participant_id'] = 'sub-' + demograficos['participant_id'].astype(str)
+        df_merge = pd.merge(df, demograficos, how='outer', on=["participant_id", 'visit', 'group'])
+        df_merge.dropna(inplace=True)
+        file_name = f"data_{name}_{task}_columns_{feature}_{norm}_{data_type.lower()}_dem.feather"
     else:
-        try:
-            path="{input_path}\derivatives\data_columns\SENSORS".format(input_path=input_path).replace('\\','/')
-            os.makedirs(path)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise
-        df.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_{norm}_sensors.feather'.format(name=name,path=path,task=task,feature=feature,norm=norm))
+        file_name = f"data_{name}_{task}_columns_{feature}_{norm}_{data_type.lower()}.feather"
+    
+    file_path = os.path.join(path, file_name).replace('\\', '/')
+    df.to_feather(file_path)
     print('Done!')
     return df 

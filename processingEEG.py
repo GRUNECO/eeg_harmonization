@@ -21,9 +21,9 @@ THE_DATASETS=[
 spatial=['54x10']
 # metrica: (Fit_params,norm)
 metrics={#'power':(False,'True'),
-         # 'osc': (False,'False'),
+         'osc': (False,'False'),
          'ape': (True,'False'),
-         #'ape':(False,'False')
+         'ape':(False,'False')
          }
 # Inputs not dataset dependent
 bands ={'Delta':(1.5,6),
@@ -38,11 +38,11 @@ bands ={'Delta':(1.5,6),
 
 pipeline(THE_DATASETS,
          prep=False,
-         post=False,
+         post=True,
          portables=False,
          tmontage='openBCI',
          prepdf=False,
-         propdf=True,
+         propdf=False,
          spatial_matrix=spatial,
          metrics=metrics,
          IC=False, 

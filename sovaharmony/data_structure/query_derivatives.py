@@ -9,7 +9,7 @@ from sovaharmony.utils import load_txt
 
 def get_dataframe_columnsIC(THE_DATASET,feature=str,spatial_matrix='54x10',fit_params=False,norm='False'):  
     '''
-    Generate dataframes with powers of components in separate columns.
+    Generate dataframes with metrics of components in separate columns.
 
     Parameters:
         THE_DATASET (dict): The dataset containing the relevant information about database.

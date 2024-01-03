@@ -1,7 +1,4 @@
-from sovaharmony.datasets import BIOMARCADORES_OE, BIOMARCADORES_CE, CHBMP, SRM, DUQUE
-from sovaharmony.datasets import BIOMARCADORES_OE_server, BIOMARCADORES_CE_server
-from sovaharmony.datasets import BIOMARCADORES_CE_54X10, CHBMP_54X10, SRM_54X10, DUQUE_54X10
-from sovaharmony.datasets import test_portables
+from sovaharmony.datasets import *
 from sovaharmony.pipeline import pipeline
 #from .misc.neuroharmonaze import neurosovaHarmonize
 
@@ -14,11 +11,12 @@ from sovaharmony.pipeline import pipeline
 #     ]
 
 THE_DATASETS=[
-    BIOMARCADORES_CE_server,
-    #BIOMARCADORES_OE_server
+        DUQUE_Server,
+        #BIOMARCADORES_CE_server,
+        #BIOMARCADORES_OE_server
 ]
 
-spatial=['openBCI']#['54x10']
+spatial=['openBCI']#['openBCI']#
 # metrica: (Fit_params,norm)
 metrics={'power':{'fit_params':False,'norm':'False','demographic':True},
          #'osc': {'fit_params':False,'norm':'False','demographic':True},
@@ -39,7 +37,7 @@ bands ={'Delta':(1.5,6),
 pipeline(THE_DATASETS,
          prep=False,
          post=False,
-         portables=False,
+         portables=True,
          tmontage='openBCI',
          prepdf=False,
          propdf=True,

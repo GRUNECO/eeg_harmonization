@@ -116,7 +116,9 @@ def get_dataframe_columnsIC(THE_DATASET,feature=str,spatial_matrix='54x10',fit_p
     if demographic:
         demograficos=load_file(demographic_path)
         demograficos.rename(columns={'subject':'participant_id'},inplace=True)
-        demograficos['participant_id']='sub-' + demograficos['participant_id'].astype(str)
+        demograficos['participant_id']='sub-' + demograficos['participant_id'].astype(str).str.replace('_', '')
+        if 'visit' not in demograficos.columns:
+            demograficos['visit'] = 'V0'
         df_merge=pd.merge(df,demograficos,how='outer',on=["participant_id",'visit','group'])
         df_merge.dropna(inplace=True)
         df_merge.to_feather(r'{path}\data_{name}_{task}_columns_{feature}_{spatial_matrix}_{norm}_components_dem.feather'.format(name=name,path=path,task=task,feature=feature,spatial_matrix=spatial_matrix,norm=norm).replace('\\','/'))

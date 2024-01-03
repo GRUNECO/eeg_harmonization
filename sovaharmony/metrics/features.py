@@ -252,10 +252,10 @@ def get_derivative(in_signal,feature,kwargs,spatial_filter=None,portables=False,
         intersection_chs =list(set(channels_reduction[montage_select]).intersection(signal.ch_names))
         signal.reorder_channels(intersection_chs)
     
-    if feature in ('power_ape', 'power_osc', 'power_irasa','power'):
+    if feature in ('power_ape', 'power_osc', 'power_irasa'):
         output,psd=foo_map[feature](signal,**kwargs)
-    
-
+    else:
+        output=foo_map[feature](signal,**kwargs)
     if spatial_filter is not None:
         output['metadata']['space']='ics'
         output['metadata']['W'] = W_adapted

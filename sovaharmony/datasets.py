@@ -62,7 +62,7 @@ BIOMARCADORESMini = {
     'events_to_keep':None,
     'run-label':'restCE',
     'session':'V',
-    'demographic':r'eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
+    'demographic':r'D:\flujo_portables\eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
 }
 
 BIOMARCADORESYorguin = {
@@ -74,7 +74,7 @@ BIOMARCADORESYorguin = {
     'events_to_keep':None,
     'run-label':'restCE',
     'session':'V',
-    'demographic':r'eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
+    'demographic':r'D:\flujo_portables\eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
 }
 
 
@@ -121,9 +121,20 @@ DUQUE = {
     'events_to_keep':None,
     'run-label':'restCE',
     'session':None,
-    'demographic':r'eeg_harmonization\demographic\dem_DUQUE.csv' 
+    'demographic':r'D:\flujo_portables\eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
 }
 
+DUQUE_Server = {
+    'name':'DUQUE',
+    'input_path':r'E:\DUQUE',
+    'layout':{'extension':'.vhdr', 'task':'resting','suffix':'eeg', 'return_type':'filename'},
+    'args':{'line_freqs':[60]},
+    'group_regex':None,
+    'events_to_keep':None,
+    'run-label':'restCE',
+    'session':None,
+    'demographic':r'D:\flujo_portables\eeg_harmonization\demographic\dem_DUQUE.csv' 
+}
 Estudiantes2021_OE={
     'name':'Estudiantes2021',
     'input_path':r'D:\XIMENA\BIDS\Estudiantes2021',

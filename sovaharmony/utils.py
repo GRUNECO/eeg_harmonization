@@ -53,7 +53,7 @@ def load_file(file_path):
     # Check if the file is a CSV file
     elif file_path.endswith('.csv'):
         # Load a CSV file
-        df = pd.read_csv(file_path)
+        df = pd.read_csv(file_path,sep=';')
     # Check if the file is a Feather file
     elif file_path.endswith('.feather'):
         # Load a Feather file

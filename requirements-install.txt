@@ -11,3 +11,5 @@ versioneer
 -e .
 neuroHarmonize
 rpy2
+yasa
+mne==1.5.1

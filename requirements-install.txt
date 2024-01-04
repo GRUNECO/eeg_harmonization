@@ -9,3 +9,5 @@ statsmodels
 https://api.github.com/repos/mne-tools/mne-bids/zipball/main
 versioneer
 -e .
+neuroHarmonize
+rpy2

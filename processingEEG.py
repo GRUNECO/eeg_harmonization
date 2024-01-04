@@ -16,8 +16,7 @@ THE_DATASETS=[
         #BIOMARCADORES_OE_server
 ]
 
-spatial=['openBCI']#['openBCI']#
-# metrica: (Fit_params,norm)
+spatial=['openBCI']#['54x10']
 metrics={'power':{'fit_params':False,'norm':'False','demographic':True},
          #'osc': {'fit_params':False,'norm':'False','demographic':True},
          #'ape': {'fit_params':True,''norm':False' ,'demographic':True},
@@ -35,9 +34,9 @@ bands ={'Delta':(1.5,6),
         }
 
 pipeline(THE_DATASETS,
-         prep=False,
-         post=False,
-         portables=True,
+         prep=False,# if you need preprocessing 
+         post=False,# if you need postprocessing
+         portables=True,# if you need reduce the number of the sensors
          tmontage='openBCI',
          prepdf=False,
          propdf=True,
@@ -52,9 +51,9 @@ pipeline(THE_DATASETS,
 # spatial=[None]
 # metrics=['sl','crossfreq']
 # pipeline(THE_DATASETS,
-#          prep=False, # if you need preprocessing 
-#          post=False, # if you need postprocessing
-#          portables=True, # if you need reduce the number of the sensors
+#          prep=False, 
+#          post=False, 
+#          portables=True, 
 #          tmontage='openBCI', # select reductor montage 
 #          prepdf=False, # If you need the dataframe in preprocessing
 #          propdf=True, # If you need the dataframe in postprocessing

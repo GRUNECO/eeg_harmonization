@@ -51,7 +51,10 @@ def MatchIt_R(data,group1 = 'G1', group2 = 'Control' ):
     data = pd.concat([dataTreat, dataCTR])
     data = data[(data['visit'] == 'V0') | (data['visit'] == 't1')]
 
-
+    # Eliminar columnas con al menos una celda con valor None
+    columnas_con_none = data.columns[data.isna().any()].tolist()
+    data.drop(columnas_con_none, axis=1,inplace=True)
+    
     pd_to_R(data)
     r('''
     R_data$treatG1 <- factor(R_data$treatG1)
@@ -71,7 +74,7 @@ def MatchIt_R(data,group1 = 'G1', group2 = 'Control' ):
     #r('''plot(EDADG12, type = "qq")''')
     r('''
     EDADG12treat <- match.data(EDADG12, group = "treated")
-    EDADG12control <- match.data(EDADG12, group = "control")
+    EDADG12control <- match.data(EDADG12, group = "Control")
     ''')
     r('''
     EDADG12total <- rbind(EDADG12treat,EDADG12control)

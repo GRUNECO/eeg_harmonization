@@ -100,7 +100,7 @@ def neurosovaHarmonize(m,b,bm,s,A,B,path_feather,path_input,path_graph,new_name,
             #graf_DB(path_graph+ fr'\Gauss',columnasAll,BS,DS,SS,CS,BH,DH,SH,CH,title,space)
 
 ## Lists
-m = ['power','sl','cohfreq','entropy','crossfreq'] 
+m = ['power'] #['power','sl','cohfreq','entropy','crossfreq'] 
 b = ['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma'] 
 bm = ['Mdelta','Mtheta','Malpha-1','Malpha-2','Mbeta1','Mbeta2','Mbeta3','Mgamma']  
 #s=['roi','ic']

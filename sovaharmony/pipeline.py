@@ -8,7 +8,7 @@ from sovaharmony.data_structure.query_derivatives import get_dataframe_columns_s
 from sovaharmony.utils import * 
 import time 
 
-def pipeline (THE_DATASETS=list,prep=False,post=False,portables=False,tmontage=str,prepdf=False,propdf=False,spatial_matrix=list,metrics=list,IC=False, Sensors=False,OVERWRITE= False,bands=dict):
+def pipeline (THE_DATASETS=list,prep=False,post=False,portables=False,tmontage=str,prepdf=False,propdf=False,spatial_matrix=list,metrics=list,IC=False, Sensors=False,roi=False,OVERWRITE= False,bands=dict):
     '''
     Input
         - THE_DATASETS: list
@@ -66,16 +66,16 @@ def pipeline (THE_DATASETS=list,prep=False,post=False,portables=False,tmontage=s
                         data_IC=get_dataframe_columnsIC(dataset,feature=m,spatial_matrix=j ,fit_params=metrics[m]['fit_params'],norm=metrics[m]['norm'],demographic=metrics[m]['demographic'])
                         final = time.perf_counter()
                         print('TIME FEATHER IC:::::::::::::::::::'+ dataset['input_path']+ m + dataset['layout']['task'], final-start)
-                    if Sensors:
+                    if Sensors  or roi:
                         start = time.perf_counter()
-                        data_ROI=get_dataframe_columns_sensors(dataset,feature=m,norm=metrics[m]['norm'],roi=False,fit_params=metrics[m]['fit_params'],demographic=metrics[m]['demographic'])
+                        data_ROI=get_dataframe_columns_sensors(dataset,feature=m,norm=metrics[m]['norm'],roi=roi,fit_params=metrics[m]['fit_params'],demographic=metrics[m]['demographic'])
                         final = time.perf_counter()
                         print('TIME FEATHER ROI:::::::::::::::::::'+ dataset['input_path']+ m + dataset['layout']['task'], final-start)
                    
                     if m!='crossfreq':
-                        if Sensors:
+                        if Sensors or roi:
                             columns_powers_rois = [palabra for palabra in list(data_ROI.keys()) if palabra.startswith(m)]
-                            dataframe_long_sensors(data_ROI,m,columns=columns_powers_rois,path=path,roi=False,norm=metrics[m]['norm'],bandas=list(bands.keys()))
+                            dataframe_long_sensors(data_ROI,m,columns=columns_powers_rois,path=path,roi=roi,norm=metrics[m]['norm'],bandas=list(bands.keys()))
                             print(f'Done! {m}')
                         if IC:
                             columns_powers_ic = [palabra for palabra in list(data_IC.keys()) if palabra.startswith(m)]

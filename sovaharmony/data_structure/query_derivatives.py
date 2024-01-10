@@ -187,15 +187,21 @@ def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False,fit
         datos_1_sujeto['condition'] = info_bids_sujeto['task']
         
         if len(new_rois)!=0:
-            for b,band in enumerate(bandas):
-                for r,roi in enumerate(new_rois):
-                    if data['metadata']['type']=='crossfreq':
-                        for b1,band1 in enumerate(bandas):
-                            datos_1_sujeto[f'{feature}_{roi_labels[r]}_M{band1}_{band.title()}']= icvalues[roi][b][b1][np.nonzero(icvalues[roi][b][b1])].mean()
-                    elif data['metadata']['type']=='sl' or data['metadata']['type']=='coherence-bands':
-                        datos_1_sujeto[f'{feature}_{roi_labels[r]}_{band.title()}']=np.mean(icvalues[b][roi])
-                    elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power' or data['metadata']['type']=='irasa':
-                        datos_1_sujeto[f'{feature}_{roi_labels[r]}_{band.title()}']=np.mean(icvalues[b,roi])
+            if data['metadata']['type']=='irasa' and fit_params:
+                icvalues = np.array(data['fit_params']['values'])
+                for a, ax in enumerate(data['fit_params']['axes']):
+                    for r,roi in enumerate(new_rois):
+                        datos_1_sujeto[f'{feature}_{roi_labels[r]}_{ax}']=icvalues[r,a]
+            else:
+                for b,band in enumerate(bandas):
+                    for r,roi in enumerate(new_rois):
+                        if data['metadata']['type']=='crossfreq':
+                            for b1,band1 in enumerate(bandas):
+                                datos_1_sujeto[f'{feature}_{roi_labels[r]}_M{band1}_{band.title()}']= icvalues[roi][b][b1][np.nonzero(icvalues[roi][b][b1])].mean()
+                        elif data['metadata']['type']=='sl' or data['metadata']['type']=='coherence-bands':
+                            datos_1_sujeto[f'{feature}_{roi_labels[r]}_{band.title()}']=np.mean(icvalues[b][roi])
+                        elif data['metadata']['type']=='entropy' or data['metadata']['type']=='power' or data['metadata']['type']=='irasa':
+                            datos_1_sujeto[f'{feature}_{roi_labels[r]}_{band.title()}']=np.mean(icvalues[b,roi])
             list_subjects.append(datos_1_sujeto)
         else:
             if data['metadata']['type']=='irasa' and fit_params:

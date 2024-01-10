@@ -11,16 +11,16 @@ from sovaharmony.pipeline import pipeline
 #     ]
 
 THE_DATASETS=[
-        DUQUE_Server,
-        #BIOMARCADORES_CE_server,
+        #DUQUE_Server,
+        BIOMARCADORES_CE_server,
         #BIOMARCADORES_OE_server
 ]
 
-spatial=['openBCI']#['54x10']
-metrics={'power':{'fit_params':False,'norm':'False','demographic':True},
-         #'osc': {'fit_params':False,'norm':'False','demographic':True},
-         #'ape': {'fit_params':True,''norm':False' ,'demographic':True},
-         #'ape': {'fit_params':False,'norm':'False','demographic':True}
+spatial=[None]#['58x25']#['openBCI']#['54x10']
+metrics={#'power':{'fit_params':False,'norm':'False','demographic':False},
+         #'osc': {'fit_params':False,'norm':'False','demographic': False},
+         'ape': {'fit_params':True,'norm':'False' ,'demographic': False},
+         #'ape': {'fit_params':False,'norm':'False','demographic': False}
          }
 # Inputs not dataset dependent
 bands ={'Delta':(1.5,6),
@@ -36,14 +36,15 @@ bands ={'Delta':(1.5,6),
 pipeline(THE_DATASETS,
          prep=False,# if you need preprocessing 
          post=False,# if you need postprocessing
-         portables=True,# if you need reduce the number of the sensors
+         portables=False,# if you need reduce the number of the sensors
          tmontage='openBCI',
          prepdf=False,
          propdf=True,
          spatial_matrix=spatial,
          metrics=metrics,
-         IC=True, 
+         IC=False, 
          Sensors=False,
+         roi=True,
          OVERWRITE=False,
          bands=bands,
         )

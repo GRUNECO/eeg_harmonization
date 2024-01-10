@@ -3,9 +3,11 @@ Componentes de interés
     C14, C15, C18, C20, C22, C23, C24, C25 
 '''
 #Armonizar y luego juntar
-from neuroHarmonize import harmonizationLearn
+import os
+
 import pandas as pd
 import numpy as np
+from neuroHarmonize import harmonizationLearn
 from funtionsHarmonize import mapsDrop
 from funtionsHarmonize import negativeTest
 from funtionsHarmonize import select
@@ -19,7 +21,7 @@ from funtionsHarmonize import graf, graf_DB
 from funtionsHarmonize import save_complete #selGamma
 import tkinter as tk
 from tkinter.filedialog import askdirectory
-import os
+
 
 m = ['power'] 
 #b = ['Gamma']

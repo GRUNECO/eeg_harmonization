@@ -1,4 +1,4 @@
-﻿participant_id;age;education;MM_total;groupd;group;sex
+﻿participant_id;age;education;MM_total;group;groupd;sex
 ALZ_S001;29;11;30;Control;G1;M
 ALZ_S003;31;14;30;Control;G1;F
 ALZ_S006;33;4;30;Control;G1;M

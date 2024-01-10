@@ -26,11 +26,14 @@ def covars(data):
     }
 
     # Drop specified columns from the DataFrame
-    data.drop(
-        ['participant_id', 'visit', 'condition', 'group', 'sex', 'age', 'MM_total', 'FAS_F', 'FAS_S', 'FAS_A', 'education'],
-        axis=1,
-        inplace=True
-    )
+    columns_to_remove = ['participant_id', 'visit', 'condition', 'group', 'sex', 'age', 'MM_total', 'FAS_F', 'FAS_S', 'FAS_A', 'education']
+
+    # Iterar sobre las columnas y eliminarlas si existen
+    for column in columns_to_remove:
+        if column in data.columns:
+            data.drop(column, axis=1, inplace=True)
+        else:
+            print(f"La columna {column} no existe en el DataFrame.")
 
     # Return the modified DataFrame and the covariates dictionary
     return data, covars_dict

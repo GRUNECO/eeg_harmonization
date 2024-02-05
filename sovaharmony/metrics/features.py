@@ -103,7 +103,7 @@ def _get_power(signal_epoch,bands,irasa=False,osc=False, aperiodic=False):
         welch_matrix=[]
         for space in space_names:
             space_idx = space_names.index(space)
-            dummy,fit_params,psd,freqs = qeeg_psd_irasa(signalCont[space_idx,:], signal_epoch.info['sfreq'],bands,signal_epoch.ch_names,osc=osc, aperiodic=aperiodic,fmin=1,fmax=45)
+            dummy,fit_params,psd,freqs = qeeg_psd_irasa(signalCont[space_idx,:], signal_epoch.info['sfreq'],bands,signal_epoch.ch_names,osc=osc, aperiodic=aperiodic,fmin=1,fmax=30)
             welch_matrix.append(psd)
             if aperiodic:
                 output['fit_params']['axes']=list(fit_params.keys())[1:]

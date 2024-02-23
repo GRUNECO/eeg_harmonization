@@ -18,9 +18,9 @@ THE_DATASETS=[
 
 spatial=['54x10']#[None]#['58x25']#['openBCI']
 metrics={#'power':{'fit_params':False,'norm':'False','demographic':False},
-         'osc': {'fit_params':False,'norm':'False','demographic': False},
+         #'osc': {'fit_params':False,'norm':'False','demographic': False},
          'ape': {'fit_params':True,'norm':'False' ,'demographic': False},
-         'ape': {'fit_params':False,'norm':'False','demographic': False}
+         #'ape': {'fit_params':False,'norm':'False','demographic': False}
          }
 # Inputs not dataset dependent
 bands ={'Delta':(1.5,6),

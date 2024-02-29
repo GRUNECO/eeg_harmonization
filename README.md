@@ -1,6 +1,10 @@
 # eeg-harmonization
 
 ## Installation
+```bash
+Third-party installation
+pip install git+https://github.com/GRUNECO/eeg_harmonization.git
+```
 
 ```bash
 git clone https://github.com/GRUNECO/eeg_harmonization.git

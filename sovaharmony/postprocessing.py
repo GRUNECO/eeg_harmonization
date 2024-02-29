@@ -11,7 +11,6 @@ import traceback
 
 def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_select=None,OVERWRITE = False,bands=dict):
     '''
-    
     Inputs:
     
     -THE_DATASET: dictionary with the following keys:

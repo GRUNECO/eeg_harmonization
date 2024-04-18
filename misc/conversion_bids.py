@@ -6,9 +6,9 @@ from sovabids.convert import convert_them # Do the conversion
 #from sovabids.datasets import lemon_prepare # Download the dataset
 from sovabids.settings import REPO_PATH
 
-sourcePath=r'E:\PROYECTO_EEG_LAPSIM\FORMATO_EDF\estudiantes_bio'
-bidsPath=r'D:\XIMENA\BIDS\Estudiantes'
-rulePath=r'D:\XIMENA\eeg_harmonization\misc\reglasQuantum.yml'
+sourcePath=r'D:\prueba_bids'
+bidsPath=r'D:\prueba2'
+rulePath=r'D:\eeg_harmonization\misc\reglas_bids\reglasPortables.yml'
 source_path = os.path.abspath(sourcePath) # For the input data we will convert
 bids_path= os.path.abspath(bidsPath) # The output directory that will have the converted data
 rules_path = os.path.abspath(rulePath) # The rules file that setups the rule for conversion

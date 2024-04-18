@@ -9,21 +9,28 @@ sidecar:                                        # Configuring the sidecar eeg fi
   PowerLineFrequency : 60                       # Noted from the visual inspection of the eeg spectrum
   EEGReference : Mastoide derecha               # As mentioned in https://www.nature.com/articles/sdata2018308
 
-channels:                                       # Configuring the channels tsv
-  type :                                        # This property allow us to overwrite channel types inferred by MNE
-    #VEO : VEOG                                  # Here the syntax is <channel name> : <channel type according to bids notation>
-    #HEO : HEOG                                  # Here we set the type of F3, it was already correctly inferred by mne but it is 
+# channels:                                       # Configuring the channels tsv
+#   type :                                        # This property allow us to overwrite channel types inferred by MNE
+#     VEO : VEOG                                  # Here the syntax is <channel name> : <channel type according to bids notation>
+#     HEO : HEOG                                  # Here we set the type of F3, it was already correctly inferred by mne but it is 
                                                 #included to illustrate retyping of various channels.
 non-bids:                                       # Additional configuration not belonging specifically to any of the previous objects
   eeg_extension : .fif                          # Sets which extension to read as an eeg file
   path_analysis:                                # Some bids properties can be inferred from the path of the source files
     # For example here we extract from the path the "subject" child of the "entities" object
-    pattern : ^.*\\sub-(\w+)\\ses-(\w+)\\eeg\\sub\d+-SAN_ses_ses-(\w+)_task_(\w+)_eeg\.fif$
+    pattern : sub-(.+)\/ses-V0\/eeg\/sub(.+)-(.+)_ses-(.+)_task_(.+)_eeg\.fif
     fields :
-      - entities.subject
-      - entities.session
+      - ignore
+      - a
+      - b
       - entities.session
       - entities.task
+    operation :
+            entities.subject : "[b] + [a]"
+      # - entities.subject
+      # - ignore
+      # - entities.session
+      # - entities.task
 
 
 

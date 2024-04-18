@@ -6,14 +6,13 @@ from sovabids.convert import convert_them # Do the conversion
 #from sovabids.datasets import lemon_prepare # Download the dataset
 from sovabids.settings import REPO_PATH
 
-sourcePath=r'D:\prueba_bids'
-bidsPath=r'D:\prueba2'
-rulePath=r'D:\eeg_harmonization\misc\reglas_bids\reglasPortables.yml'
+sourcePath=r'C:\Users\Luisa\Documents\prueba_bids_2'
+bidsPath=r'C:\Users\Luisa\Documents\bids_data_portables'
+rulePath=r'D:\flujo_portables\eeg_harmonization\misc\reglas_bids\reglasPortables.yml'
 source_path = os.path.abspath(sourcePath) # For the input data we will convert
 bids_path= os.path.abspath(bidsPath) # The output directory that will have the converted data
 rules_path = os.path.abspath(rulePath) # The rules file that setups the rule for conversion
 mapping_path = os.path.abspath(os.path.join(bids_path,'code','sovabids','mappings.yml')) # The mapping file that will hold the results of applying the rules to each file
-
 
 print('source_path:',source_path.replace(REPO_PATH,''))
 print('bids_path:', bids_path.replace(REPO_PATH,''))

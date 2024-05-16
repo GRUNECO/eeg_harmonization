@@ -40,7 +40,7 @@ BIOMARCADORES_OE_server= {
 BIOMARCADORES_CE_server= {
     'name':'BIOMARCADORES',
     #'input_path':r'/media/gruneco-server/ADATA HD650/BIOMARCADORES',
-    'input_path':'E:\BIOMARCADORES',
+    'input_path':'F:\BIOMARCADORES',
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename', 'session':'V0'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',

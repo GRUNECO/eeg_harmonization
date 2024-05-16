@@ -54,8 +54,9 @@ def get_spatial_filter(name='62x19',portables=False,montage_select=None):
     if portables:
         montage_select=montage_select
         sf['ch_names']=[x.replace(' ','') for x in sf['ch_names']]
-        index_ch_portables=[sf['ch_names'].index(channels_reduction[montage_select][i]) for i in range(len(channels_reduction['cresta']))]
-        comp_select=[0,1,2,3,4,6,7,9]
+        index_ch_portables=[sf['ch_names'].index(channels_reduction[montage_select][i]) for i in range(len(channels_reduction[montage_select]))]
+        #comp_select=[0,1,2,3,4,6,7,9]
+        comp_select = [0,1,2,4,5,7,8,9]
         A=sf['A'][index_ch_portables,:] # Select channels, rows
         A=A[:,[comp_select]] # Select components, columns
         A=np.squeeze(A)

@@ -68,7 +68,7 @@ def get_dataframe_columnsIC(THE_DATASET,feature=str,spatial_matrix='54x10',fit_p
         elif spatial_matrix=='54x10':
             comp_labels =['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
         elif spatial_matrix=='cresta' or spatial_matrix=='openBCI' or spatial_matrix=='paper':
-            comp_labels =['C1', 'C2', 'C3', 'C4', 'C5', 'C7', 'C8', 'C10']
+            comp_labels =['C1', 'C2', 'C3', 'C5', 'C6', 'C8', 'C9', 'C10']
 
         icvalues = np.array(data['values'])
         bandas = data['metadata']['axes']['bands']
@@ -141,7 +141,7 @@ def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False,fit
     layout = BIDSLayout(data_path,derivatives=True)
     layout.get(scope='derivatives', return_type='file')
     paths= layout.get(extension='.txt',task=task,suffix=feature, return_type='filename')
-    paths = [x for x in paths if f'space-sensors_norm-{norm}' in x]
+    paths = [x for x in paths if f'space-sensors_norm-{norm}' in x and 'sovaharmony' in x]
     list_subjects = []
     
     if roi:
@@ -160,6 +160,7 @@ def get_dataframe_columns_sensors(THE_DATASET,feature,norm='False',roi=False,fit
         for key_prefix in key_prefixes:
             if key_prefix in data['metadata']['axes'].keys():
                 sensors = data['metadata']['axes'][key_prefix]
+                print(sensors)
         if roi:
             for roi_ in rois:
                 channels = set(sensors).intersection(roi_)

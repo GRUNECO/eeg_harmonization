@@ -46,7 +46,7 @@ Orden de archivos:
 2. Dataframes_potencias_Componentes_Demograficos.py 
 3. Borrar_datos_atipicos_potencias.py 
 4. Dataframes_SL_Coherencia_Entropy_Cross.py 
-5. neuroharmonaze_G1CTR.py 
+5. neuroharmonaze.py 
 6. unirfeatherharmonize.py 
 7. Graficos_power_sl_coherencia_entropia_cross.py
 8. graficos_data_harmonized.py

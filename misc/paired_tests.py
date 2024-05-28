@@ -64,19 +64,9 @@ def pd_to_R_V1(df):
     globalenv['R_data'] = r_from_pd_df
 
 # Convert R dataframe to Python dataframe 
-<<<<<<< HEAD
 def R_to_pd_V1():
     R_data2 = r('''R_data2 <- rapply(EDADG12total, as.character, classes="factor", how="replace")''')
     R_data = pd.DataFrame([dict(R_data2.items())]) 
-=======
-def R_to_pd():
-    ro.r('''
-    R_data2 <- rapply(EDADG12total, as.character, classes="factor", how="replace")
-    ''')
-
-    R_data2 = ro.r['R_data2']
-    R_data = pd.DataFrame([dict(R_data2.items())])
->>>>>>> a64d87c90398dac07193f291f87f9db149365ac0
     with localconverter(ro.default_converter + pandas2ri.converter):
         pd_from_r_df = ro.conversion.rpy2py(R_data.iloc[0])
         new_pd = pd.DataFrame(dict(pd_from_r_df.items()), columns=R_data.columns.values)   
@@ -112,17 +102,6 @@ def R_to_pd(variable_name):
     return pandas2ri.rpy2py(r(variable_name))
 
 def MatchIt_R(data,group1 = 'G1', group2 = 'Control' ):
-<<<<<<< HEAD
-    data['group'] = data['group'].replace('G2', 'Control')
-    data['treatG1'] = data['group']
-    data['treatG1'] = data.treatG1.replace(group1,'Treat') 
-    data['treatG1'] = data.treatG1.replace(group2,'Control')
-    dataTreat = data[data['treatG1'] == 'Treat']
-    dataCTR = data[data['treatG1'] == 'Control']
-    data = pd.concat([dataTreat, dataCTR])
-    data = data[(data['visit'] == 'V0') | (data['visit'] == 't1')]
-
-=======
     if (group1  == 'Control' or group2  == 'Control'):
         data['group'] = data['group'].replace('CTR', 'Control')
     filtered_data = data[(data['group'] == group1) | (data['group'] == group2)]
@@ -133,7 +112,6 @@ def MatchIt_R(data,group1 = 'G1', group2 = 'Control' ):
     dataCTR = filtered_data[filtered_data['treatG1'] == 'Control']
     filtered_data = pd.concat([dataTreat, dataCTR])
     data = filtered_data[(filtered_data['visit'] == 'V0') | (filtered_data['visit'] == 't1')]
->>>>>>> a64d87c90398dac07193f291f87f9db149365ac0
 
     # Eliminar columnas con al menos una celda con valor None
     columnas_con_none = data.columns[data.isna().any()].tolist()

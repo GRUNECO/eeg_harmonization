@@ -1,3 +1,6 @@
+#@autor: Verónica Henao Isaza, Universidad de Antioquia
+#@autor: Luisa María Zapata Saldarriaga, Universidad de Antioquia, luisazapatasaldarriaga@gmail.com
+
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -18,21 +21,62 @@ def remove_columns_with_c10(df):
 
 
 def covars(data):
-    covars = {'SITE':data['database'].to_numpy(),
-        'gender':data['sex'].to_numpy(),
-        'age':data['age'].to_numpy()}
-    data.drop(['participant_id','visit','condition','group','sex','age'],axis=1,inplace=True)
-    data.drop(['MM_total','FAS_F','FAS_S','FAS_A','education'],axis=1,inplace=True)
-    return data,covars
+    """
+    Extract and store selected covariates from the input DataFrame.
+
+    Parameters:
+    - data (pd.DataFrame): Input DataFrame containing covariate information.
+
+    Returns:
+    - pd.DataFrame: The input DataFrame with specified columns dropped.
+    - dict: Dictionary containing covariates extracted from the DataFrame.
+    """
+    # Create a dictionary to store selected covariates
+    covars_dict = {
+        'SITE': data['database'].to_numpy(),
+        'gender': data['sex'].to_numpy(),
+        'age': data['age'].to_numpy()
+    }
+
+    # Drop specified columns from the DataFrame
+    columns_to_remove = ['participant_id', 'visit', 'condition', 'group', 'sex', 'age', 'MM_total', 'FAS_F', 'FAS_S', 'FAS_A', 'education']
+
+    # Iterar sobre las columnas y eliminarlas si existen
+    for column in columns_to_remove:
+        if column in data.columns:
+            data.drop(column, axis=1, inplace=True)
+        else:
+            print(f"La columna {column} no existe en el DataFrame.")
+
+    # Return the modified DataFrame and the covariates dictionary
+    return data, covars_dict
 
 def covarsGen(data):
-    covars = {'SITE':data['database'].to_numpy(),
-        'gender':data['sex'].to_numpy(),
-        'age':data['age'].to_numpy(),
-        'group':data['group'].to_numpy()}
-    data.drop(['participant_id','visit','condition','group','sex','age'],axis=1,inplace=True)
-    data.drop(['MM_total','FAS_F','FAS_S','FAS_A','education'],axis=1,inplace=True)
-    return data,covars
+    """
+    Extract selected covariates from the input DataFrame and drop specified columns.
+
+    Parameters:
+    - data (pd.DataFrame): Input DataFrame containing covariate information.
+
+    Returns:
+    - pd.DataFrame: The input DataFrame with specified columns dropped.
+    - dict: Dictionary containing extracted covariates from the DataFrame.
+    """
+    # Create a dictionary to store selected covariates
+    covars = {
+        'SITE': data['database'].to_numpy(),
+        'gender': data['sex'].to_numpy(),
+        'age': data['age'].to_numpy(),
+        'group': data['group'].to_numpy()
+    }
+
+    # Drop specified columns from the DataFrame
+    data.drop(['participant_id', 'visit', 'condition', 'group', 'sex', 'age'], axis=1, inplace=True)
+    data.drop(['MM_total', 'FAS_F', 'FAS_S', 'FAS_A', 'education'], axis=1, inplace=True)
+
+    # Return the modified DataFrame and the covariates dictionary
+    return data, covars
+
 
 def labels(data):
     databases = {label:float(idx) for idx,label in enumerate(np.unique(data['database']))}
@@ -59,12 +103,22 @@ def mapsDrop(data,filtGroup=None,visit1=None,visit2=None):
 
 
 def negativeTest(model):
-    positivos = []
-    negativos = []
+    """
+    Count the number of negative values in a 2D list (model).
+
+    Parameters:
+    - model (list): 2D list containing numerical values.
+
+    Returns:
+    - int: The count of negative values.
+    """
+    positive_values = []
+    negative_values = []
     for row in model:
-        positivos.extend(x for x in row if float(x) >= 0)
-        negativos.extend(x for x in row if float(x) < 0)
-    return len(negativos)
+        positive_values.extend(x for x in row if float(x) >= 0)
+        negative_values.extend(x for x in row if float(x) < 0)
+    print(f"Number of negative values: {len(negative_values)}")
+    return len(negative_values)
 
 def delcol(data,m,b,roi,bm=None):
     for metrici in m:
@@ -103,7 +157,7 @@ def createModel(path,drop,control=None,replace=None):
     return model,data.columns
 
 
-def select(data,metric,OneBand=None,WithoutBand=None,Gamma=None,space='roi'):
+def select(data,metric,OneBand=None,WithoutBand=None,Gamma=None,space='roi',spatial_matrix='54x10'):
     m = ['power','sl','cohfreq','entropy','crossfreq'] # Pongo las que voy a eliminar
     b = ['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma']  # Pongo las que voy a eliminar
     Beta = ['Beta1','Beta2','Beta3']
@@ -111,8 +165,10 @@ def select(data,metric,OneBand=None,WithoutBand=None,Gamma=None,space='roi'):
     if space == 'roi':
         roi = ['F','C','T','PO']
     elif space == 'ic':
-        roi = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
-        #roi = ['C14','C15','C18','C20','C22','C23','C24','C25'] #ic
+        if spatial_matrix=='54x10':
+            roi = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+        if spatial_matrix=='58x25':
+            roi = ['C14','C15','C18','C20','C22','C23','C24','C25'] #ic
     bm = ['Mdelta','Mtheta','Malpha-1','Malpha-2','Mbeta1','Mbeta2','Mbeta3','Mgamma']  # Pongo las que voy a eliminar
     if metric == 'All':
         if OneBand == None and WithoutBand == None:
@@ -378,10 +434,8 @@ def rename_cols(data1,data2,namegroup1,namegroup2):
 
     return data1
 
-def extract_components_interes(data_df, components):
-    #components=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25' ]
+def extract_components_interes(data_df, components=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25' ]):
     columns=data_df.columns
-
     comp_neural=[]
     for col in columns:
         for comp in components:

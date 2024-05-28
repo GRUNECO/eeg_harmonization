@@ -1,12 +1,14 @@
 BIOMARCADORES_OE = {
     'name':'BIOMARCADORES',
-    'input_path':r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES',
+    #'input_path':r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Datos_MsC_Veronica\BIOMARCADORES',
+    'input_path':r'C:\Users\Luisa\OneDrive - Universidad de Antioquia\Datos MsC Verónica\BIOMARCADORES',
     'layout':{'extension':'.vhdr', 'task':'OE','suffix':'eeg', 'return_type':'filename', 'session':'V0'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
     'run-label':'restOE',
-    'session':'V'
+    'session':'V',
+    'demographic':'eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
 }
 
 BIOMARCADORES_CE = {
@@ -17,9 +19,38 @@ BIOMARCADORES_CE = {
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
     'run-label':'restCE',
-    'session':'V'
+    'session':'V',
+    'demographic':'eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
    
 }
+
+BIOMARCADORES_OE_server= {
+    'name':'BIOMARCADORES',
+    #'input_path':r'/media/gruneco-server/ADATA HD650/BIOMARCADORES',
+    'input_path':'E:\BIOMARCADORES',
+    'layout':{'extension':'.vhdr', 'task':'OE','suffix':'eeg', 'return_type':'filename', 'session':'V2'},
+    'args':{'line_freqs':[60]},
+    'group_regex':'(.+).{3}',
+    'events_to_keep':None,
+    'run-label':'restOE',
+    'session':'V',
+    'demographic':r'D:\flujo_portables\eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
+}
+
+BIOMARCADORES_CE_server= {
+    'name':'BIOMARCADORES',
+    #'input_path':r'/media/gruneco-server/ADATA HD650/BIOMARCADORES',
+    'input_path':'F:\BIOMARCADORES',
+    'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename', 'session':'V0'},
+    'args':{'line_freqs':[60]},
+    'group_regex':'(.+).{3}',
+    'events_to_keep':None,
+    'run-label':'restCE',
+    'session':'V',
+    'demographic':r'D:\flujo_portables\eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
+}
+
+
 
 BIOMARCADORESMini = {
     'name':'BIOMARCADORES',
@@ -30,7 +61,8 @@ BIOMARCADORESMini = {
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
     'run-label':'restCE',
-    'session':'V'
+    'session':'V',
+    'demographic':r'D:\flujo_portables\eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
 }
 
 BIOMARCADORESYorguin = {
@@ -41,7 +73,8 @@ BIOMARCADORESYorguin = {
     'group_regex':'(.+).{3}',
     'events_to_keep':None,
     'run-label':'restCE',
-    'session':'V'
+    'session':'V',
+    'demographic':r'D:\flujo_portables\eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
 }
 
 
@@ -87,9 +120,21 @@ DUQUE = {
     'group_regex':None,
     'events_to_keep':None,
     'run-label':'restCE',
-    'session':None
+    'session':None,
+    'demographic':r'D:\flujo_portables\eeg_harmonization\demographic\dem_biomarcadores.xlsx' 
 }
 
+DUQUE_Server = {
+    'name':'DUQUE',
+    'input_path':r'E:\DUQUE',
+    'layout':{'extension':'.vhdr', 'task':'resting','suffix':'eeg', 'return_type':'filename'},
+    'args':{'line_freqs':[60]},
+    'group_regex':None,
+    'events_to_keep':None,
+    'run-label':'restCE',
+    'session':None,
+    'demographic':r'D:\flujo_portables\eeg_harmonization\demographic\dem_DUQUE.csv' 
+}
 Estudiantes2021_OE={
     'name':'Estudiantes2021',
     'input_path':r'D:\XIMENA\BIDS\Estudiantes2021',
@@ -292,4 +337,15 @@ DUQUE_54X10 = {
     'events_to_keep':None,
     'run-label':'restCE',
     'session':None
+}
+
+test_portables={
+    'name':'test_portables',
+    'input_path':r'C:\Users\Luisa\OneDrive - Universidad de Antioquia\Datos MsC Verónica\BIOMARCADORES',
+    'layout':{'extension':'.vhdr', 'task':'OE','suffix':'eeg', 'return_type':'filename', 'session':'V0'},
+    'args':{'line_freqs':[60]},
+    'group_regex':'(.+).{3}',
+    'events_to_keep':None,
+    'run-label':'restOE',
+    'session':'V'
 }

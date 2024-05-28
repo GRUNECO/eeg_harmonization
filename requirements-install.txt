@@ -1,11 +1,15 @@
-git+https://gitfront.io/r/GRUNECO/wdwHTYJe8bbz/sovachronux.git
+git+https://gitfront.io/r/GRUNECO/XnGbV3yU7ARv/sovachronux.git
 git+https://gitfront.io/r/GRUNECO/db7qFm7z89d4/sovawica.git
-git+https://gitfront.io/r/GRUNECO/pD1ut9JRPFNw/sovareject.git
+git+https://github.com/GRUNECO/sovareject.git 
 git+https://gitfront.io/r/GRUNECO/xiGpXFpQvM2T/sovaflow.git
-git+https://gitfront.io/r/GRUNECO/Vyo9MVr7QNTZ/violinplot.git
+git+https://github.com/GRUNECO/violinplot.git 
 pybids
 seaborn
 statsmodels
 https://api.github.com/repos/mne-tools/mne-bids/zipball/main
 versioneer
 -e .
+neuroHarmonize
+rpy2
+yasa
+mne==1.5.1

@@ -10,6 +10,15 @@ from sovaflow.utils import createRaw
 from sovachronux.qeeg_psd_chronux import qeeg_psd_chronux
 from sovaharmony.utils import _verify_epoch_continuous,_verify_epochs_axes
 import mne
+import yasa
+import numpy as np
+
+channels_reduction={'cresta':['F3','F4','C3','C4','P3','P4','O1','O2'],
+                    'openBCI':['FP1','FP2','C3','C4','P7','P8','O2','O1'],# #https://docs.openbci.com/Deprecated/UltracortexMark3_NovaDep/
+                    'paper':['F3','F4','C3','C4','TP7','TP8','O1','O2'] # En el paper esta T3 y T4, lo cambiamos por TP7 y TP8
+                    # Quantitative electroencephalography in mild cognitive impairment: longitdinal changes and possible prediction of ALzheimer's disease
+                    }
+
 
 ## USE PYTHON >3.7 , fundamental to guarantee dict order
 
@@ -18,24 +27,107 @@ import mne
 #_get_[derivative_name]
 
 ### INTERNAL FEATURES FUNCTIONS ###
-def _get_power(signal_epoch,bands):
+def qeeg_psd_irasa(data, sf,bands,ch_names,osc=True, aperiodic=True,fmin=1,fmax=45,win_sec=5):
+    '''
+    Function responsible for calculating PSD distribution at specific frequency intervals, using YASA library.
+    
+    Input parameters:
+        - data:
+            numpy array, required.
+            2-D matrix [samples, trials]. It contains the data to process.
+        - sf: int
+            Sample frequencie 
+        - bands:
+
+        - ch_names
+        - osc
+        - aperiodic
+        - fmin
+        - fmax
+        - win_sec
+        
+    Output:
+        - power_normalized 
+        - fit_params
+    '''
+   
+    power = {}
+    # PSD using YASA
+    freqs, psd_aperiodic, psd_osc,fit_params = yasa.irasa(data, sf, ch_names=None, band=(fmin, fmax), win_sec=win_sec, return_fit=True)
+    if osc:
+        # To avoid the negative values that YASA gets, we use the following:
+        psd=psd_osc-np.min(psd_osc)
+    if aperiodic:
+         # To avoid the negative values that YASA gets, we use the following:
+        psd=psd_aperiodic-np.min(psd_aperiodic)
+    else: 
+        psd = psd_aperiodic + psd_osc
+    
+    for band_label,vals in bands.items():
+        fmin,fmax = vals
+        idx_band = np.logical_and(fmin <= freqs, freqs < fmax)
+        pot_band = sum(psd.T[idx_band == True])
+        power[band_label]=pot_band
+        
+    total_pot = sum(list(power.values()))
+    power_normalized = {}
+    
+    #Calculate the density power for each interval.
+    for band_label,pot_band in power.items():
+        power_normalized[band_label]=pot_band/total_pot
+
+    return power_normalized,fit_params,psd,freqs
+
+
+def _get_power(signal_epoch,bands,irasa=False,osc=False, aperiodic=False):
     signal = np.transpose(signal_epoch.get_data(),(1,2,0)) # epochs spaces times -> spaces times epochs
     _verify_epochs_axes(signal_epoch.get_data(),signal)
     space_names = signal_epoch.info['ch_names']
     spaces,times,epochs = signal.shape
     output = {}
-    output['metadata'] = {'type':'power','kwargs':{'bands':bands}}
+    if osc==False and aperiodic==False:
+        type='power'
+    else:
+        type='irasa'
+    output['metadata'] = {'type':type,'kwargs':{'bands':bands}}
     bands_list = list(bands.keys())
     values = np.empty((len(bands_list),spaces))
     output['metadata']['axes']={'bands':bands_list,'spaces':space_names}
-    for space in space_names:
-        space_idx = space_names.index(space)
-        dummy = qeeg_psd_chronux(signal[space_idx,:,:],signal_epoch.info['sfreq'],bands)
-        for b in bands.keys():
-            band_idx = bands_list.index(b)
-            values[band_idx,space_idx]=dummy[b] #if there is an error in this line update sovachornux
-    output['values'] = values
-    return output
+    nchans,points,epochs = signal.shape
+    signalCont = np.reshape(signal,(nchans,points*epochs),order='F')
+    
+    if irasa:
+        if aperiodic:
+            output['fit_params']={}
+            output['fit_params']['values']=[]
+        welch_matrix=[]
+        for space in space_names:
+            space_idx = space_names.index(space)
+            dummy,fit_params,psd,freqs = qeeg_psd_irasa(signalCont[space_idx,:], signal_epoch.info['sfreq'],bands,signal_epoch.ch_names,osc=osc, aperiodic=aperiodic,fmin=1,fmax=30)
+            welch_matrix.append(psd)
+            if aperiodic:
+                output['fit_params']['axes']=list(fit_params.keys())[1:]
+                output['fit_params']['values']+=[[fit_params['Intercept'][0],fit_params['Slope'][0],fit_params['R^2'][0],fit_params['std(osc)'][0]]]
+            for b in bands.keys():
+                band_idx = bands_list.index(b)
+                values[band_idx,space_idx]=dummy[b] #if there is an error in this line update sovachornux
+        output['values'] = values
+        
+    else:
+        for space in space_names:
+            space_idx = space_names.index(space)
+            dummy = qeeg_psd_chronux(signal[space_idx,:,:],signal_epoch.info['sfreq'],bands,spectro=True)         
+            
+            for b in bands.keys():
+                band_idx = bands_list.index(b)
+                values[band_idx,space_idx]=dummy[2][b] #if there is an error in this line update sovachornux
+        output['values'] = values
+    if irasa==False and osc==False and aperiodic==False: 
+        return output
+    else:
+        return output, welch_matrix
+
+
 
 def _get_sl(signal_epoch,bands):
     space_names = signal_epoch.info['ch_names']
@@ -105,12 +197,14 @@ def _get_entropy(signal_epoch,bands,D):
 foo_map={
     'absPower':_get_power,
     'power':_get_power,
+    'power_osc':_get_power,
+    'power_ape':_get_power,
     'sl':_get_sl,
     'cohfreq':_get_coh,
     'crossfreq':_get_pme,
     'entropy':_get_entropy
 }
-def get_derivative(in_signal,feature,kwargs,spatial_filter=None):
+def get_derivative(in_signal,feature,kwargs,spatial_filter=None,portables=False, montage_select=str):
     """
     Returns derivative
     If spatial_filter is not None, it will be computed over ics, otherwise over channels
@@ -121,6 +215,7 @@ def get_derivative(in_signal,feature,kwargs,spatial_filter=None):
     spatial_filter: tuple (A,W,spatial_filter_chs)
     """
     signal = in_signal.copy()
+    
     if spatial_filter is not None:
         # ICs powers
         A,W,spatial_filter_chs,sf_name = spatial_filter['A'],spatial_filter['W'],spatial_filter['ch_names'],spatial_filter['name']
@@ -132,9 +227,18 @@ def get_derivative(in_signal,feature,kwargs,spatial_filter=None):
         nchans,points,epochs = signal2.shape
         signalCont = np.reshape(signal2,(nchans,points*epochs),order='F')
         _verify_epoch_continuous(signal.get_data(),signalCont,('epochs','spaces','times'))
-        ics = W_adapted @ signalCont
-        comps = ics.shape[0]
-        ics_epoch = np.reshape(ics,(comps,points,epochs),order='F')
+        if portables:
+            resample= signal.info['sfreq']/4 
+            signal_resample=signalCont[:,::4] # Signal chx resample- continue
+            ics = W_adapted @ signal_resample
+            comps = ics.shape[0]
+            ics_epoch = np.reshape(ics,(comps,int(points/4),epochs),order='F')
+            
+        else:
+            ics = W_adapted @ signalCont
+            comps = ics.shape[0]
+            ics_epoch = np.reshape(ics,(comps,points,epochs),order='F')
+        
         _verify_epoch_continuous(ics_epoch,ics,('spaces','times','epochs'))
         ics_epoch2 = np.transpose(ics_epoch,(2,0,1))
         _verify_epochs_axes(ics_epoch2,ics_epoch)
@@ -144,8 +248,15 @@ def get_derivative(in_signal,feature,kwargs,spatial_filter=None):
         del signal2
         info_epochs=mne.create_info(['C'+str(x+1) for x in range(comps)], in_signal.info['sfreq'], ch_types='eeg')
         signal = mne.EpochsArray(ics_epoch2,info_epochs)
-    output=foo_map[feature](signal,**kwargs)
-
+    
+    if spatial_filter==None and portables:
+        intersection_chs =list(set(channels_reduction[montage_select]).intersection(signal.ch_names))
+        signal.reorder_channels(intersection_chs)
+    
+    if feature in ('power_ape', 'power_osc', 'power_irasa'):
+        output,psd=foo_map[feature](signal,**kwargs)
+    else:
+        output=foo_map[feature](signal,**kwargs)
     if spatial_filter is not None:
         output['metadata']['space']='ics'
         output['metadata']['W'] = W_adapted

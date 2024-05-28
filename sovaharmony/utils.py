@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import os
 import errno
 import glob 
+import re
 def load_txt(file):
   '''
   Function that reads txt files
@@ -32,28 +33,44 @@ def load_txt(file):
     data=json.load(f)
   return data
 
-def load_feather(path):
-    '''
-    Function to upload files with feather format
+def load_file(file_path):
+    """
+    Load a file into a Pandas DataFrame based on its format (Excel, CSV, or Feather).
 
-    Parameters
+    Parameters:
     ----------
-        path:str
-            Directory where the file with the extension .feather
+        - file_path (str): The path to the file to be loaded.
 
-    Returns 
-    -------
-        data: dataframe
-            Data in dataframe format
-    '''
-    data=pd.read_feather(os.path.join(path).replace("\\","/"))
-    return data
+    Returns:
+    ----------
+        - pd.DataFrame or None: A DataFrame containing the loaded data if successful, or None if the file format is not supported.
+    """
+    file_path=file_path.replace("\\","/")
+    # Check if the file is an Excel file
+    if file_path.endswith('.xlsx'):
+        # Load an Excel file
+        df = pd.read_excel(file_path)
+    # Check if the file is a CSV file
+    elif file_path.endswith('.csv'):
+        # Load a CSV file
+        df = pd.read_csv(file_path,sep=';')
+    # Check if the file is a Feather file
+    elif file_path.endswith('.feather'):
+        # Load a Feather file
+        df = pd.read_feather(file_path)
+    else:
+        # Print an error message for unsupported file formats
+        print("Unsupported file format. Supported formats: Excel (.xlsx), CSV (.csv), or Feather (.feather)")
+        return None
+    
+    return df
+
 
 def concat_df(path):
     path_df=glob.glob(path)
     data=[]
     for df in path_df:
-        d=load_feather(df)
+        d=load_file(df)
         
         data.append(d)
     data_concat=pd.concat((data))
@@ -91,54 +108,92 @@ def _verify_epoch_continuous(data,spaces_times,data_axes,max_epochs=None):
 
 "Functions to save dataframes for graphics"
 
-def dataframe_long_roi(data,type,columns,name,path):
+def dataframe_long_sensors(data,type,columns,path,roi=False,norm=False,bandas=list):
     '''Function used to convert a dataframe to be used for graphing by ROIs'''
     #demographic data and neuropsychological test columns
     #data_dem=['participant_id', 'visit', 'group', 'condition', 'database','age', 'sex', 'education', 'MM_total', 'FAS_F', 'FAS_A', 'FAS_S']
     data_dem=['participant_id', 'visit', 'group', 'condition', 'database']
-    columns_df=data_dem+[type, 'Band', 'ROI']
+    if roi:
+        columns_df=data_dem+[type, 'Band', 'ROI']
+    else:
+        columns_df=data_dem+[type, 'Band', 'Sensors']
     data_new=pd.DataFrame(columns=columns_df)
-    #Frequency bands
-    bandas=['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma']
+    fit_params=["Intercept", "Slope","R^2","std(osc)"]
     #ROIs 
-    roi=['F', 'C','PO', 'T_']
+    if roi:
+        spaces=['F', 'C','PO', 'T']
+    else:
+        space = set()
+        for cadena in columns:
+            matches = re.findall(r'_(.*?)_', cadena)
+            for match in matches:
+                space.add(match)
+        spaces = list(space)
+    
     for i in columns:
         '''The column of interest is taken with its respective demographic data and added to the new dataframe'''
         data_x=data_dem.copy()
         data_x.append(i)
         d_sep=data.loc[:,data_x] 
-        for j in bandas:
-            if j in i:
-                band=j
-        for c in roi:
-            if c in i:
-                r=c
-        d_sep['Band']=[band]*len(d_sep)
-        d_sep['ROI']=[r]*len(d_sep)
-        d_sep= d_sep.rename(columns={i:type})
-        data_new=data_new.append(d_sep,ignore_index = True) #Uno el dataframe 
-    data_new['ROI']=data_new['ROI'].replace({'T_':'T'}, regex=True)#Quito el _ y lo reemplazo con '' 
-    try:
-        path="{input_path}\data_long\ROI".format(input_path=path).replace('\\','/')
-        os.makedirs(path)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    data_new.reset_index(drop=True).to_feather('{path}\data_long_{task}_{metric}_{name}_roi.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
-    print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
+        band = next((j for j in bandas if j in i), None)
+        fparams = next((params for params in fit_params if params in i), None)
 
-def dataframe_long_components(data,type,columns,name,path):
+        for space in spaces:
+            if space in i:
+                if roi:
+                    d_sep['ROI']=[space]*len(d_sep)
+                else:
+                     d_sep['Sensors']=[space]*len(d_sep)
+                try:
+                    if band: 
+                        d_sep['Band']=[band]*len(d_sep)
+                except:
+                    pass
+                try:
+                    if fparams:
+                        d_sep['Fit_params'] = [fparams] * len(d_sep)
+                except:
+                    pass
+                d_sep= d_sep.rename(columns={i:type})
+                data_new=pd.concat((data_new,d_sep),ignore_index = True)
+    
+    if data_new['Band'].isnull().sum()!=0 or data_new['Band'].isna().sum()!=0:
+            data_new.drop(['Band'],axis=1,inplace=True)
+            type='ape_fit_params'           
+    if roi:
+        try:
+            path="{input_path}\data_long\ROI".format(input_path=path).replace('\\','/')
+            os.makedirs(path)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+        data_new.reset_index(drop=True).to_feather('{path}\data_{name}_{task}_long_{metric}_{norm}_roi.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type,norm=norm))
+    else:
+        try:
+            path="{input_path}\data_long\SENSORS".format(input_path=path).replace('\\','/')
+            os.makedirs(path)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+        data_new.reset_index(drop=True).to_feather('{path}\data_{name}_{task}_long_{metric}_{norm}_sensors.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type,norm=norm))
+    print('Dataframe de {type}'.format(type=type))
+
+def dataframe_long_components(data,type,columns,path,spatial_matrix=str,norm=False,metric=None,bandas=list):
     '''Function used to convert a wide dataframe into a long one to be used for graphing by IC'''
     #demographic data and neuropsychological test columns
     #data_dem=['participant_id', 'visit', 'group', 'condition', 'database','age', 'sex', 'education', 'MM_total', 'FAS_F', 'FAS_A', 'FAS_S']
     data_dem=['participant_id', 'visit', 'group', 'condition', 'database']
     columns_df=data_dem+[type, 'Band', 'Component']
     data_new=pd.DataFrame(columns=columns_df)
-    #Frequency bands
-    bandas=['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma']
+    fit_params=["Intercept", "Slope","R^2","std(osc)"]
     #Components
-    #componentes=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25']
-    componentes=['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+    if spatial_matrix=='58x25':
+        componentes =['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25']
+    elif spatial_matrix=='54x10':
+        componentes = [f'C{i}' for i in range(1, 11)]
+    elif spatial_matrix=='cresta' or spatial_matrix=='openBCI' or spatial_matrix=='paper':
+        componentes = [f'C{i}' for i in range(1, 9)]
+    
     for i in columns:
         '''The column of interest is taken with its respective demographic data and added to the new dataframe'''
         data_x=data_dem.copy()
@@ -147,21 +202,44 @@ def dataframe_long_components(data,type,columns,name,path):
         for j in bandas:
             if j in i:
                 band=j
+        for params in fit_params:
+            if params in i:
+                fparams=params
         for c in componentes:
-            if c in i:
-                componente=c
-        d_sep['Band']=[band]*len(d_sep)
-        d_sep['Component']=[componente]*len(d_sep)
-        d_sep= d_sep.rename(columns={i:type})
-        data_new=data_new.append(d_sep,ignore_index = True) #Uno el dataframe 
+            if i.startswith(f'{metric}_{c}_'):
+                print(f'Match found: {c} in {i}')
+                componente = c
+                d_sep['Component'] = [componente] * len(d_sep)
+                try:
+                    if band: 
+                        d_sep['Band'] = [band] * len(d_sep)
+                except:
+                    pass
+                
+                try:
+                    if fparams:
+                        d_sep['Fit_params'] = [fparams] * len(d_sep)
+                except:
+                    pass
+        
+                d_sep = d_sep.rename(columns={i: type})
+                data_new = pd.concat((data_new, d_sep), ignore_index=True)
+                
+                
+        #data_new=data_new.append(d_sep,ignore_index = True) #Uno el dataframe 
     try:
         path="{input_path}\data_long\IC".format(input_path=path).replace('\\','/')
         os.makedirs(path)
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    data_new.reset_index(drop=True).to_feather('{path}\data_{task}_{metric}_long_{name}_components.feather'.format(path=path,name=data_new['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
-    print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
+        
+    print(data_new['Band'].isnull().sum())
+    if data_new['Band'].isnull().sum()!=0 or data_new['Band'].isna().sum()!=0:
+        data_new.drop(['Band'],axis=1,inplace=True)
+        type='ape_fit_params'
+    data_new.reset_index(drop=True).to_feather('{path}\data_{name}_{task}_long_{metric}_{spatial_matrix}_{norm}_components.feather'.format(path=path,name=data_new['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type,spatial_matrix=spatial_matrix,norm=norm).replace('\\','/'))
+    print('Dataframe de {type} '.format(type=type))
 
 def dataframe_long_cross_roi(data,type,columns,name,path):
     '''Function used to convert a dataframe to be used for graphing by ROIs'''
@@ -206,7 +284,7 @@ def dataframe_long_cross_roi(data,type,columns,name,path):
     data_new.reset_index(drop=True).to_feather('{path}\data_{name}_{task}_long_{metric}_ROI.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 
-def dataframe_long_cross_ic(data,type='Cross Frequency',columns=None,name=None,path=None):
+def dataframe_long_cross_ic(data,type='Cross Frequency',columns=None,name=None,path=None,spatial_matrix='54x10'):
     '''Function used to convert a dataframe to be used for graphing.'''
     #demographic data and neuropsychological test columns
     #data_dem=['participant_id', 'visit', 'group', 'condition', 'database','age', 'sex', 'education', 'MM_total', 'FAS_F', 'FAS_A', 'FAS_S']
@@ -216,8 +294,12 @@ def dataframe_long_cross_ic(data,type='Cross Frequency',columns=None,name=None,p
     #Frequency bands
     bandas=['_Delta','_Theta','_Alpha-1','_Alpha-2','_Beta1','_Beta2','_Beta3','_Gamma']
     m_bandas=['Mdelta','Mtheta','Malpha-1','Malpha-2','Mbeta1','Mbeta2','Mbeta3','Mgamma']
-    #componentes=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25']
-    componentes=['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+    if spatial_matrix=='58x25':
+        componentes =['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25']
+    elif spatial_matrix=='54x10':
+        componentes =['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+    elif spatial_matrix=='cresta' or spatial_matrix=='openBCI' or spatial_matrix=='paper':
+        componentes =['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8']
     for i in columns:
         '''The column of interest is taken with its respective demographic data and added to the new dataframe'''
         data_x=data_dem.copy()
@@ -237,7 +319,7 @@ def dataframe_long_cross_ic(data,type='Cross Frequency',columns=None,name=None,p
         d_sep['M_Band']=[bandm]*len(d_sep)
         d_sep['Component']=[componente]*len(d_sep)
         d_sep= d_sep.rename(columns={i:type})
-        data_new=data_new.append(d_sep,ignore_index = True) #Uno el dataframe 
+        data_new=data_new._append(d_sep,ignore_index = True) #Uno el dataframe 
     data_new['Band']=data_new['Band'].replace({'_':''}, regex=True)#Quito el _ y lo reemplazo con ''
     try:
         path="{input_path}\data_long\IC".format(input_path=path).replace('\\','/')
@@ -245,7 +327,7 @@ def dataframe_long_cross_ic(data,type='Cross Frequency',columns=None,name=None,p
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    data_new.reset_index(drop=True).to_feather('{path}\data_{name}_{task}_long_{metric}_components.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type))
+    data_new.reset_index(drop=True).to_feather('{path}\data_{task}_{metric}_long_{name}_{spatial_matrix}_components.feather'.format(path=path,name=data_new['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type,spatial_matrix=spatial_matrix).replace('\\','/'))
     print('Dataframe para graficos de {type} guardado: {name}'.format(type=type,name=name))
 
 def dataframe_componentes_deseadas(data,columnas):
@@ -360,452 +442,6 @@ def estadisticos_demograficos(data,name,path):
     writer.save()
     writer.close()   
 
-
-#Listas de columnas
-#columns_powers_ic=['power_C14_Delta',
-#       'power_C14_Theta', 'power_C14_Alpha-1', 'power_C14_Alpha-2',
-#       'power_C14_Beta1', 'power_C14_Beta2', 'power_C14_Beta3',
-#       'power_C14_Gamma', 'power_C15_Delta', 'power_C15_Theta',
-#       'power_C15_Alpha-1', 'power_C15_Alpha-2', 'power_C15_Beta1',
-#       'power_C15_Beta2', 'power_C15_Beta3', 'power_C15_Gamma',
-#       'power_C18_Delta', 'power_C18_Theta', 'power_C18_Alpha-1',
-#       'power_C18_Alpha-2', 'power_C18_Beta1', 'power_C18_Beta2',
-#       'power_C18_Beta3', 'power_C18_Gamma', 'power_C20_Delta',
-#       'power_C20_Theta', 'power_C20_Alpha-1', 'power_C20_Alpha-2',
-#       'power_C20_Beta1', 'power_C20_Beta2', 'power_C20_Beta3',
-#       'power_C20_Gamma', 'power_C22_Delta', 'power_C22_Theta',
-#       'power_C22_Alpha-1', 'power_C22_Alpha-2', 'power_C22_Beta1',
-#       'power_C22_Beta2', 'power_C22_Beta3', 'power_C22_Gamma',
-#       'power_C23_Delta', 'power_C23_Theta', 'power_C23_Alpha-1',
-#       'power_C23_Alpha-2', 'power_C23_Beta1', 'power_C23_Beta2',
-#       'power_C23_Beta3', 'power_C23_Gamma', 'power_C24_Delta',
-#       'power_C24_Theta', 'power_C24_Alpha-1', 'power_C24_Alpha-2',
-#       'power_C24_Beta1', 'power_C24_Beta2', 'power_C24_Beta3',
-#       'power_C24_Gamma', 'power_C25_Delta', 'power_C25_Theta',
-#       'power_C25_Alpha-1', 'power_C25_Alpha-2', 'power_C25_Beta1',
-#       'power_C25_Beta2', 'power_C25_Beta3', 'power_C25_Gamma']
-columns_powers_ic=['power_C1_Delta', 'power_C2_Delta', 'power_C3_Delta', 'power_C4_Delta',
-       'power_C5_Delta', 'power_C6_Delta', 'power_C7_Delta', 'power_C8_Delta',
-       'power_C9_Delta', 'power_C10_Delta', 'power_C1_Theta', 'power_C2_Theta',
-       'power_C3_Theta', 'power_C4_Theta', 'power_C5_Theta', 'power_C6_Theta',
-       'power_C7_Theta', 'power_C8_Theta', 'power_C9_Theta', 'power_C10_Theta',
-       'power_C1_Alpha-1', 'power_C2_Alpha-1', 'power_C3_Alpha-1',
-       'power_C4_Alpha-1', 'power_C5_Alpha-1', 'power_C6_Alpha-1',
-       'power_C7_Alpha-1', 'power_C8_Alpha-1', 'power_C9_Alpha-1',
-       'power_C10_Alpha-1', 'power_C1_Alpha-2', 'power_C2_Alpha-2',
-       'power_C3_Alpha-2', 'power_C4_Alpha-2', 'power_C5_Alpha-2',
-       'power_C6_Alpha-2', 'power_C7_Alpha-2', 'power_C8_Alpha-2',
-       'power_C9_Alpha-2', 'power_C10_Alpha-2', 'power_C1_Beta1',
-       'power_C2_Beta1', 'power_C3_Beta1', 'power_C4_Beta1', 'power_C5_Beta1',
-       'power_C6_Beta1', 'power_C7_Beta1', 'power_C8_Beta1', 'power_C9_Beta1',
-       'power_C10_Beta1', 'power_C1_Beta2', 'power_C2_Beta2', 'power_C3_Beta2',
-       'power_C4_Beta2', 'power_C5_Beta2', 'power_C6_Beta2', 'power_C7_Beta2',
-       'power_C8_Beta2', 'power_C9_Beta2', 'power_C10_Beta2', 'power_C1_Beta3',
-       'power_C2_Beta3', 'power_C3_Beta3', 'power_C4_Beta3', 'power_C5_Beta3',
-       'power_C6_Beta3', 'power_C7_Beta3', 'power_C8_Beta3', 'power_C9_Beta3',
-       'power_C10_Beta3', 'power_C1_Gamma', 'power_C2_Gamma', 'power_C3_Gamma',
-       'power_C4_Gamma', 'power_C5_Gamma', 'power_C6_Gamma', 'power_C7_Gamma',
-       'power_C8_Gamma', 'power_C9_Gamma', 'power_C10_Gamma']
-
-columns_powers_rois=['power_F_Delta','power_C_Delta', 'power_PO_Delta', 'power_T_Delta', 'power_F_Theta',
-       'power_C_Theta', 'power_PO_Theta', 'power_T_Theta', 'power_F_Alpha-1',
-       'power_C_Alpha-1', 'power_PO_Alpha-1', 'power_T_Alpha-1',
-       'power_F_Alpha-2', 'power_C_Alpha-2', 'power_PO_Alpha-2',
-       'power_T_Alpha-2', 'power_F_Beta1', 'power_C_Beta1', 'power_PO_Beta1',
-       'power_T_Beta1', 'power_F_Beta2', 'power_C_Beta2', 'power_PO_Beta2',
-       'power_T_Beta2', 'power_F_Beta3', 'power_C_Beta3', 'power_PO_Beta3',
-       'power_T_Beta3', 'power_F_Gamma', 'power_C_Gamma', 'power_PO_Gamma',
-       'power_T_Gamma']
-
-
-
-#Sl columns Roi
-columns_SL_roi=['sl_F_Delta', 'sl_C_Delta',
-       'sl_PO_Delta', 'sl_T_Delta', 'sl_F_Theta', 'sl_C_Theta', 'sl_PO_Theta',
-       'sl_T_Theta', 'sl_F_Alpha-1', 'sl_C_Alpha-1', 'sl_PO_Alpha-1',
-       'sl_T_Alpha-1', 'sl_F_Alpha-2', 'sl_C_Alpha-2', 'sl_PO_Alpha-2',
-       'sl_T_Alpha-2', 'sl_F_Beta1', 'sl_C_Beta1', 'sl_PO_Beta1', 'sl_T_Beta1',
-       'sl_F_Beta2', 'sl_C_Beta2', 'sl_PO_Beta2', 'sl_T_Beta2', 'sl_F_Beta3',
-       'sl_C_Beta3', 'sl_PO_Beta3', 'sl_T_Beta3', 'sl_F_Gamma', 'sl_C_Gamma',
-       'sl_PO_Gamma', 'sl_T_Gamma']
-
-#Coherence columns Roi
-columns_coherence_roi=['cohfreq_F_Delta',
-       'cohfreq_C_Delta', 'cohfreq_PO_Delta', 'cohfreq_T_Delta',
-       'cohfreq_F_Theta', 'cohfreq_C_Theta', 'cohfreq_PO_Theta',
-       'cohfreq_T_Theta', 'cohfreq_F_Alpha-1', 'cohfreq_C_Alpha-1',
-       'cohfreq_PO_Alpha-1', 'cohfreq_T_Alpha-1', 'cohfreq_F_Alpha-2',
-       'cohfreq_C_Alpha-2', 'cohfreq_PO_Alpha-2', 'cohfreq_T_Alpha-2',
-       'cohfreq_F_Beta1', 'cohfreq_C_Beta1', 'cohfreq_PO_Beta1',
-       'cohfreq_T_Beta1', 'cohfreq_F_Beta2', 'cohfreq_C_Beta2',
-       'cohfreq_PO_Beta2', 'cohfreq_T_Beta2', 'cohfreq_F_Beta3',
-       'cohfreq_C_Beta3', 'cohfreq_PO_Beta3', 'cohfreq_T_Beta3',
-       'cohfreq_F_Gamma', 'cohfreq_C_Gamma', 'cohfreq_PO_Gamma',
-       'cohfreq_T_Gamma']
-
-#Entropy columns Roi  
-columns_entropy_rois=['entropy_F_Delta',
-       'entropy_C_Delta', 'entropy_PO_Delta', 'entropy_T_Delta',
-       'entropy_F_Theta', 'entropy_C_Theta', 'entropy_PO_Theta',
-       'entropy_T_Theta', 'entropy_F_Alpha-1', 'entropy_C_Alpha-1',
-       'entropy_PO_Alpha-1', 'entropy_T_Alpha-1', 'entropy_F_Alpha-2',
-       'entropy_C_Alpha-2', 'entropy_PO_Alpha-2', 'entropy_T_Alpha-2',
-       'entropy_F_Beta1', 'entropy_C_Beta1', 'entropy_PO_Beta1',
-       'entropy_T_Beta1', 'entropy_F_Beta2', 'entropy_C_Beta2',
-       'entropy_PO_Beta2', 'entropy_T_Beta2', 'entropy_F_Beta3',
-       'entropy_C_Beta3', 'entropy_PO_Beta3', 'entropy_T_Beta3',
-       'entropy_F_Gamma', 'entropy_C_Gamma', 'entropy_PO_Gamma',
-       'entropy_T_Gamma']
-
-#columns_SL_ic=['sl_C14_Delta', 'sl_C14_Theta', 'sl_C14_Alpha-1',
-#       'sl_C14_Alpha-2', 'sl_C14_Beta1', 'sl_C14_Beta2', 'sl_C14_Beta3',
-#       'sl_C14_Gamma', 'sl_C15_Delta', 'sl_C15_Theta', 'sl_C15_Alpha-1',
-#       'sl_C15_Alpha-2', 'sl_C15_Beta1', 'sl_C15_Beta2', 'sl_C15_Beta3',
-#       'sl_C15_Gamma', 'sl_C18_Delta', 'sl_C18_Theta', 'sl_C18_Alpha-1',
-#       'sl_C18_Alpha-2', 'sl_C18_Beta1', 'sl_C18_Beta2', 'sl_C18_Beta3',
-#       'sl_C18_Gamma', 'sl_C20_Delta', 'sl_C20_Theta', 'sl_C20_Alpha-1',
-#       'sl_C20_Alpha-2', 'sl_C20_Beta1', 'sl_C20_Beta2', 'sl_C20_Beta3',
-#       'sl_C20_Gamma', 'sl_C22_Delta', 'sl_C22_Theta', 'sl_C22_Alpha-1',
-#       'sl_C22_Alpha-2', 'sl_C22_Beta1', 'sl_C22_Beta2', 'sl_C22_Beta3',
-#       'sl_C22_Gamma', 'sl_C23_Delta', 'sl_C23_Theta', 'sl_C23_Alpha-1',
-#       'sl_C23_Alpha-2', 'sl_C23_Beta1', 'sl_C23_Beta2', 'sl_C23_Beta3',
-#       'sl_C23_Gamma', 'sl_C24_Delta', 'sl_C24_Theta', 'sl_C24_Alpha-1',
-#       'sl_C24_Alpha-2', 'sl_C24_Beta1', 'sl_C24_Beta2', 'sl_C24_Beta3',
-#       'sl_C24_Gamma','sl_C25_Delta', 'sl_C25_Theta', 'sl_C25_Alpha-1',
-#       'sl_C25_Alpha-2', 'sl_C25_Beta1', 'sl_C25_Beta2', 'sl_C25_Beta3',
-#       'sl_C25_Gamma']
-columns_SL_ic=['sl_C1_Delta', 'sl_C2_Delta', 'sl_C3_Delta', 'sl_C4_Delta',
-       'sl_C5_Delta', 'sl_C6_Delta', 'sl_C7_Delta', 'sl_C8_Delta',
-       'sl_C9_Delta', 'sl_C10_Delta', 'sl_C1_Theta', 'sl_C2_Theta',
-       'sl_C3_Theta', 'sl_C4_Theta', 'sl_C5_Theta', 'sl_C6_Theta',
-       'sl_C7_Theta', 'sl_C8_Theta', 'sl_C9_Theta', 'sl_C10_Theta',
-       'sl_C1_Alpha-1', 'sl_C2_Alpha-1', 'sl_C3_Alpha-1', 'sl_C4_Alpha-1',
-       'sl_C5_Alpha-1', 'sl_C6_Alpha-1', 'sl_C7_Alpha-1', 'sl_C8_Alpha-1',
-       'sl_C9_Alpha-1', 'sl_C10_Alpha-1', 'sl_C1_Alpha-2', 'sl_C2_Alpha-2',
-       'sl_C3_Alpha-2', 'sl_C4_Alpha-2', 'sl_C5_Alpha-2', 'sl_C6_Alpha-2',
-       'sl_C7_Alpha-2', 'sl_C8_Alpha-2', 'sl_C9_Alpha-2', 'sl_C10_Alpha-2',
-       'sl_C1_Beta1', 'sl_C2_Beta1', 'sl_C3_Beta1', 'sl_C4_Beta1',
-       'sl_C5_Beta1', 'sl_C6_Beta1', 'sl_C7_Beta1', 'sl_C8_Beta1',
-       'sl_C9_Beta1', 'sl_C10_Beta1', 'sl_C1_Beta2', 'sl_C2_Beta2',
-       'sl_C3_Beta2', 'sl_C4_Beta2', 'sl_C5_Beta2', 'sl_C6_Beta2',
-       'sl_C7_Beta2', 'sl_C8_Beta2', 'sl_C9_Beta2', 'sl_C10_Beta2',
-       'sl_C1_Beta3', 'sl_C2_Beta3', 'sl_C3_Beta3', 'sl_C4_Beta3',
-       'sl_C5_Beta3', 'sl_C6_Beta3', 'sl_C7_Beta3', 'sl_C8_Beta3',
-       'sl_C9_Beta3', 'sl_C10_Beta3', 'sl_C1_Gamma', 'sl_C2_Gamma',
-       'sl_C3_Gamma', 'sl_C4_Gamma', 'sl_C5_Gamma', 'sl_C6_Gamma',
-       'sl_C7_Gamma', 'sl_C8_Gamma', 'sl_C9_Gamma', 'sl_C10_Gamma']
-#columns_coherence_ic=['cohfreq_C14_Delta', 'cohfreq_C14_Theta',
-#       'cohfreq_C14_Alpha-1', 'cohfreq_C14_Alpha-2', 'cohfreq_C14_Beta1',
-#       'cohfreq_C14_Beta2', 'cohfreq_C14_Beta3', 'cohfreq_C14_Gamma',
-#       'cohfreq_C15_Delta', 'cohfreq_C15_Theta', 'cohfreq_C15_Alpha-1',
-#       'cohfreq_C15_Alpha-2', 'cohfreq_C15_Beta1', 'cohfreq_C15_Beta2',
-#       'cohfreq_C15_Beta3', 'cohfreq_C15_Gamma', 'cohfreq_C18_Delta',
-#       'cohfreq_C18_Theta', 'cohfreq_C18_Alpha-1', 'cohfreq_C18_Alpha-2',
-#       'cohfreq_C18_Beta1', 'cohfreq_C18_Beta2', 'cohfreq_C18_Beta3',
-#       'cohfreq_C18_Gamma', 'cohfreq_C20_Delta', 'cohfreq_C20_Theta',
-#       'cohfreq_C20_Alpha-1', 'cohfreq_C20_Alpha-2', 'cohfreq_C20_Beta1',
-#       'cohfreq_C20_Beta2', 'cohfreq_C20_Beta3', 'cohfreq_C20_Gamma',
-#       'cohfreq_C22_Delta', 'cohfreq_C22_Theta', 'cohfreq_C22_Alpha-1',
-#       'cohfreq_C22_Alpha-2', 'cohfreq_C22_Beta1', 'cohfreq_C22_Beta2',
-#       'cohfreq_C22_Beta3', 'cohfreq_C22_Gamma', 'cohfreq_C23_Delta',
-#       'cohfreq_C23_Theta', 'cohfreq_C23_Alpha-1', 'cohfreq_C23_Alpha-2',
-#       'cohfreq_C23_Beta1', 'cohfreq_C23_Beta2', 'cohfreq_C23_Beta3',
-#       'cohfreq_C23_Gamma', 'cohfreq_C24_Delta', 'cohfreq_C24_Theta',
-#       'cohfreq_C24_Alpha-1', 'cohfreq_C24_Alpha-2', 'cohfreq_C24_Beta1',
-#       'cohfreq_C24_Beta2', 'cohfreq_C24_Beta3', 'cohfreq_C24_Gamma',
-#       'cohfreq_C25_Delta', 'cohfreq_C25_Theta',
-#       'cohfreq_C25_Alpha-1', 'cohfreq_C25_Alpha-2', 'cohfreq_C25_Beta1',
-#       'cohfreq_C25_Beta2', 'cohfreq_C25_Beta3', 'cohfreq_C25_Gamma']
-columns_coherence_ic=['cohfreq_C1_Delta', 'cohfreq_C2_Delta', 'cohfreq_C3_Delta',
-       'cohfreq_C4_Delta', 'cohfreq_C5_Delta', 'cohfreq_C6_Delta',
-       'cohfreq_C7_Delta', 'cohfreq_C8_Delta', 'cohfreq_C9_Delta',
-       'cohfreq_C10_Delta', 'cohfreq_C1_Theta', 'cohfreq_C2_Theta',
-       'cohfreq_C3_Theta', 'cohfreq_C4_Theta', 'cohfreq_C5_Theta',
-       'cohfreq_C6_Theta', 'cohfreq_C7_Theta', 'cohfreq_C8_Theta',
-       'cohfreq_C9_Theta', 'cohfreq_C10_Theta', 'cohfreq_C1_Alpha-1',
-       'cohfreq_C2_Alpha-1', 'cohfreq_C3_Alpha-1', 'cohfreq_C4_Alpha-1',
-       'cohfreq_C5_Alpha-1', 'cohfreq_C6_Alpha-1', 'cohfreq_C7_Alpha-1',
-       'cohfreq_C8_Alpha-1', 'cohfreq_C9_Alpha-1', 'cohfreq_C10_Alpha-1',
-       'cohfreq_C1_Alpha-2', 'cohfreq_C2_Alpha-2', 'cohfreq_C3_Alpha-2',
-       'cohfreq_C4_Alpha-2', 'cohfreq_C5_Alpha-2', 'cohfreq_C6_Alpha-2',
-       'cohfreq_C7_Alpha-2', 'cohfreq_C8_Alpha-2', 'cohfreq_C9_Alpha-2',
-       'cohfreq_C10_Alpha-2', 'cohfreq_C1_Beta1', 'cohfreq_C2_Beta1',
-       'cohfreq_C3_Beta1', 'cohfreq_C4_Beta1', 'cohfreq_C5_Beta1',
-       'cohfreq_C6_Beta1', 'cohfreq_C7_Beta1', 'cohfreq_C8_Beta1',
-       'cohfreq_C9_Beta1', 'cohfreq_C10_Beta1', 'cohfreq_C1_Beta2',
-       'cohfreq_C2_Beta2', 'cohfreq_C3_Beta2', 'cohfreq_C4_Beta2',
-       'cohfreq_C5_Beta2', 'cohfreq_C6_Beta2', 'cohfreq_C7_Beta2',
-       'cohfreq_C8_Beta2', 'cohfreq_C9_Beta2', 'cohfreq_C10_Beta2',
-       'cohfreq_C1_Beta3', 'cohfreq_C2_Beta3', 'cohfreq_C3_Beta3',
-       'cohfreq_C4_Beta3', 'cohfreq_C5_Beta3', 'cohfreq_C6_Beta3',
-       'cohfreq_C7_Beta3', 'cohfreq_C8_Beta3', 'cohfreq_C9_Beta3',
-       'cohfreq_C10_Beta3', 'cohfreq_C1_Gamma', 'cohfreq_C2_Gamma',
-       'cohfreq_C3_Gamma', 'cohfreq_C4_Gamma', 'cohfreq_C5_Gamma',
-       'cohfreq_C6_Gamma', 'cohfreq_C7_Gamma', 'cohfreq_C8_Gamma',
-       'cohfreq_C9_Gamma', 'cohfreq_C10_Gamma']
-#columns_entropy_ic=['entropy_C14_Delta', 'entropy_C14_Theta',
-#       'entropy_C14_Alpha-1', 'entropy_C14_Alpha-2', 'entropy_C14_Beta1',
-#       'entropy_C14_Beta2', 'entropy_C14_Beta3', 'entropy_C14_Gamma',
-#       'entropy_C15_Delta', 'entropy_C15_Theta', 'entropy_C15_Alpha-1',
-#       'entropy_C15_Alpha-2', 'entropy_C15_Beta1', 'entropy_C15_Beta2',
-#       'entropy_C15_Beta3', 'entropy_C15_Gamma', 'entropy_C18_Delta',
-#       'entropy_C18_Theta', 'entropy_C18_Alpha-1', 'entropy_C18_Alpha-2',
-#       'entropy_C18_Beta1', 'entropy_C18_Beta2', 'entropy_C18_Beta3',
-#       'entropy_C18_Gamma', 'entropy_C20_Delta', 'entropy_C20_Theta',
-#       'entropy_C20_Alpha-1', 'entropy_C20_Alpha-2', 'entropy_C20_Beta1',
-#       'entropy_C20_Beta2', 'entropy_C20_Beta3', 'entropy_C20_Gamma',
-#       'entropy_C22_Delta', 'entropy_C22_Theta', 'entropy_C22_Alpha-1',
-#       'entropy_C22_Alpha-2', 'entropy_C22_Beta1', 'entropy_C22_Beta2',
-#       'entropy_C22_Beta3', 'entropy_C22_Gamma', 'entropy_C23_Delta',
-#       'entropy_C23_Theta', 'entropy_C23_Alpha-1', 'entropy_C23_Alpha-2',
-#       'entropy_C23_Beta1', 'entropy_C23_Beta2', 'entropy_C23_Beta3',
-#       'entropy_C23_Gamma', 'entropy_C24_Delta', 'entropy_C24_Theta',
-#       'entropy_C24_Alpha-1', 'entropy_C24_Alpha-2', 'entropy_C24_Beta1',
-#       'entropy_C24_Beta2', 'entropy_C24_Beta3', 'entropy_C24_Gamma',
-#       'entropy_C25_Delta', 'entropy_C25_Theta',
-#       'entropy_C25_Alpha-1', 'entropy_C25_Alpha-2', 'entropy_C25_Beta1',
-#       'entropy_C25_Beta2', 'entropy_C25_Beta3', 'entropy_C25_Gamma']
-columns_entropy_ic=['entropy_C1_Delta', 'entropy_C2_Delta', 'entropy_C3_Delta',
-       'entropy_C4_Delta', 'entropy_C5_Delta', 'entropy_C6_Delta',
-       'entropy_C7_Delta', 'entropy_C8_Delta', 'entropy_C9_Delta',
-       'entropy_C10_Delta', 'entropy_C1_Theta', 'entropy_C2_Theta',
-       'entropy_C3_Theta', 'entropy_C4_Theta', 'entropy_C5_Theta',
-       'entropy_C6_Theta', 'entropy_C7_Theta', 'entropy_C8_Theta',
-       'entropy_C9_Theta', 'entropy_C10_Theta', 'entropy_C1_Alpha-1',
-       'entropy_C2_Alpha-1', 'entropy_C3_Alpha-1', 'entropy_C4_Alpha-1',
-       'entropy_C5_Alpha-1', 'entropy_C6_Alpha-1', 'entropy_C7_Alpha-1',
-       'entropy_C8_Alpha-1', 'entropy_C9_Alpha-1', 'entropy_C10_Alpha-1',
-       'entropy_C1_Alpha-2', 'entropy_C2_Alpha-2', 'entropy_C3_Alpha-2',
-       'entropy_C4_Alpha-2', 'entropy_C5_Alpha-2', 'entropy_C6_Alpha-2',
-       'entropy_C7_Alpha-2', 'entropy_C8_Alpha-2', 'entropy_C9_Alpha-2',
-       'entropy_C10_Alpha-2', 'entropy_C1_Beta1', 'entropy_C2_Beta1',
-       'entropy_C3_Beta1', 'entropy_C4_Beta1', 'entropy_C5_Beta1',
-       'entropy_C6_Beta1', 'entropy_C7_Beta1', 'entropy_C8_Beta1',
-       'entropy_C9_Beta1', 'entropy_C10_Beta1', 'entropy_C1_Beta2',
-       'entropy_C2_Beta2', 'entropy_C3_Beta2', 'entropy_C4_Beta2',
-       'entropy_C5_Beta2', 'entropy_C6_Beta2', 'entropy_C7_Beta2',
-       'entropy_C8_Beta2', 'entropy_C9_Beta2', 'entropy_C10_Beta2',
-       'entropy_C1_Beta3', 'entropy_C2_Beta3', 'entropy_C3_Beta3',
-       'entropy_C4_Beta3', 'entropy_C5_Beta3', 'entropy_C6_Beta3',
-       'entropy_C7_Beta3', 'entropy_C8_Beta3', 'entropy_C9_Beta3',
-       'entropy_C10_Beta3', 'entropy_C1_Gamma', 'entropy_C2_Gamma',
-       'entropy_C3_Gamma', 'entropy_C4_Gamma', 'entropy_C5_Gamma',
-       'entropy_C6_Gamma', 'entropy_C7_Gamma', 'entropy_C8_Gamma',
-       'entropy_C9_Gamma', 'entropy_C10_Gamma']
-columns_cross_ic=['crossfreq_C1_Mdelta_Delta', 'crossfreq_C1_Mtheta_Delta',
-        'crossfreq_C1_Malpha-1_Delta', 'crossfreq_C1_Malpha-2_Delta',
-        'crossfreq_C1_Mbeta1_Delta', 'crossfreq_C1_Mbeta2_Delta', 'crossfreq_C1_Mbeta3_Delta', 
-        'crossfreq_C1_Mgamma_Delta', 'crossfreq_C2_Mdelta_Delta', 'crossfreq_C2_Mtheta_Delta',
-        'crossfreq_C2_Malpha-1_Delta', 'crossfreq_C2_Malpha-2_Delta', 'crossfreq_C2_Mbeta1_Delta', 
-        'crossfreq_C2_Mbeta2_Delta', 'crossfreq_C2_Mbeta3_Delta', 'crossfreq_C2_Mgamma_Delta', 
-        'crossfreq_C3_Mdelta_Delta', 'crossfreq_C3_Mtheta_Delta', 'crossfreq_C3_Malpha-1_Delta', 
-        'crossfreq_C3_Malpha-2_Delta','crossfreq_C3_Mbeta1_Delta', 'crossfreq_C3_Mbeta2_Delta', 
-        'crossfreq_C3_Mbeta3_Delta', 'crossfreq_C3_Mgamma_Delta', 'crossfreq_C4_Mdelta_Delta', 
-        'crossfreq_C4_Mtheta_Delta', 'crossfreq_C4_Malpha-1_Delta', 'crossfreq_C4_Malpha-2_Delta', 
-        'crossfreq_C4_Mbeta1_Delta', 'crossfreq_C4_Mbeta2_Delta','crossfreq_C4_Mbeta3_Delta', 
-        'crossfreq_C4_Mgamma_Delta', 'crossfreq_C5_Mdelta_Delta', 'crossfreq_C5_Mtheta_Delta', 
-        'crossfreq_C5_Malpha-1_Delta', 'crossfreq_C5_Malpha-2_Delta', 'crossfreq_C5_Mbeta1_Delta', 
-        'crossfreq_C5_Mbeta2_Delta', 'crossfreq_C5_Mbeta3_Delta', 'crossfreq_C5_Mgamma_Delta',
-        'crossfreq_C6_Mdelta_Delta', 'crossfreq_C6_Mtheta_Delta', 'crossfreq_C6_Malpha-1_Delta', 
-        'crossfreq_C6_Malpha-2_Delta', 'crossfreq_C6_Mbeta1_Delta', 'crossfreq_C6_Mbeta2_Delta', 
-        'crossfreq_C6_Mbeta3_Delta', 'crossfreq_C6_Mgamma_Delta', 'crossfreq_C7_Mdelta_Delta', 
-        'crossfreq_C7_Mtheta_Delta','crossfreq_C7_Malpha-1_Delta', 'crossfreq_C7_Malpha-2_Delta',
-        'crossfreq_C7_Mbeta1_Delta', 'crossfreq_C7_Mbeta2_Delta', 'crossfreq_C7_Mbeta3_Delta',
-        'crossfreq_C7_Mgamma_Delta', 'crossfreq_C8_Mdelta_Delta', 'crossfreq_C8_Mtheta_Delta',
-        'crossfreq_C8_Malpha-1_Delta', 'crossfreq_C8_Malpha-2_Delta','crossfreq_C8_Mbeta1_Delta',
-        'crossfreq_C8_Mbeta2_Delta', 'crossfreq_C8_Mbeta3_Delta', 'crossfreq_C8_Mgamma_Delta',
-        'crossfreq_C9_Mdelta_Delta', 'crossfreq_C9_Mtheta_Delta', 'crossfreq_C9_Malpha-1_Delta',
-        'crossfreq_C9_Malpha-2_Delta', 'crossfreq_C9_Mbeta1_Delta', 'crossfreq_C9_Mbeta2_Delta',
-        'crossfreq_C9_Mbeta3_Delta', 'crossfreq_C9_Mgamma_Delta', 'crossfreq_C10_Mdelta_Delta',
-        'crossfreq_C10_Mtheta_Delta', 'crossfreq_C10_Malpha-1_Delta', 'crossfreq_C10_Malpha-2_Delta',
-        'crossfreq_C10_Mbeta1_Delta', 'crossfreq_C10_Mbeta2_Delta', 'crossfreq_C10_Mbeta3_Delta',
-        'crossfreq_C10_Mgamma_Delta','crossfreq_C1_Mdelta_Theta', 'crossfreq_C1_Mtheta_Theta', 
-        'crossfreq_C1_Malpha-1_Theta', 'crossfreq_C1_Malpha-2_Theta', 'crossfreq_C1_Mbeta1_Theta',
-        'crossfreq_C1_Mbeta2_Theta', 'crossfreq_C1_Mbeta3_Theta', 'crossfreq_C1_Mgamma_Theta', 
-        'crossfreq_C2_Mdelta_Theta', 'crossfreq_C2_Mtheta_Theta','crossfreq_C2_Malpha-1_Theta', 
-        'crossfreq_C2_Malpha-2_Theta', 'crossfreq_C2_Mbeta1_Theta', 'crossfreq_C2_Mbeta2_Theta', 
-        'crossfreq_C2_Mbeta3_Theta', 'crossfreq_C2_Mgamma_Theta', 'crossfreq_C3_Mdelta_Theta', 
-        'crossfreq_C3_Mtheta_Theta', 'crossfreq_C3_Malpha-1_Theta', 'crossfreq_C3_Malpha-2_Theta',
-        'crossfreq_C3_Mbeta1_Theta', 'crossfreq_C3_Mbeta2_Theta', 'crossfreq_C3_Mbeta3_Theta', 
-        'crossfreq_C3_Mgamma_Theta', 'crossfreq_C4_Mdelta_Theta', 'crossfreq_C4_Mtheta_Theta', 
-        'crossfreq_C4_Malpha-1_Theta', 'crossfreq_C4_Malpha-2_Theta', 'crossfreq_C4_Mbeta1_Theta',
-        'crossfreq_C4_Mbeta2_Theta','crossfreq_C4_Mbeta3_Theta', 'crossfreq_C4_Mgamma_Theta', 
-        'crossfreq_C5_Mdelta_Theta', 'crossfreq_C5_Mtheta_Theta', 'crossfreq_C5_Malpha-1_Theta',
-        'crossfreq_C5_Malpha-2_Theta', 'crossfreq_C5_Mbeta1_Theta', 'crossfreq_C5_Mbeta2_Theta',
-        'crossfreq_C5_Mbeta3_Theta', 'crossfreq_C5_Mgamma_Theta','crossfreq_C6_Mdelta_Theta', 
-        'crossfreq_C6_Mtheta_Theta', 'crossfreq_C6_Malpha-1_Theta', 'crossfreq_C6_Malpha-2_Theta',
-        'crossfreq_C6_Mbeta1_Theta', 'crossfreq_C6_Mbeta2_Theta', 'crossfreq_C6_Mbeta3_Theta',
-        'crossfreq_C6_Mgamma_Theta', 'crossfreq_C7_Mdelta_Theta', 'crossfreq_C7_Mtheta_Theta',
-        'crossfreq_C7_Malpha-1_Theta', 'crossfreq_C7_Malpha-2_Theta', 'crossfreq_C7_Mbeta1_Theta',
-        'crossfreq_C7_Mbeta2_Theta', 'crossfreq_C7_Mbeta3_Theta', 'crossfreq_C7_Mgamma_Theta', 
-        'crossfreq_C8_Mdelta_Theta', 'crossfreq_C8_Mtheta_Theta', 'crossfreq_C8_Malpha-1_Theta',
-        'crossfreq_C8_Malpha-2_Theta','crossfreq_C8_Mbeta1_Theta', 'crossfreq_C8_Mbeta2_Theta',
-        'crossfreq_C8_Mbeta3_Theta', 'crossfreq_C8_Mgamma_Theta', 'crossfreq_C9_Mdelta_Theta',
-        'crossfreq_C9_Mtheta_Theta', 'crossfreq_C9_Malpha-1_Theta', 'crossfreq_C9_Malpha-2_Theta',
-        'crossfreq_C9_Mbeta1_Theta', 'crossfreq_C9_Mbeta2_Theta','crossfreq_C9_Mbeta3_Theta', 
-        'crossfreq_C9_Mgamma_Theta', 'crossfreq_C10_Mdelta_Theta', 'crossfreq_C10_Mtheta_Theta',
-        'crossfreq_C10_Malpha-1_Theta', 'crossfreq_C10_Malpha-2_Theta', 'crossfreq_C10_Mbeta1_Theta',
-        'crossfreq_C10_Mbeta2_Theta', 'crossfreq_C10_Mbeta3_Theta', 'crossfreq_C10_Mgamma_Theta',
-        'crossfreq_C1_Mdelta_Alpha-1', 'crossfreq_C1_Mtheta_Alpha-1', 'crossfreq_C1_Malpha-1_Alpha-1',
-        'crossfreq_C1_Malpha-2_Alpha-1', 'crossfreq_C1_Mbeta1_Alpha-1', 'crossfreq_C1_Mbeta2_Alpha-1',
-        'crossfreq_C1_Mbeta3_Alpha-1', 'crossfreq_C1_Mgamma_Alpha-1', 'crossfreq_C2_Mdelta_Alpha-1',
-        'crossfreq_C2_Mtheta_Alpha-1','crossfreq_C2_Malpha-1_Alpha-1', 'crossfreq_C2_Malpha-2_Alpha-1',
-        'crossfreq_C2_Mbeta1_Alpha-1', 'crossfreq_C2_Mbeta2_Alpha-1', 'crossfreq_C2_Mbeta3_Alpha-1',
-        'crossfreq_C2_Mgamma_Alpha-1', 'crossfreq_C3_Mdelta_Alpha-1', 'crossfreq_C3_Mtheta_Alpha-1',
-        'crossfreq_C3_Malpha-1_Alpha-1', 'crossfreq_C3_Malpha-2_Alpha-1','crossfreq_C3_Mbeta1_Alpha-1',
-        'crossfreq_C3_Mbeta2_Alpha-1', 'crossfreq_C3_Mbeta3_Alpha-1', 'crossfreq_C3_Mgamma_Alpha-1', 
-        'crossfreq_C4_Mdelta_Alpha-1', 'crossfreq_C4_Mtheta_Alpha-1', 'crossfreq_C4_Malpha-1_Alpha-1', 
-        'crossfreq_C4_Malpha-2_Alpha-1', 'crossfreq_C4_Mbeta1_Alpha-1', 'crossfreq_C4_Mbeta2_Alpha-1',
-        'crossfreq_C4_Mbeta3_Alpha-1', 'crossfreq_C4_Mgamma_Alpha-1', 'crossfreq_C5_Mdelta_Alpha-1',
-        'crossfreq_C5_Mtheta_Alpha-1', 'crossfreq_C5_Malpha-1_Alpha-1', 'crossfreq_C5_Malpha-2_Alpha-1', 
-        'crossfreq_C5_Mbeta1_Alpha-1', 'crossfreq_C5_Mbeta2_Alpha-1', 'crossfreq_C5_Mbeta3_Alpha-1', 
-        'crossfreq_C5_Mgamma_Alpha-1','crossfreq_C6_Mdelta_Alpha-1', 'crossfreq_C6_Mtheta_Alpha-1', 
-        'crossfreq_C6_Malpha-1_Alpha-1', 'crossfreq_C6_Malpha-2_Alpha-1', 'crossfreq_C6_Mbeta1_Alpha-1',
-        'crossfreq_C6_Mbeta2_Alpha-1', 'crossfreq_C6_Mbeta3_Alpha-1', 'crossfreq_C6_Mgamma_Alpha-1', 
-        'crossfreq_C7_Mdelta_Alpha-1', 'crossfreq_C7_Mtheta_Alpha-1','crossfreq_C7_Malpha-1_Alpha-1',
-        'crossfreq_C7_Malpha-2_Alpha-1', 'crossfreq_C7_Mbeta1_Alpha-1', 'crossfreq_C7_Mbeta2_Alpha-1', 
-        'crossfreq_C7_Mbeta3_Alpha-1', 'crossfreq_C7_Mgamma_Alpha-1', 'crossfreq_C8_Mdelta_Alpha-1', 
-        'crossfreq_C8_Mtheta_Alpha-1', 'crossfreq_C8_Malpha-1_Alpha-1', 'crossfreq_C8_Malpha-2_Alpha-1',
-        'crossfreq_C8_Mbeta1_Alpha-1', 'crossfreq_C8_Mbeta2_Alpha-1', 'crossfreq_C8_Mbeta3_Alpha-1', 
-        'crossfreq_C8_Mgamma_Alpha-1', 'crossfreq_C9_Mdelta_Alpha-1', 'crossfreq_C9_Mtheta_Alpha-1', 
-        'crossfreq_C9_Malpha-1_Alpha-1', 'crossfreq_C9_Malpha-2_Alpha-1', 'crossfreq_C9_Mbeta1_Alpha-1',
-        'crossfreq_C9_Mbeta2_Alpha-1','crossfreq_C9_Mbeta3_Alpha-1', 'crossfreq_C9_Mgamma_Alpha-1', 
-        'crossfreq_C10_Mdelta_Alpha-1', 'crossfreq_C10_Mtheta_Alpha-1', 'crossfreq_C10_Malpha-1_Alpha-1',
-        'crossfreq_C10_Malpha-2_Alpha-1', 'crossfreq_C10_Mbeta1_Alpha-1', 'crossfreq_C10_Mbeta2_Alpha-1',
-        'crossfreq_C10_Mbeta3_Alpha-1', 'crossfreq_C10_Mgamma_Alpha-1','crossfreq_C1_Mdelta_Alpha-2',
-        'crossfreq_C1_Mtheta_Alpha-2', 'crossfreq_C1_Malpha-1_Alpha-2', 'crossfreq_C1_Malpha-2_Alpha-2',
-        'crossfreq_C1_Mbeta1_Alpha-2', 'crossfreq_C1_Mbeta2_Alpha-2', 'crossfreq_C1_Mbeta3_Alpha-2', 
-        'crossfreq_C1_Mgamma_Alpha-2', 'crossfreq_C2_Mdelta_Alpha-2', 'crossfreq_C2_Mtheta_Alpha-2',
-        'crossfreq_C2_Malpha-1_Alpha-2', 'crossfreq_C2_Malpha-2_Alpha-2', 'crossfreq_C2_Mbeta1_Alpha-2',
-        'crossfreq_C2_Mbeta2_Alpha-2', 'crossfreq_C2_Mbeta3_Alpha-2', 'crossfreq_C2_Mgamma_Alpha-2', 
-        'crossfreq_C3_Mdelta_Alpha-2', 'crossfreq_C3_Mtheta_Alpha-2', 'crossfreq_C3_Malpha-1_Alpha-2', 
-        'crossfreq_C3_Malpha-2_Alpha-2','crossfreq_C3_Mbeta1_Alpha-2', 'crossfreq_C3_Mbeta2_Alpha-2', 
-        'crossfreq_C3_Mbeta3_Alpha-2', 'crossfreq_C3_Mgamma_Alpha-2', 'crossfreq_C4_Mdelta_Alpha-2', 
-        'crossfreq_C4_Mtheta_Alpha-2', 'crossfreq_C4_Malpha-1_Alpha-2', 'crossfreq_C4_Malpha-2_Alpha-2',
-        'crossfreq_C4_Mbeta1_Alpha-2', 'crossfreq_C4_Mbeta2_Alpha-2','crossfreq_C4_Mbeta3_Alpha-2', 
-        'crossfreq_C4_Mgamma_Alpha-2', 'crossfreq_C5_Mdelta_Alpha-2', 'crossfreq_C5_Mtheta_Alpha-2', 
-        'crossfreq_C5_Malpha-1_Alpha-2', 'crossfreq_C5_Malpha-2_Alpha-2', 'crossfreq_C5_Mbeta1_Alpha-2', 
-        'crossfreq_C5_Mbeta2_Alpha-2', 'crossfreq_C5_Mbeta3_Alpha-2', 'crossfreq_C5_Mgamma_Alpha-2',
-        'crossfreq_C6_Mdelta_Alpha-2', 'crossfreq_C6_Mtheta_Alpha-2', 'crossfreq_C6_Malpha-1_Alpha-2', 
-        'crossfreq_C6_Malpha-2_Alpha-2', 'crossfreq_C6_Mbeta1_Alpha-2', 'crossfreq_C6_Mbeta2_Alpha-2', 
-        'crossfreq_C6_Mbeta3_Alpha-2', 'crossfreq_C6_Mgamma_Alpha-2', 'crossfreq_C7_Mdelta_Alpha-2', 
-        'crossfreq_C7_Mtheta_Alpha-2','crossfreq_C7_Malpha-1_Alpha-2', 'crossfreq_C7_Malpha-2_Alpha-2', 
-        'crossfreq_C7_Mbeta1_Alpha-2', 'crossfreq_C7_Mbeta2_Alpha-2', 'crossfreq_C7_Mbeta3_Alpha-2', 
-        'crossfreq_C7_Mgamma_Alpha-2', 'crossfreq_C8_Mdelta_Alpha-2', 'crossfreq_C8_Mtheta_Alpha-2', 
-        'crossfreq_C8_Malpha-1_Alpha-2', 'crossfreq_C8_Malpha-2_Alpha-2','crossfreq_C8_Mbeta1_Alpha-2',
-        'crossfreq_C8_Mbeta2_Alpha-2', 'crossfreq_C8_Mbeta3_Alpha-2', 'crossfreq_C8_Mgamma_Alpha-2', 
-        'crossfreq_C9_Mdelta_Alpha-2', 'crossfreq_C9_Mtheta_Alpha-2', 'crossfreq_C9_Malpha-1_Alpha-2', 
-        'crossfreq_C9_Malpha-2_Alpha-2', 'crossfreq_C9_Mbeta1_Alpha-2', 'crossfreq_C9_Mbeta2_Alpha-2',
-        'crossfreq_C9_Mbeta3_Alpha-2', 'crossfreq_C9_Mgamma_Alpha-2', 'crossfreq_C10_Mdelta_Alpha-2', 
-        'crossfreq_C10_Mtheta_Alpha-2', 'crossfreq_C10_Malpha-1_Alpha-2', 'crossfreq_C10_Malpha-2_Alpha-2',
-        'crossfreq_C10_Mbeta1_Alpha-2', 'crossfreq_C10_Mbeta2_Alpha-2', 'crossfreq_C10_Mbeta3_Alpha-2',
-        'crossfreq_C10_Mgamma_Alpha-2','crossfreq_C1_Mdelta_Beta1', 'crossfreq_C1_Mtheta_Beta1', 
-        'crossfreq_C1_Malpha-1_Beta1', 'crossfreq_C1_Malpha-2_Beta1', 'crossfreq_C1_Mbeta1_Beta1', 
-        'crossfreq_C1_Mbeta2_Beta1', 'crossfreq_C1_Mbeta3_Beta1', 'crossfreq_C1_Mgamma_Beta1', 
-        'crossfreq_C2_Mdelta_Beta1', 'crossfreq_C2_Mtheta_Beta1','crossfreq_C2_Malpha-1_Beta1', 
-        'crossfreq_C2_Malpha-2_Beta1', 'crossfreq_C2_Mbeta1_Beta1', 'crossfreq_C2_Mbeta2_Beta1', 
-        'crossfreq_C2_Mbeta3_Beta1', 'crossfreq_C2_Mgamma_Beta1', 'crossfreq_C3_Mdelta_Beta1', 
-        'crossfreq_C3_Mtheta_Beta1', 'crossfreq_C3_Malpha-1_Beta1', 'crossfreq_C3_Malpha-2_Beta1',
-        'crossfreq_C3_Mbeta1_Beta1', 'crossfreq_C3_Mbeta2_Beta1', 'crossfreq_C3_Mbeta3_Beta1', 
-        'crossfreq_C3_Mgamma_Beta1', 'crossfreq_C4_Mdelta_Beta1', 'crossfreq_C4_Mtheta_Beta1', 
-        'crossfreq_C4_Malpha-1_Beta1', 'crossfreq_C4_Malpha-2_Beta1', 'crossfreq_C4_Mbeta1_Beta1', 
-        'crossfreq_C4_Mbeta2_Beta1','crossfreq_C4_Mbeta3_Beta1', 'crossfreq_C4_Mgamma_Beta1', 
-        'crossfreq_C5_Mdelta_Beta1', 'crossfreq_C5_Mtheta_Beta1', 'crossfreq_C5_Malpha-1_Beta1', 
-        'crossfreq_C5_Malpha-2_Beta1', 'crossfreq_C5_Mbeta1_Beta1', 'crossfreq_C5_Mbeta2_Beta1', 
-        'crossfreq_C5_Mbeta3_Beta1', 'crossfreq_C5_Mgamma_Beta1','crossfreq_C6_Mdelta_Beta1', 
-        'crossfreq_C6_Mtheta_Beta1', 'crossfreq_C6_Malpha-1_Beta1', 'crossfreq_C6_Malpha-2_Beta1', 
-        'crossfreq_C6_Mbeta1_Beta1', 'crossfreq_C6_Mbeta2_Beta1', 'crossfreq_C6_Mbeta3_Beta1', 
-        'crossfreq_C6_Mgamma_Beta1', 'crossfreq_C7_Mdelta_Beta1', 'crossfreq_C7_Mtheta_Beta1',
-        'crossfreq_C7_Malpha-1_Beta1', 'crossfreq_C7_Malpha-2_Beta1', 'crossfreq_C7_Mbeta1_Beta1',
-        'crossfreq_C7_Mbeta2_Beta1', 'crossfreq_C7_Mbeta3_Beta1', 'crossfreq_C7_Mgamma_Beta1', 
-        'crossfreq_C8_Mdelta_Beta1', 'crossfreq_C8_Mtheta_Beta1', 'crossfreq_C8_Malpha-1_Beta1', 
-        'crossfreq_C8_Malpha-2_Beta1','crossfreq_C8_Mbeta1_Beta1', 'crossfreq_C8_Mbeta2_Beta1', 
-        'crossfreq_C8_Mbeta3_Beta1', 'crossfreq_C8_Mgamma_Beta1', 'crossfreq_C9_Mdelta_Beta1', 
-        'crossfreq_C9_Mtheta_Beta1', 'crossfreq_C9_Malpha-1_Beta1', 'crossfreq_C9_Malpha-2_Beta1', 
-        'crossfreq_C9_Mbeta1_Beta1', 'crossfreq_C9_Mbeta2_Beta1','crossfreq_C9_Mbeta3_Beta1',
-        'crossfreq_C9_Mgamma_Beta1', 'crossfreq_C10_Mdelta_Beta1', 'crossfreq_C10_Mtheta_Beta1', 
-        'crossfreq_C10_Malpha-1_Beta1', 'crossfreq_C10_Malpha-2_Beta1', 'crossfreq_C10_Mbeta1_Beta1', 
-        'crossfreq_C10_Mbeta2_Beta1', 'crossfreq_C10_Mbeta3_Beta1', 'crossfreq_C10_Mgamma_Beta1',
-        'crossfreq_C1_Mdelta_Beta2', 'crossfreq_C1_Mtheta_Beta2', 'crossfreq_C1_Malpha-1_Beta2', 
-        'crossfreq_C1_Malpha-2_Beta2', 'crossfreq_C1_Mbeta1_Beta2', 'crossfreq_C1_Mbeta2_Beta2',
-        'crossfreq_C1_Mbeta3_Beta2', 'crossfreq_C1_Mgamma_Beta2', 'crossfreq_C2_Mdelta_Beta2', 
-        'crossfreq_C2_Mtheta_Beta2','crossfreq_C2_Malpha-1_Beta2', 'crossfreq_C2_Malpha-2_Beta2',
-        'crossfreq_C2_Mbeta1_Beta2', 'crossfreq_C2_Mbeta2_Beta2', 'crossfreq_C2_Mbeta3_Beta2', 
-        'crossfreq_C2_Mgamma_Beta2', 'crossfreq_C3_Mdelta_Beta2', 'crossfreq_C3_Mtheta_Beta2',
-        'crossfreq_C3_Malpha-1_Beta2', 'crossfreq_C3_Malpha-2_Beta2','crossfreq_C3_Mbeta1_Beta2', 
-        'crossfreq_C3_Mbeta2_Beta2', 'crossfreq_C3_Mbeta3_Beta2', 'crossfreq_C3_Mgamma_Beta2',
-        'crossfreq_C4_Mdelta_Beta2', 'crossfreq_C4_Mtheta_Beta2', 'crossfreq_C4_Malpha-1_Beta2', 
-        'crossfreq_C4_Malpha-2_Beta2', 'crossfreq_C4_Mbeta1_Beta2', 'crossfreq_C4_Mbeta2_Beta2',
-        'crossfreq_C4_Mbeta3_Beta2', 'crossfreq_C4_Mgamma_Beta2', 'crossfreq_C5_Mdelta_Beta2', 
-        'crossfreq_C5_Mtheta_Beta2', 'crossfreq_C5_Malpha-1_Beta2', 'crossfreq_C5_Malpha-2_Beta2', 
-        'crossfreq_C5_Mbeta1_Beta2', 'crossfreq_C5_Mbeta2_Beta2', 'crossfreq_C5_Mbeta3_Beta2', 
-        'crossfreq_C5_Mgamma_Beta2','crossfreq_C6_Mdelta_Beta2', 'crossfreq_C6_Mtheta_Beta2',
-        'crossfreq_C6_Malpha-1_Beta2', 'crossfreq_C6_Malpha-2_Beta2', 'crossfreq_C6_Mbeta1_Beta2', 
-        'crossfreq_C6_Mbeta2_Beta2', 'crossfreq_C6_Mbeta3_Beta2', 'crossfreq_C6_Mgamma_Beta2', 
-        'crossfreq_C7_Mdelta_Beta2', 'crossfreq_C7_Mtheta_Beta2','crossfreq_C7_Malpha-1_Beta2', 
-        'crossfreq_C7_Malpha-2_Beta2', 'crossfreq_C7_Mbeta1_Beta2', 'crossfreq_C7_Mbeta2_Beta2',
-        'crossfreq_C7_Mbeta3_Beta2', 'crossfreq_C7_Mgamma_Beta2', 'crossfreq_C8_Mdelta_Beta2',
-        'crossfreq_C8_Mtheta_Beta2', 'crossfreq_C8_Malpha-1_Beta2', 'crossfreq_C8_Malpha-2_Beta2',
-        'crossfreq_C8_Mbeta1_Beta2', 'crossfreq_C8_Mbeta2_Beta2', 'crossfreq_C8_Mbeta3_Beta2', 
-        'crossfreq_C8_Mgamma_Beta2', 'crossfreq_C9_Mdelta_Beta2', 'crossfreq_C9_Mtheta_Beta2', 
-        'crossfreq_C9_Malpha-1_Beta2', 'crossfreq_C9_Malpha-2_Beta2', 'crossfreq_C9_Mbeta1_Beta2',
-        'crossfreq_C9_Mbeta2_Beta2','crossfreq_C9_Mbeta3_Beta2', 'crossfreq_C9_Mgamma_Beta2', 
-        'crossfreq_C10_Mdelta_Beta2', 'crossfreq_C10_Mtheta_Beta2', 'crossfreq_C10_Malpha-1_Beta2',
-        'crossfreq_C10_Malpha-2_Beta2', 'crossfreq_C10_Mbeta1_Beta2', 'crossfreq_C10_Mbeta2_Beta2', 
-        'crossfreq_C10_Mbeta3_Beta2', 'crossfreq_C10_Mgamma_Beta2','crossfreq_C1_Mdelta_Beta3', 
-        'crossfreq_C1_Mtheta_Beta3', 'crossfreq_C1_Malpha-1_Beta3', 'crossfreq_C1_Malpha-2_Beta3', 
-        'crossfreq_C1_Mbeta1_Beta3', 'crossfreq_C1_Mbeta2_Beta3', 'crossfreq_C1_Mbeta3_Beta3', 
-        'crossfreq_C1_Mgamma_Beta3', 'crossfreq_C2_Mdelta_Beta3', 'crossfreq_C2_Mtheta_Beta3',
-        'crossfreq_C2_Malpha-1_Beta3', 'crossfreq_C2_Malpha-2_Beta3', 'crossfreq_C2_Mbeta1_Beta3',
-        'crossfreq_C2_Mbeta2_Beta3', 'crossfreq_C2_Mbeta3_Beta3', 'crossfreq_C2_Mgamma_Beta3', 
-        'crossfreq_C3_Mdelta_Beta3', 'crossfreq_C3_Mtheta_Beta3', 'crossfreq_C3_Malpha-1_Beta3', 
-        'crossfreq_C3_Malpha-2_Beta3','crossfreq_C3_Mbeta1_Beta3', 'crossfreq_C3_Mbeta2_Beta3', 
-        'crossfreq_C3_Mbeta3_Beta3', 'crossfreq_C3_Mgamma_Beta3', 'crossfreq_C4_Mdelta_Beta3', 
-        'crossfreq_C4_Mtheta_Beta3', 'crossfreq_C4_Malpha-1_Beta3', 'crossfreq_C4_Malpha-2_Beta3',
-        'crossfreq_C4_Mbeta1_Beta3', 'crossfreq_C4_Mbeta2_Beta3','crossfreq_C4_Mbeta3_Beta3', 
-        'crossfreq_C4_Mgamma_Beta3', 'crossfreq_C5_Mdelta_Beta3', 'crossfreq_C5_Mtheta_Beta3',
-        'crossfreq_C5_Malpha-1_Beta3', 'crossfreq_C5_Malpha-2_Beta3', 'crossfreq_C5_Mbeta1_Beta3', 
-        'crossfreq_C5_Mbeta2_Beta3', 'crossfreq_C5_Mbeta3_Beta3', 'crossfreq_C5_Mgamma_Beta3',
-        'crossfreq_C6_Mdelta_Beta3', 'crossfreq_C6_Mtheta_Beta3', 'crossfreq_C6_Malpha-1_Beta3',
-        'crossfreq_C6_Malpha-2_Beta3', 'crossfreq_C6_Mbeta1_Beta3', 'crossfreq_C6_Mbeta2_Beta3',
-        'crossfreq_C6_Mbeta3_Beta3', 'crossfreq_C6_Mgamma_Beta3', 'crossfreq_C7_Mdelta_Beta3',
-        'crossfreq_C7_Mtheta_Beta3','crossfreq_C7_Malpha-1_Beta3', 'crossfreq_C7_Malpha-2_Beta3',
-        'crossfreq_C7_Mbeta1_Beta3', 'crossfreq_C7_Mbeta2_Beta3', 'crossfreq_C7_Mbeta3_Beta3', 
-        'crossfreq_C7_Mgamma_Beta3', 'crossfreq_C8_Mdelta_Beta3', 'crossfreq_C8_Mtheta_Beta3', 
-        'crossfreq_C8_Malpha-1_Beta3', 'crossfreq_C8_Malpha-2_Beta3','crossfreq_C8_Mbeta1_Beta3',
-        'crossfreq_C8_Mbeta2_Beta3', 'crossfreq_C8_Mbeta3_Beta3', 'crossfreq_C8_Mgamma_Beta3', 
-        'crossfreq_C9_Mdelta_Beta3', 'crossfreq_C9_Mtheta_Beta3', 'crossfreq_C9_Malpha-1_Beta3',
-        'crossfreq_C9_Malpha-2_Beta3', 'crossfreq_C9_Mbeta1_Beta3', 'crossfreq_C9_Mbeta2_Beta3',
-        'crossfreq_C9_Mbeta3_Beta3', 'crossfreq_C9_Mgamma_Beta3', 'crossfreq_C10_Mdelta_Beta3',
-        'crossfreq_C10_Mtheta_Beta3', 'crossfreq_C10_Malpha-1_Beta3', 'crossfreq_C10_Malpha-2_Beta3',
-        'crossfreq_C10_Mbeta1_Beta3', 'crossfreq_C10_Mbeta2_Beta3', 'crossfreq_C10_Mbeta3_Beta3', 
-        'crossfreq_C10_Mgamma_Beta3','crossfreq_C1_Mdelta_Gamma', 'crossfreq_C1_Mtheta_Gamma', 
-        'crossfreq_C1_Malpha-1_Gamma', 'crossfreq_C1_Malpha-2_Gamma', 'crossfreq_C1_Mbeta1_Gamma',
-        'crossfreq_C1_Mbeta2_Gamma', 'crossfreq_C1_Mbeta3_Gamma', 'crossfreq_C1_Mgamma_Gamma',
-        'crossfreq_C2_Mdelta_Gamma', 'crossfreq_C2_Mtheta_Gamma','crossfreq_C2_Malpha-1_Gamma',
-        'crossfreq_C2_Malpha-2_Gamma', 'crossfreq_C2_Mbeta1_Gamma', 'crossfreq_C2_Mbeta2_Gamma',
-        'crossfreq_C2_Mbeta3_Gamma', 'crossfreq_C2_Mgamma_Gamma', 'crossfreq_C3_Mdelta_Gamma',
-        'crossfreq_C3_Mtheta_Gamma', 'crossfreq_C3_Malpha-1_Gamma', 'crossfreq_C3_Malpha-2_Gamma',
-        'crossfreq_C3_Mbeta1_Gamma', 'crossfreq_C3_Mbeta2_Gamma', 'crossfreq_C3_Mbeta3_Gamma',
-        'crossfreq_C3_Mgamma_Gamma', 'crossfreq_C4_Mdelta_Gamma', 'crossfreq_C4_Mtheta_Gamma',
-        'crossfreq_C4_Malpha-1_Gamma', 'crossfreq_C4_Malpha-2_Gamma', 'crossfreq_C4_Mbeta1_Gamma',
-        'crossfreq_C4_Mbeta2_Gamma','crossfreq_C4_Mbeta3_Gamma', 'crossfreq_C4_Mgamma_Gamma',
-        'crossfreq_C5_Mdelta_Gamma', 'crossfreq_C5_Mtheta_Gamma', 'crossfreq_C5_Malpha-1_Gamma', 
-        'crossfreq_C5_Malpha-2_Gamma', 'crossfreq_C5_Mbeta1_Gamma', 'crossfreq_C5_Mbeta2_Gamma', 
-        'crossfreq_C5_Mbeta3_Gamma', 'crossfreq_C5_Mgamma_Gamma','crossfreq_C6_Mdelta_Gamma', 
-        'crossfreq_C6_Mtheta_Gamma', 'crossfreq_C6_Malpha-1_Gamma', 'crossfreq_C6_Malpha-2_Gamma',
-        'crossfreq_C6_Mbeta1_Gamma', 'crossfreq_C6_Mbeta2_Gamma', 'crossfreq_C6_Mbeta3_Gamma',
-        'crossfreq_C6_Mgamma_Gamma', 'crossfreq_C7_Mdelta_Gamma', 'crossfreq_C7_Mtheta_Gamma', 
-        'crossfreq_C7_Malpha-1_Gamma', 'crossfreq_C7_Malpha-2_Gamma', 'crossfreq_C7_Mbeta1_Gamma', 
-        'crossfreq_C7_Mbeta2_Gamma', 'crossfreq_C7_Mbeta3_Gamma', 'crossfreq_C7_Mgamma_Gamma', 
-        'crossfreq_C8_Mdelta_Gamma', 'crossfreq_C8_Mtheta_Gamma', 'crossfreq_C8_Malpha-1_Gamma', 
-        'crossfreq_C8_Malpha-2_Gamma','crossfreq_C8_Mbeta1_Gamma', 'crossfreq_C8_Mbeta2_Gamma', 
-        'crossfreq_C8_Mbeta3_Gamma', 'crossfreq_C8_Mgamma_Gamma', 'crossfreq_C9_Mdelta_Gamma', 
-        'crossfreq_C9_Mtheta_Gamma', 'crossfreq_C9_Malpha-1_Gamma', 'crossfreq_C9_Malpha-2_Gamma',
-        'crossfreq_C9_Mbeta1_Gamma', 'crossfreq_C9_Mbeta2_Gamma', 'crossfreq_C9_Mbeta3_Gamma', 
-        'crossfreq_C9_Mgamma_Gamma', 'crossfreq_C10_Mdelta_Gamma', 'crossfreq_C10_Mtheta_Gamma', 
-        'crossfreq_C10_Malpha-1_Gamma', 'crossfreq_C10_Malpha-2_Gamma', 'crossfreq_C10_Mbeta1_Gamma',
-        'crossfreq_C10_Mbeta2_Gamma', 'crossfreq_C10_Mbeta3_Gamma', 'crossfreq_C10_Mgamma_Gamma']
 
 '''manejo de pandas: https://joserzapata.github.io/courses/python-ciencia-datos/pandas/'''
 

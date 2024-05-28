@@ -3,11 +3,11 @@ Componentes de interés
     C14, C15, C18, C20, C22, C23, C24, C25 
 '''
 #Armonizar y luego juntar
-from neuroHarmonize import harmonizationLearn
+import os
+
 import pandas as pd
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
+from neuroHarmonize import harmonizationLearn
 from funtionsHarmonize import mapsDrop
 from funtionsHarmonize import negativeTest
 from funtionsHarmonize import select
@@ -21,11 +21,11 @@ from funtionsHarmonize import graf, graf_DB, remove_columns_with_c10
 from funtionsHarmonize import save_complete #selGamma
 import tkinter as tk
 from tkinter.filedialog import askdirectory
-import os
 
-#m = ['power'] 
+
+m = ['power'] 
 #b = ['Gamma']
-m = ['power','sl','cohfreq','entropy','crossfreq'] 
+#m = ['power','sl','cohfreq','entropy','crossfreq'] 
 # = ['crossfreq'] 
 b = ['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma'] 
 bm = ['Mdelta','Mtheta','Malpha-1','Malpha-2','Mbeta1','Mbeta2','Mbeta3','Mgamma']  
@@ -47,18 +47,29 @@ s=['ic']
 #s=['roi','ic']
 #path_feather = askdirectory()
 #path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
+<<<<<<< HEAD
 path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_Paper\Datosparaorganizardataframes/' 
 #path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_Correcciones_Evaluador\Datosparaorganizardataframes\11092023'
 
+=======
+#path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_54x10\Datosparaorganizardataframes/' 
+path_feather=r'C:\Users\Luisa\OneDrive - Universidad de Antioquia\Maestria_Luisa\data\Data_complete\ic'
+>>>>>>> a64d87c90398dac07193f291f87f9db149365ac0
 print("user chose", path_feather, "for read feather")
 for space in s:
     for allm in m:  
     #    for allb in b:  
         #Tab
+<<<<<<< HEAD
         data_in = pd.read_feather(path_feather+r'\Data_complete_'+space+'.feather')
         data_in = data_in.drop_duplicates(subset='participant_id') #Solo aplica para la matriz 54x10
         data = remove_columns_with_c10(data_in) #Solo aplica para la matriz 54x10
         #data = MatchIt_R(data_in,'G1','Control')
+=======
+        #data_in = pd.read_feather(path_feather+r'\Data_complete_'+space+'.feather')
+        data_in = pd.read_feather(path_feather+r'\Data_complete_openBCI_False_components.feather')
+        data = MatchIt_R(data_in,'G1','Control')
+>>>>>>> a64d87c90398dac07193f291f87f9db149365ac0
         dd = data.copy()
         data = mapsDrop(data)
         dataAll,covarsAll = covars(data)

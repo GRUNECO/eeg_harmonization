@@ -251,7 +251,7 @@ Residentes_T3={
 
 BIOMARCADORES_CE_54X10 = {
     'name':'BIOMARCADORES',
-    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASEDEDATOS98\BIOMARCADORES',
+    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASEDEDATOS147\BIOMARCADORES',
     'layout':{'extension':'.vhdr', 'task':'CE','suffix':'eeg', 'return_type':'filename', 'session':'V0'},
     'args':{'line_freqs':[60]},
     'group_regex':'(.+).{3}',
@@ -263,7 +263,7 @@ BIOMARCADORES_CE_54X10 = {
 
 CHBMP_54X10 = {
     'name':'CHBMP',
-    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASEDEDATOS98\CHBMP',
+    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASEDEDATOS147\CHBMP',
     'layout':{'extension':'.edf', 'task':'protmap','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60],},
     'group_regex':None,
@@ -274,7 +274,7 @@ CHBMP_54X10 = {
 
 SRM_54X10 = {
     'name':'SRM',
-    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASEDEDATOS98\SRM',
+    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASEDEDATOS147\SRM',
     'layout':{'extension':'.edf', 'task':'resteyesc','suffix':'eeg', 'return_type':'filename', 'session':'t1'},
     'args':{'line_freqs':[50]},
     'group_regex':None,
@@ -285,7 +285,7 @@ SRM_54X10 = {
 
 DUQUE_54X10 = {
     'name':'DUQUE',
-    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASEDEDATOS98\DUQUE',
+    'input_path':r'E:\Academico\Universidad\Posgrado\Tesis\Datos\BASEDEDATOS147\DUQUE',
     'layout':{'extension':'.vhdr', 'task':'resting','suffix':'eeg', 'return_type':'filename'},
     'args':{'line_freqs':[60]},
     'group_regex':None,

@@ -39,8 +39,9 @@ b = ['Delta','Theta','Alpha-1','Alpha-2','Beta1','Beta2','Beta3','Gamma']
 
 row=0
 s=['roi','ic']
-path_feather = askdirectory()
+#path_feather = askdirectory()
 #path_feather = r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
+path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_Correcciones_Evaluador\Datosparaorganizardataframes\11092023'
 for space in s:
     for allm in m:  
     #    for allb in b:  

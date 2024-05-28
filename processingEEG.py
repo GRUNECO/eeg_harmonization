@@ -47,8 +47,8 @@ import time
 #joblib para paralelizar flujos 
 THE_DATASETS=[
     CHBMP_54X10,
-    SRM_54X10,
-    DUQUE_54X10,
+    SRM_54X10
+    ,DUQUE_54X10,
     BIOMARCADORES_CE_54X10
     ]
 

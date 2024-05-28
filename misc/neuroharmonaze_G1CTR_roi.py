@@ -43,22 +43,20 @@ tk.Tk().withdraw() # part of the import if you are not using other tkinter funct
 #df_stats_trans = pd.DataFrame(columns=['Std_sovaharmony','Var_sovaharmony','Mean_sovaharmony','Min_sovaharmony','Max_sovaharmony','Values_close_to_zero_sovaharmony','Negative_sovaharmony','Var_neuroHarmonize','Std_neuroHarmonize','Mean_neuroHarmonize','Min_neuroHarmonize','Max_neuroHarmonize','Values_close_to_zero_neuroHarmonize','Negative__neuroHarmonize'])
 
 row=0
-s=['ic']
+s=['roi']
 #s=['roi','ic']
 #path_feather = askdirectory()
-#path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/' 
-path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_Paper\Datosparaorganizardataframes/' 
-#path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_Correcciones_Evaluador\Datosparaorganizardataframes\11092023'
-
+path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_BD\Datosparaorganizardataframes/complete' 
+path_feather_save=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_Correcciones_Evaluador/Datosparaorganizardataframes/' 
+#path_feather=r'C:\Users\veroh\OneDrive - Universidad de Antioquia\Articulo análisis longitudinal\Resultados_Armonizacion_54x10\Datosparaorganizardataframes/' 
 print("user chose", path_feather, "for read feather")
 for space in s:
     for allm in m:  
     #    for allb in b:  
         #Tab
         data_in = pd.read_feather(path_feather+r'\Data_complete_'+space+'.feather')
-        data_in = data_in.drop_duplicates(subset='participant_id') #Solo aplica para la matriz 54x10
-        data = remove_columns_with_c10(data_in) #Solo aplica para la matriz 54x10
-        #data = MatchIt_R(data_in,'G1','Control')
+        data_in = remove_columns_with_c10(data_in) #Solo aplica para la matriz 54x10
+        data = MatchIt_R(data_in,'G1','Control')
         dd = data.copy()
         data = mapsDrop(data)
         dataAll,covarsAll = covars(data)
@@ -68,7 +66,7 @@ for space in s:
 
 
         ######### eeg_harmonization ##########
-        dataAll = dataAll.drop(columns=['visit_x','visit_y']) #Se agrega durante cambio a 54x10
+        ##dataAll = dataAll.drop(columns=['visit_x','visit_y']) #Se agrega durante cambio a 54x10
         noGene,Gene = renameModel(dataAll)
         B,D,S,C = renameDatabases(dataAll)
         noGene.drop(['database'],axis=1,inplace=True)
@@ -97,7 +95,7 @@ for space in s:
 
         data_sovaeeg = organizarDataFrame(sovaeeg,database_database,allm,dd,space)
         new_sovaname = 'Data_complete_'+space+'_sovaharmony_G1_'+allm
-        path_save_feather = path_feather + fr'\sovaharmony\complete\{space}\G1'
+        path_save_feather = path_feather_save + fr'\sovaharmony\complete\{space}\G1'
         os.makedirs(path_save_feather,exist_ok=True)
         save_complete(new_sovaname,data_sovaeeg,dd,path_save_feather,'Control','G1')
         
@@ -117,7 +115,7 @@ for space in s:
         #save neuroHarmonize
         datacol = organizarDataFrame(new_dataAll,database_database,allm,dd,space) 
         new_name = 'Data_complete_'+space+'_neuroHarmonize_G1_'+allm
-        path_save_feather = path_feather + fr'\neuroHarmonize\complete\{space}\G1'
+        path_save_feather = path_feather_save + fr'\neuroHarmonize\complete\{space}\G1'
         os.makedirs(path_save_feather,exist_ok=True)
         save_complete(new_name,datacol,dd,path_save_feather,'Control','G1')
 
@@ -125,8 +123,8 @@ for space in s:
         #noGene_h,Gene_h = renameModel(new_All)
         noGene_ht,Gene_ht = renameModel(new_dataAll)
         BH,DH,SH,CH = renameDatabases(new_dataAll)
-        graf(path_feather,columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy_data_adjdataAll,title,space)
-        graf_DB(path_feather,columnasAll,B,D,S,C,BH,DH,SH,CH,title,space)
+        graf(path_feather_save,columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy_data_adjdataAll,title,space)
+        graf_DB(path_feather_save,columnasAll,B,D,S,C,BH,DH,SH,CH,title,space)
 
         #Tab
         #df_stats.to_excel(writer, startrow=row)

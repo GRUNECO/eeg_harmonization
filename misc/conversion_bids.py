@@ -6,8 +6,8 @@ from sovabids.convert import convert_them # Do the conversion
 #from sovabids.datasets import lemon_prepare # Download the dataset
 from sovabids.settings import REPO_PATH
 
-sourcePath=r'C:\Users\Luisa\Documents\prueba_bids_2'
-bidsPath=r'C:\Users\Luisa\Documents\bids_data_portables'
+sourcePath=r'C:\Users\Luisa\Documents\EEG_PORTABLES'
+bidsPath=r'C:\Users\Luisa\Documents\BIDS_PORTABLES_CORREGIDO'
 rulePath=r'D:\flujo_portables\eeg_harmonization\misc\reglas_bids\reglasPortables.yml'
 source_path = os.path.abspath(sourcePath) # For the input data we will convert
 bids_path= os.path.abspath(bidsPath) # The output directory that will have the converted data

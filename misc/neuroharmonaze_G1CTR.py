@@ -17,7 +17,7 @@ from funtionsHarmonize import extract_components_interes
 from funtionsHarmonize import rename_cols
 from paired_tests import MatchIt_R
 from funtionsHarmonize import organizarDataFrame
-from funtionsHarmonize import graf, graf_DB
+from funtionsHarmonize import graf, graf_DB, remove_columns_with_c10
 from funtionsHarmonize import save_complete #selGamma
 import tkinter as tk
 from tkinter.filedialog import askdirectory
@@ -84,7 +84,7 @@ for space in s:
             #dataAll = delcolumn(data,'Gamma',bm='Mgamma')
             #dataAll = delcolumn(data,'crossfreq',em=None)
             #components=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25' ]
-            components=['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+            components=['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
             dataAll=extract_components_interes(dataAll,components)
             columnasAll = dataAll.columns
         else:
@@ -123,8 +123,8 @@ for space in s:
         #noGene_h,Gene_h = renameModel(new_All)
         noGene_ht,Gene_ht = renameModel(new_dataAll)
         BH,DH,SH,CH = renameDatabases(new_dataAll)
-        #graf(path_feather,columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy_data_adjdataAll,title,space)
-        #graf_DB(path_feather,columnasAll,B,D,S,C,BH,DH,SH,CH,title,space)
+        graf(path_feather,columnasAll,noGene,Gene,noGene_ht,Gene_ht,nnoGene,nGene,nmy_dataAll,nmy_data_adjdataAll,title,space)
+        graf_DB(path_feather,columnasAll,B,D,S,C,BH,DH,SH,CH,title,space)
 
         #Tab
         #df_stats.to_excel(writer, startrow=row)

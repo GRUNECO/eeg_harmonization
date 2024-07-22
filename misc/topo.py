@@ -25,7 +25,7 @@ plt.show()
 #%% Uno por uno
 fig3 = us.single_topomap(A[:,comp],ch_names,show=True,label='1',show_names=False)
 plt.show()
-label = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+label = ['1', '2', '3', '4', '5', '6', '7', '8', '9','10']
 #%% Todas las componentes
 figMany = us.topomap(A,W,ch_names,cmap='seismic',show=False,ncols=5,labels=label)
 plt.show()

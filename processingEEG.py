@@ -11,10 +11,11 @@ from sovaharmony.pipeline import pipeline
 #     ]
 
 THE_DATASETS=[
-        #DUQUE_Server,
-        BIOMARCADORES_CE_server,
-        #BIOMARCADORES_OE_server
-]
+    CHBMP_54X10,
+    SRM_54X10
+    ,DUQUE_54X10,
+    BIOMARCADORES_CE_54X10
+    ]
 
 spatial=[None]##['58x25']#['openBCI']
 metrics={'power':{'fit_params':False,'norm':'False','demographic':False},

@@ -7,6 +7,19 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import os
 
+def remove_columns_with_c10(df):
+    '''
+    Para la matriz ICA 54x10 no no se debe considerar el C10 porque no es neuronal
+    pero en las etapas previas no se considero, para evitar que se armonize o 
+    entre al modelo de ML se va a eliminar en este codigo de neuroHarmonze
+    utilizando esta funcion que busca las columnas que contienen esta componente
+    y las elimina del dataframe.
+    '''
+    columns_to_drop = [col for col in df.columns if 'C10' in col]
+    df = df.drop(columns=columns_to_drop)
+    return df
+
+
 def covars(data):
     """
     Extract and store selected covariates from the input DataFrame.
@@ -298,7 +311,7 @@ def add_Gamma(new_All,space):
         for roi in s:
             new_All['power_'+roi+'_Gamma']=1-(new_All['power_'+roi+'_Delta']+new_All['power_'+roi+'_Theta']+new_All['power_'+roi+'_Alpha-1']+new_All['power_'+roi+'_Alpha-2']+new_All['power_'+roi+'_Beta1']+new_All['power_'+roi+'_Beta2']+new_All['power_'+roi+'_Beta3'])
     elif space == 'ic':
-        s = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10']
+        s = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
         #s = ['C14','C15','C18','C20','C22','C23','C24','C25'] #ic
         for ic in s:
             new_All['power_'+ic+'_Gamma']=1-(new_All['power_'+ic+'_Delta']+new_All['power_'+ic+'_Theta']+new_All['power_'+ic+'_Alpha-1']+new_All['power_'+ic+'_Alpha-2']+new_All['power_'+ic+'_Beta1']+new_All['power_'+ic+'_Beta2']+new_All['power_'+ic+'_Beta3'])
@@ -310,6 +323,9 @@ def return_col(data1,data2,fist=True):
     if fist == True: data2: data2: 695 rows , 396 columns  : database {'BIOMARCADORES': 0.0, 'CHBMP': 1.0, 'DUQUE': 2.0, 'SRM': 3.0} : group {'Control': 0.0, 'DCL': 1.0, 'DTA': 2.0, 'G1': 3.0, 'G2': 4.0}
     data2: 340 rows , 381 columns  : database [0,1] : group ['Control', 'G1']
     '''
+    ### REVISAR
+    data1 = data1.reset_index(drop=True)
+    data2 = data2.reset_index(drop=True)
     if fist == True:
         databases = {label:float(idx) for idx,label in enumerate(np.unique(data2['database']))}
         print(databases)

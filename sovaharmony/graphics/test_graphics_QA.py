@@ -76,7 +76,6 @@ fig_wica=graphics(data_wica,
 fig_wica.savefig(path+'/QA/{database}/QA_{database}_WICA.png'.format(database=database))
 
 data_reject=concat_df(save_path+'/*reject.feather')
-import numpy as np
 list_metrics=list(data_reject.Metric.unique())
 for element in list_metrics:
     if element[0]=='i':

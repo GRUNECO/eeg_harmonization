@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LogisticRegression
+import matplotlib.pyplot as plt
 
 # Función para realizar el emparejamiento por puntaje de propensión
 def propensity_matching(X, treat):
@@ -53,6 +54,7 @@ def match_and_optimize(data, group1='G1', group2='Control',ratio=79):
     
     # Separar los puntajes de propensión por grupo
     g1_prop_scores, g2_prop_scores = separate_propensity_scores(data, prop_scores, group1, group2)
+    plot_propensity_scores(g1_prop_scores, g2_prop_scores)
     
     # Determinar el objetivo de cuántos sujetos de G1 deben permanecer
     target_g1_count = ratio
@@ -75,8 +77,45 @@ def match_and_optimize(data, group1='G1', group2='Control',ratio=79):
     
     return data_MatchIt
 
-# Ejemplo de uso (asegúrate de tener tu DataFrame 'data' preparado)
-# data_MatchIt = match_and_optimize(data, group1='G1', group2='Control')
+def plot_propensity_scores(g1_prop_scores, g2_prop_scores):
+    plt.figure(figsize=(10, 6))
+    
+    # Configurar el tamaño de la letra
+    plt.rc('font', size=16)
+    
+    # Crear un DataFrame para la gráfica
+    data_treated = pd.DataFrame({'Propensity Score': g1_prop_scores, 'Group': 'ACr'})
+    data_untreated = pd.DataFrame({'Propensity Score': g2_prop_scores, 'Group': 'HC'})
+    
+    # Ajustar el rango de los bins para que sean iguales para ambos grupos
+    bins = np.linspace(min(np.concatenate([g1_prop_scores, g2_prop_scores])), 
+                       max(np.concatenate([g1_prop_scores, g2_prop_scores])), 30)
+    
+    # Histograma para los tratados
+    treated_hist, _ = np.histogram(g1_prop_scores, bins=bins)
+    untreated_hist, _ = np.histogram(g2_prop_scores, bins=bins)
+    
+    bin_centers = 0.5 * (bins[1:] + bins[:-1])
+    
+    bar_width = (bins[1] - bins[0]) * 0.9  # Ancho de las barras
+    
+    # Crear la gráfica de barras
+    plt.bar(bin_centers, treated_hist, width=bar_width, color='salmon', label='ACr')
+    plt.bar(bin_centers, -untreated_hist, width=bar_width, color='slateblue', label='HC')
+    
+    # Añadir una línea media en el eje y
+    plt.axhline(0, color='black', linewidth=0.8)
+    
+    # Añadir etiquetas y título
+    plt.xlabel('Propensity Score (%)')
+    plt.ylabel('Frequency')
+    plt.title('Common Support 2:1')
+    plt.legend(title='Group')
+    plt.grid(True)
+    
+    # Mostrar la gráfica
+    plt.show()
+
 
 
 

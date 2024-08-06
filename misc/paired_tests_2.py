@@ -66,6 +66,7 @@ def match_and_optimize(data, group1='G1', group2='Control',ratio=79):
     # Eliminar los sujetos de G1 con los puntajes de propensión más bajos para cumplir con el objetivo
     g1_data = data[data['group'] == 'G1']
     g1_data = remove_excess_g1(g1_data, g1_prop_scores, target_g1_count)
+    g2_data = remove_excess_g1(g2_data, g2_prop_scores, g1_data.shape[0]*2) # Se implemento en el ICA 58x25, pero no era necesario en el 54x10
     
     # Combinar g1_data con los datos de control
     #g2_data = data[data['group'] == group2].reset_index(drop=True)

@@ -19,14 +19,17 @@ from funtionsHarmonize import save_complete
 import tkinter as tk
 from tkinter.filedialog import askdirectory
 import os
-tk.Tk().withdraw() # part of the import if you are not using other tkinter functions
+tk.Tk().withdraw() 
 
 # ratio es la cantidad de valores de G1 esperado para cumplir con el matching 2:1, 5:1, 10:1, por defecto 2:1 para 2 controles por cada G1 teniendo 158 controles
+# Es decir para 2:1 es 158/2 = 79; para 5:1 es 158/5 = 31; para 10:1 es 158/10 = 15
 def neurosovaHarmonize(m,b,bm,s,ica,group1,group2,path_feather,path_input,path_graph,new_name,Gen=False,ratio=79):
     group1 = A
     group2 = B
     if ratio == 79:
-        str_ratio = '2to1'
+        str_ratio = '2to1' # With 158 HC
+    elif ratio == 166:
+        str_ratio = '2to1' # With 333 HC
     elif ratio == 31:
         str_ratio = '5to1'
     elif ratio == 15:
@@ -34,9 +37,9 @@ def neurosovaHarmonize(m,b,bm,s,ica,group1,group2,path_feather,path_input,path_g
     else:
         str_ratio = str(ratio)
     
-    os.makedirs(path_feather + fr'\sovaharmony\complete'+str_ratio,exist_ok=True)
+    #os.makedirs(path_feather + fr'\sovaharmony\complete'+str_ratio,exist_ok=True)
     os.makedirs(path_feather + fr'\neuroHarmonize\complete'+str_ratio,exist_ok=True)
-    os.makedirs(path_feather+fr'\sovaharmony\complete'+str_ratio,exist_ok=True)
+    #os.makedirs(path_feather+fr'\sovaharmony\complete'+str_ratio,exist_ok=True)
 
 
     for space in s:
@@ -59,7 +62,7 @@ def neurosovaHarmonize(m,b,bm,s,ica,group1,group2,path_feather,path_input,path_g
             else: 
                 dataAll,covarsAll = covars(data)
             #title,dataAll = select(dataAll,allm,OneBand=None,WithoutBand=None,Gamma=None,space=space)
-            title,dataAll = select(dataAll,allm,OneBand=None,WithoutBand=None,Gamma='power',space=space)
+            title,dataAll = select(dataAll,allm,OneBand=None,WithoutBand=None,Gamma='power',space=space,spatial_matrix=ica)
             
             ######### eeg_harmonization ##########
             def procesar_data(data):
@@ -125,9 +128,17 @@ def neurosovaHarmonize(m,b,bm,s,ica,group1,group2,path_feather,path_input,path_g
 
             #save neuroHarmonize
             datacol = organizarDataFrame(new_dataAll,database_database,allm,dd,space,ica) 
-            os.makedirs(path_feather + fr'\neuroHarmonize\complete'+str_ratio,exist_ok=True)
-            os.makedirs(path_feather+fr'\neuroHarmonize\complete'+str_ratio+rf'\{space}\{A}',exist_ok=True)
-            save_complete(new_name+'_'+space+rf'_neuroHarmonize_{A}_'+allm,datacol,dd,path_feather+fr'\neuroHarmonize\complete'+str_ratio+rf'\{space}\{A}',B,A)
+            #new_path = rf'C:\Users\veroh\OneDrive\Escritorio\Intento'
+            new_path = path
+            os.chmod(new_path, 0o777)
+            #os.makedirs(path_feather + fr'\neuroHarmonize\complete'+str_ratio,exist_ok=True)
+            os.makedirs(new_path + fr'\neuroHarmonize\complete'+str_ratio,exist_ok=True)
+            print("Directorio creado o ya existente")
+            #os.makedirs(path_feather+fr'\neuroHarmonize\complete'+str_ratio+rf'\{space}\{A}',exist_ok=True)
+            os.makedirs(new_path+fr'\neuroHarmonize\complete'+str_ratio+rf'\{space}\{A}',exist_ok=True)
+            print("Directorio creado o ya existente")
+            #save_complete(new_name+'_'+space+rf'_neuroHarmonize_{A}_'+allm,datacol,dd,path_feather+fr'\neuroHarmonize\complete'+str_ratio+rf'\{space}\{A}',B,A)
+            save_complete(new_name+'_'+space+rf'_neuroHarmonize_{A}_'+allm,datacol,dd,new_path+fr'\neuroHarmonize\complete'+str_ratio+rf'\{space}\{A}',B,A)
 
 
             #noGene_h,Gene_h = renameModel(new_All)
@@ -169,6 +180,7 @@ os.makedirs(path_feather,exist_ok=True)
 os.makedirs(path_graph,exist_ok=True)
 
 new_name = 'Data_complete'
-neurosovaHarmonize(m,b,bm,s,ica,A,B,path_feather,path_input,path_graph,new_name,Gen=False,ratio=79) #2:1
+neurosovaHarmonize(m,b,bm,s,ica,A,B,path_feather,path_input,path_graph,new_name,Gen=False,ratio=166) #2:1
+#neurosovaHarmonize(m,b,bm,s,ica,A,B,path_feather,path_input,path_graph,new_name,Gen=False,ratio=79) #2:1
 #neurosovaHarmonize(m,b,bm,s,ica,A,B,path_feather,path_input,path_graph,new_name,Gen=False,ratio=31) #5:1
 #neurosovaHarmonize(m,b,bm,s,ica,A,B,path_feather,path_input,path_graph,new_name,Gen=False, ratio=15) #10:1

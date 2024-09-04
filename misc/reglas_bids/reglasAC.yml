@@ -1,0 +1,23 @@
+
+
+dataset_description:                            # Configuring the dataset_description.json file
+  Name : AR Synapse                         # Name of the dataset, set up as a fixed string
+  Authors:                                      # Here I put the personnel involved in the acquisition of the dataset
+    - Synapse                          
+
+sidecar:                                        # Configuring the sidecar eeg file
+  PowerLineFrequency : 60                       # Noted from the visual inspection of the eeg spectrum
+  EEGReference : Mastoide derecha               # As mentioned in https://www.nature.com/articles/sdata2018308
+non-bids:                                       # Additional configuration not belonging specifically to any of the previous objects
+  eeg_extension : .set                          # Sets which extension to read as an eeg file
+  path_analysis:                                # Some bids properties can be inferred from the path of the source files
+    # For example here we extract from the path the "subject" child of the "entities" object
+    pattern : sub-(.+)\/eeg\/s(.+)_sub-(.+)_(.+)_eeg.set
+    fields :
+      - entities.subject
+      - ignore
+      - ignore
+      - entities.task
+
+
+

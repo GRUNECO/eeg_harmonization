@@ -52,26 +52,28 @@ def get_spatial_filter(name='62x19',portables=False,montage_select=None):
     ch_names = [x[0] for x in mat_contents['ch_names'][0,:].tolist()]
     sf = {'A':A,'W':W,'ch_names':ch_names,'name':name}
     if portables:
-        montage_select=montage_select
         sf['ch_names']=[x.replace(' ','') for x in sf['ch_names']]
         index_ch_portables=[sf['ch_names'].index(channels_reduction[montage_select][i]) for i in range(len(channels_reduction[montage_select]))]
         #comp_select=[0,1,2,3,4,6,7,9]
-        comp_select = [0,1,2,4,5,7,8,9]
+        # Descartar los componentes C1: 0 y C5: 4
+        comp_select_neurals={'C2':1, 'C3':2, 'C4':3, 'C6':5, 'C7':6, 'C8':7, 'C9':8, 'C10':9}
+        comp_select = list(comp_select_neurals.values())
         A=sf['A'][index_ch_portables,:] # Select channels, rows
         A=A[:,[comp_select]] # Select components, columns
         A=np.squeeze(A)
         W=sf['W'][:,index_ch_portables] # Select channels, rows
         W=W[[comp_select],:] # Select components, columns
         W=np.squeeze(W)
-        sf={'A':A,'W':W,'ch_names':channels_reduction[montage_select],'name':montage_select}
+        sf={'A':A,'W':W,'ch_names':channels_reduction[montage_select],'name':montage_select, 'labels':list(comp_select_neurals.keys())}
         return sf
     else:   
         return sf
 
-def plot_spatial_filter(name='62x19'):
+def plot_spatial_filter(name='62x19',portables=False,montage_select=None, info=None):
     #ch_names = [us.chn_name_mapping(x) for x in ch_names]
     montage_kind = 'standard_1020'
-    A,W,ch_names = get_spatial_filter(name)
-    #%% Todas las componentes
-    figMany = us.topomap(A,W,ch_names,cmap='seismic',show=False)
+    data= get_spatial_filter(name,portables=portables,montage_select=montage_select)
+    figMany = us.topomap(data['A'],data['W'],data['ch_names'],info =info,cmap='seismic',labels=data['labels'],show=True)
     plt.show()
+
+plot_spatial_filter(name='54x10',portables=True,montage_select='openBCI', info = None)

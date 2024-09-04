@@ -305,14 +305,18 @@ def to_save_df(new_data,df):
                 
     return df
 
-def add_Gamma(new_All,space):
+def add_Gamma(new_All,space,ica):
     if space == 'roi':
         s = ['F','C','T','PO']
         for roi in s:
             new_All['power_'+roi+'_Gamma']=1-(new_All['power_'+roi+'_Delta']+new_All['power_'+roi+'_Theta']+new_All['power_'+roi+'_Alpha-1']+new_All['power_'+roi+'_Alpha-2']+new_All['power_'+roi+'_Beta1']+new_All['power_'+roi+'_Beta2']+new_All['power_'+roi+'_Beta3'])
     elif space == 'ic':
-        s = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
-        #s = ['C14','C15','C18','C20','C22','C23','C24','C25'] #ic
+        if ica == '54x10':
+            s=['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
+        elif ica == '58x25':
+            s=['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25' ]
+        else:
+            print('Error ICA')
         for ic in s:
             new_All['power_'+ic+'_Gamma']=1-(new_All['power_'+ic+'_Delta']+new_All['power_'+ic+'_Theta']+new_All['power_'+ic+'_Alpha-1']+new_All['power_'+ic+'_Alpha-2']+new_All['power_'+ic+'_Beta1']+new_All['power_'+ic+'_Beta2']+new_All['power_'+ic+'_Beta3'])
     return new_All
@@ -506,6 +510,8 @@ def graf_DB(path,columnasAll,B,D,S,C,BH,DH,SH,CH,title,space):
 def save_complete(new_name,data,dd,path_feather,group1,group2):
     data_eeg_dataAll = data.reset_index(drop=True) 
     data_eeg_dataAll = rename_cols(data_eeg_dataAll,dd,group1,group2)
+    if not os.path.exists(path_feather):
+        os.makedirs(path_feather)
     data_eeg_dataAll.reset_index(drop=True).to_feather('{path}\{name}.feather'.format(path=path_feather,name=new_name))
 
 def G1G2(new_dataAll,dd=None,database_database=None,database=False):
@@ -522,11 +528,11 @@ def G1G2(new_dataAll,dd=None,database_database=None,database=False):
     datacol['database'] = datacol.database.replace(2,1)
     return datacol
 
-def organizarDataFrame(new_dataAll,database_database,allm,dd,space):
+def organizarDataFrame(new_dataAll,database_database,allm,dd,space,ica):
     new_dataAll['database'] = database_database
     new_dataAll = return_col(new_dataAll,dd,fist=False)
     if allm == 'power':
-        new_dataAll = add_Gamma(new_dataAll,space)
+        new_dataAll = add_Gamma(new_dataAll,space,ica)
     return new_dataAll
 
     

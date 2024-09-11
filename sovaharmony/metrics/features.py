@@ -133,7 +133,7 @@ def _get_psd(signal_epoch,bands):
     space_names = signal_epoch.info['ch_names']
     spaces,times,epochs = signal.shape
     output = {}
-    output['metadata'] = {'type':type,'kwargs':{'bands':bands}}
+    output['metadata'] = {'type':'psd','kwargs':{'bands':bands}}
     bands_list = list(bands.keys())
     values = np.empty((len(bands_list),spaces))
     freqs = np.empty((len(bands_list),spaces))
@@ -223,7 +223,8 @@ foo_map={
     'sl':_get_sl,
     'cohfreq':_get_coh,
     'crossfreq':_get_pme,
-    'entropy':_get_entropy
+    'entropy':_get_entropy,
+    'psd':_get_psd
 }
 def get_derivative(in_signal,feature,kwargs,spatial_filter=None,portables=False, montage_select=str):
     """

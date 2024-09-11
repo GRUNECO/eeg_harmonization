@@ -73,7 +73,31 @@ def plot_spatial_filter(name='62x19',portables=False,montage_select=None, info=N
     #ch_names = [us.chn_name_mapping(x) for x in ch_names]
     montage_kind = 'standard_1020'
     data= get_spatial_filter(name,portables=portables,montage_select=montage_select)
-    figMany = us.topomap(data['A'],data['W'],data['ch_names'],info =info,cmap='seismic',labels=data['labels'],show=True)
+    #%% Todas las componentes
+    from mne.preprocessing import ICA
+    ch_names = data['ch_names']
+    A = data['A']
+    W = data['W']
+    labels=data['labels']
+    if info is None:
+        info = us.generate_info(ch_names)
+        print(info)
+
+    ica = ICA(random_state=97, method = 'fastica')
+    ica.info = info
+    ica.n_components_= A.shape[0]
+    ica.unmixing_matrix_ = W
+    ica.pca_components_ = np.eye(A.shape[0]) #transformer.whitening_#np.linalg.pinv(transformer.whitening_)
+    ica.mixing_matrix_ = A
+    ica._update_ica_names()
+
+    if labels is None:
+        labels = [str('comp'+str(i+1)) for i in range(A.shape[1])]
+
+
+    ica._ica_names = labels
+    #figMany = us.topomap(data['A'],data['W'],data['ch_names'],info =info,cmap='seismic',labels=data['labels'],show=True)
+    ica.plot_components(show=True)
     plt.show()
 
-plot_spatial_filter(name='54x10',portables=True,montage_select='openBCI', info = None)
+#plot_spatial_filter(name='54x10',portables=True,montage_select='openBCI', info = None)

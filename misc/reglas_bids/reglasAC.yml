@@ -6,7 +6,7 @@ dataset_description:                            # Configuring the dataset_descri
     - Synapse                          
 
 sidecar:                                        # Configuring the sidecar eeg file
-  PowerLineFrequency : 60                       # Noted from the visual inspection of the eeg spectrum
+  PowerLineFrequency : 50                       # Noted from the visual inspection of the eeg spectrum
   EEGReference : Mastoide derecha               # As mentioned in https://www.nature.com/articles/sdata2018308
 non-bids:                                       # Additional configuration not belonging specifically to any of the previous objects
   eeg_extension : .set                          # Sets which extension to read as an eeg file
@@ -18,6 +18,9 @@ non-bids:                                       # Additional configuration not b
       - ignore
       - ignore
       - entities.task
+code_execution:
+  - code: "import mne; print(mne.__version__)"
+    description: "Prints the version of the MNE library"
 
 
 

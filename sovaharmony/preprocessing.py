@@ -1,7 +1,6 @@
 from sovaflow.flow import preflow
 from sovaflow.flow import crop_raw_data,run_reject
 from sovaflow.utils import cfg_logger
-from sovaViolin.functions_postprocessing_channels import compare_nD_power
 import mne
 import json
 import os

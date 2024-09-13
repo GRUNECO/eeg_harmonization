@@ -1,5 +1,4 @@
 sovaflow
-sovaViolin
 pybids
 seaborn
 statsmodels

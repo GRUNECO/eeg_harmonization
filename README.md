@@ -10,6 +10,7 @@ pip install git+https://github.com/GRUNECO/eeg_harmonization.git
 git clone https://github.com/GRUNECO/eeg_harmonization.git
 cd eeg_harmonization
 pip install -r requirements-install.txt
+pip install -e .
 ```
 
 ## Upgrading

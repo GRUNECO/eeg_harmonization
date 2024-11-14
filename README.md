@@ -46,14 +46,17 @@ harmonize(BIOMARCADORES)
 ```
 Orden de archivos:
 
-1. ProcessingEEG.py 
-2. Dataframes_potencias_Componentes_Demograficos.py 
-3. Borrar_datos_atipicos_potencias.py 
-4. Dataframes_SL_Coherencia_Entropy_Cross.py 
-5. neuroharmonaze.py 
-6. unirfeatherharmonize.py 
-7. Graficos_power_sl_coherencia_entropia_cross.py
-8. graficos_data_harmonized.py
+1. eeg_harmonization\processingEEG.py 
+2. Data_analysis_ML_Harmonization_Proyect\Manipulation\Dataframes_potencias_Componentes_Demograficos.py | Data_analysis_ML_Harmonization_Proyect\Manipulation\Dataframes_potencias_Rois_demograficos.py
+3. Data_analysis_ML_Harmonization_Proyect\Manipulation\Borrar_datos_atipicos_potencias.py
+4. Data_analysis_ML_Harmonization_Proyect\Manipulation\Dataframes_SL_Coherencia_Entropy_Cross.py
+5. eeg_harmonization\misc\neuroharmonaze.py
+6. Data_analysis_ML_Harmonization_Proyect\Manipulation\unirfeatherharmonize.py
+7. Data_analysis_ML_Harmonization_Proyect\Manipulation\Graficos_power_sl_coherencia_entropia_cross.py
+8. Data_analysis_ML_Harmonization_Proyect\Manipulation\graficos_data_harmonized.py
+9. Data_analysis_ML_Harmonization_Proyect\Manipulation\training_script.py
+
+*old*
 9. ML_models_G1_ic_sovaharmony.py
 10. ML_models_G1_ic_neuroHarmonize.py
 

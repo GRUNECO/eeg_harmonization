@@ -59,11 +59,6 @@ scikit-learn==1.5.2
 scipy==1.14.1
 seaborn==0.13.2
 six==1.16.0
-sovachronux @ git+https://github.com/GRUNECO/sovachronux.git@7f99faa759a371be1ab0068576df449ab131ede9
-sovaflow @ git+https://github.com/GRUNECO/sovaflow.git@ff0c3e676849aa4a220e23ec57a63ff15f8ca602
-sovaharmony @ git+https://github.com/GRUNECO/eeg_harmonization.git@444ea6755b78a8428ac8534a5e721e52698f5513
-sovareject @ git+https://github.com/GRUNECO/sovareject.git@1791565d5eb32d314b34a61ab71ebe194f4c9b6a
-sovawica @ git+https://gitfront.io/r/yjmantilla/e26e54b1952da01b4529449b6370ba0e5e608f78/sovawica.git@c37a190ac7a17d1fc4ed6eb923fda7b7e36faf54
 SQLAlchemy==2.0.36
 statsmodels==0.14.4
 threadpoolctl==3.5.0

@@ -71,6 +71,5 @@ versioneer==0.29
 wrapt==1.17.0
 sovachronux @ git+https://gitfront.io/r/GRUNECO/4BjKkjJbDxf7/sovachronux.git@31d27aac25f255067c3d210f1a9f0c678a45b356
 sovaflow @ git+https://gitfront.io/r/GRUNECO/E827iy6c5ads/sovaflow.git@7c0bfe30389671843b2df9cf7aa4931889903703
-sovaharmony @ git+https://github.com/GRUNECO/eeg_harmonization.git@fb2179ad375993cd29fb6b3801a93edc4e10b3c0
 sovareject @ git+https://gitfront.io/r/GRUNECO/8cVYUCpdJGJa/sovareject.git@0b2013b310abba3f444be86f23bf20778f85fad4
 sovawica @ git+https://github.com/GRUNECO/sovawica.git@362fed4f474870af39d3bf0f08e2c9d48eb21c6b

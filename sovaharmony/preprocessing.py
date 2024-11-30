@@ -13,7 +13,6 @@ from sovaharmony.info import info as info_dict
 import statsmodels.api as sm
 import pandas as pd
 from astropy.stats import mad_std
-from lib2to3.pgen2.token import LSQB
 from matplotlib import pyplot as plt
 import numpy as np
 from sovaflow.utils import createRaw

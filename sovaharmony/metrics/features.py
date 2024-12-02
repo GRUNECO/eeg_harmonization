@@ -128,26 +128,34 @@ def _get_power(signal_epoch,bands,irasa=False,osc=False, aperiodic=False):
         return output, welch_matrix
 
 def _get_psd(signal_epoch,bands):
-    signal = np.transpose(signal_epoch.get_data(),(1,2,0)) # epochs spaces times -> spaces times epochs
-    _verify_epochs_axes(signal_epoch.get_data(),signal)
+    signal = np.transpose(signal_epoch.get_data(), (1, 2, 0))  # epochs spaces times -> spaces times epochs
+    _verify_epochs_axes(signal_epoch.get_data(), signal)
+
     space_names = signal_epoch.info['ch_names']
-    spaces,times,epochs = signal.shape
+    spaces, times, epochs = signal.shape
+
     output = {}
-    output['metadata'] = {'type':'psd','kwargs':{'bands':bands}}
-    bands_list = list(bands.keys())
-    values = np.empty((len(bands_list),spaces))
-    freqs = np.empty((len(bands_list),spaces))
-    for space in space_names:
-        space_idx = space_names.index(space)
-        dummy = qeeg_psd_chronux(signal[space_idx,:,:],signal_epoch.info['sfreq'],bands,spectro=True)         
+    output['metadata'] = {'type': 'psd', 'kwargs': {'bands': bands}}
+    output['metadata']['axes']={'spaces':space_names}
+    values = None  # Inicialización para asignar más tarde
+    freqs = None
+
+    for space_idx, space in enumerate(space_names):
+        dummy = qeeg_psd_chronux(signal[space_idx, :, :], signal_epoch.info['sfreq'], bands, spectro=True)
         
-        for b in bands.keys():
-            band_idx = bands_list.index(b)
-            values[band_idx,space_idx]=dummy[0][b] #if there is an error in this line update sovachornux
-            freqs[band_idx,space_idx]=dummy[1][b]
+        # Inicialización dinámica de valores y frecuencias al detectar la forma de dummy
+        if values is None or freqs is None:
+            values = np.empty((spaces, *dummy[0].shape))  # Dimensiones dinámicas
+            freqs = np.empty((spaces, *dummy[1].shape))
+        
+        # Asignación de valores y frecuencias
+        values[space_idx] = dummy[0]
+        freqs[space_idx] = dummy[1]
+
     output['values'] = values
     output['freqs'] = freqs
     return output
+
     
 
 def _get_sl(signal_epoch,bands):

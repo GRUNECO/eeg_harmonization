@@ -6,9 +6,9 @@ from sovabids.convert import convert_them # Do the conversion
 #from sovabids.datasets import lemon_prepare # Download the dataset
 from sovabids.settings import REPO_PATH
 
-sourcePath  = r'C:\Users\Luisa\Documents\DB_HARMONIZE\BrainLat\AR'
-bidsPath = r'C:\Users\Luisa\Documents\DB_HARMONIZE\BrainLat\AR_BIDS_1'
-rulePath = r'D:\flujo_portables\eeg_harmonization\misc\reglas_bids\reglasAC.yml'
+sourcePath  = r'E:\EEG_MULTICENTER\BrainLat\CL'
+bidsPath = r'E:\EEG_MULTICENTER\BrainLat\CL_BIDS1'
+rulePath = r'D:\flujo_portables\eeg_harmonization\misc\reglas_bids\reglasCL.yml'
 source_path = os.path.abspath(sourcePath) # For the input data we will convert
 bids_path= os.path.abspath(bidsPath) # The output directory that will have the converted data
 rules_path = os.path.abspath(rulePath) # The rules file that setups the rule for conversion

@@ -46,7 +46,11 @@ def write_json(data,filepath,mode=None):
             json.dump(data, fp,indent=4,default=default)
 
 
-def harmonize(THE_DATASET,fast_mode=False):
+def harmonize(THE_DATASET,
+            L_FREQ = int,
+            H_FREQ = int,
+            epoch_length = int,
+            fast_mode=False):
     """Process a single bids dataset.
     
     Inputs:
@@ -131,8 +135,7 @@ def harmonize(THE_DATASET,fast_mode=False):
                 logger.info(f'{prep_path} and {wica_path} already existed, skipping...')
             else:
                 raw = mne.io.read_raw(eeg_file,preload=True)
-                signal,prep_signal,stats=preflow(raw,correct_montage=channels,fast_mode=fast_mode,**THE_DATASET.get('args',{}))
-                
+                signal,prep_signal,stats=preflow(raw,correct_montage=channels,fast_mode=fast_mode, L_FREQ = L_FREQ,H_FREQ = H_FREQ,epoch_length = epoch_length**THE_DATASET.get('args',{}))
                 del raw
                 
                 prep_signal.save(prep_path ,split_naming='bids', overwrite=True)
@@ -166,7 +169,7 @@ def harmonize(THE_DATASET,fast_mode=False):
             else:
                 signal = mne.io.read_raw(wica_path,preload=True)
                 signal = crop_raw_data(signal,events, events_to_keep)
-                signal,reject_info = run_reject(signal, THE_DATASET.get('epoch_length', 5))
+                signal,reject_info = run_reject(signal, epoch_length = epoch_length)
                 signal.save(reject_path ,split_naming='bids', overwrite=True)
                 write_json(json_dict,reject_path.replace('.fif','.json'))
                 write_json(json_dict,stats_path.replace('label','reject'+pipelabel).replace('.txt','.json'))

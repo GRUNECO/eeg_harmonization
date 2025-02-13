@@ -60,14 +60,14 @@ def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_sel
         #process=str(i)+'/'+str(num_files)
         msg =f"File {i+1} of {num_files} ({(i+1)*100/num_files}%) : {eeg_file}"
         logger.info(msg)
-
         reject_path = get_derivative_path(layout,eeg_file,'reject'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
         norm_path = get_derivative_path(layout,eeg_file,'huber'+pipelabel,'eeg','.fif',bids_root,derivatives_root)
 
         json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
         #('absPower',{'bands':bands,'normalize':False})
         features_tuples=[
-            ('power',{'bands':bands,'irasa':False,'osc':False,'aperiodic':False}),
+            ('psd',{'bands':bands}),
+            #('power',{'bands':bands,'irasa':False,'osc':False,'aperiodic':False}),
             #('power_osc',{'bands':bands,'irasa':True,'osc':True, 'aperiodic':False}),
             #('power_ape',{'bands':bands,'irasa':True,'osc':False,'aperiodic':True}),
             #('sl',{'bands':bands}),

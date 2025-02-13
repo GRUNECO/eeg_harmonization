@@ -117,10 +117,10 @@ def _get_power(signal_epoch,bands,irasa=False,osc=False, aperiodic=False):
         for space in space_names:
             space_idx = space_names.index(space)
             dummy = qeeg_psd_chronux(signal[space_idx,:,:],signal_epoch.info['sfreq'],bands,spectro=True)         
-            
             for b in bands.keys():
                 band_idx = bands_list.index(b)
                 values[band_idx,space_idx]=dummy[2][b] #if there is an error in this line update sovachornux
+                
         output['values'] = values
     if irasa==False and osc==False and aperiodic==False: 
         return output

@@ -135,7 +135,7 @@ def harmonize(THE_DATASET,
                 logger.info(f'{prep_path} and {wica_path} already existed, skipping...')
             else:
                 raw = mne.io.read_raw(eeg_file,preload=True)
-                signal,prep_signal,stats=preflow(raw,correct_montage=channels,fast_mode=fast_mode, L_FREQ = L_FREQ,H_FREQ = H_FREQ,epoch_length = epoch_length**THE_DATASET.get('args',{}))
+                signal,prep_signal,stats=preflow(raw,correct_montage=channels,fast_mode=fast_mode, L_FREQ = L_FREQ,H_FREQ = H_FREQ,epoch_length = epoch_length,**THE_DATASET.get('args',{}))
                 del raw
                 
                 prep_signal.save(prep_path ,split_naming='bids', overwrite=True)

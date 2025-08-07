@@ -1,6 +1,6 @@
 import numpy as np
 import itertools #Usado para ver las posibles permutaciones
-
+import math
 
 def Entropia_Permutacion(senal,D):
   """
@@ -74,8 +74,9 @@ def Entropia_Permutacion(senal,D):
   Pis = p_i/(numero_vectores)  
   Pis=np.delete(Pis, np.where(Pis==0))
   PE = np.dot(np.log2(Pis),-Pis) 
+  return float(PE / math.log2(math.factorial(3)))  # Normalizada
 
-  return float(PE/np.log2(np.math.factorial(3))) #Normalizada
+  #return float(PE/np.log2(np.math.factorial(3))) #Normalizada - versión antinua
 
 
 

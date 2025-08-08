@@ -178,68 +178,77 @@ def dataframe_long_sensors(data,type,columns,path,roi=False,norm=False,bandas=li
         data_new.reset_index(drop=True).to_feather('{path}\data_{name}_{task}_long_{metric}_{norm}_sensors.feather'.format(path=path,name=data['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type,norm=norm))
     print('Dataframe de {type}'.format(type=type))
 
-def dataframe_long_components(data,type,columns,path,spatial_matrix=str,norm=False,metric=None,bandas=list):
-    '''Function used to convert a wide dataframe into a long one to be used for graphing by IC'''
-    #demographic data and neuropsychological test columns
-    #data_dem=['participant_id', 'visit', 'group', 'condition', 'database','age', 'sex', 'education', 'MM_total', 'FAS_F', 'FAS_A', 'FAS_S']
-    data_dem=['participant_id', 'visit', 'group', 'condition', 'database']
-    columns_df=data_dem+[type, 'Band', 'Component']
-    data_new=pd.DataFrame(columns=columns_df)
-    fit_params=["Intercept", "Slope","R^2","std(osc)"]
-    #Components
-    if spatial_matrix=='58x25':
-        componentes =['C14', 'C15','C18', 'C20', 'C22','C23', 'C24', 'C25']
-    elif spatial_matrix=='54x10':
+def dataframe_long_components(data, colname, columns, path, spatial_matrix=str, norm=False, metric=None, bandas=list):
+    """
+    Convierte un dataframe ancho a formato largo para gráficas por IC.
+    """
+    import os
+    import pandas as pd
+
+    data_dem = ['participant_id', 'visit', 'group', 'condition', 'database']
+    columns_df = data_dem + [colname, 'Band', 'Component']
+    data_new = pd.DataFrame(columns=columns_df)
+    fit_params = ["Intercept", "Slope", "R^2", "std(osc)"]
+
+    # Definir componentes
+    if spatial_matrix == '58x25':
+        componentes = ['C14', 'C15', 'C18', 'C20', 'C22', 'C23', 'C24', 'C25']
+    elif spatial_matrix == '54x10':
         componentes = [f'C{i}' for i in range(1, 11)]
-    elif spatial_matrix=='cresta' or spatial_matrix=='openBCI' or spatial_matrix=='paper':
+    elif spatial_matrix in ('cresta', 'openBCI', 'paper'):
         componentes = [f'C{i}' for i in range(1, 9)]
-    
+    else:
+        componentes = []
+
     for i in columns:
-        '''The column of interest is taken with its respective demographic data and added to the new dataframe'''
-        data_x=data_dem.copy()
+        band = None
+        fparams = None
+
+        data_x = data_dem.copy()
         data_x.append(i)
-        d_sep=data.loc[:,data_x] 
+        d_sep = data.loc[:, data_x]
+
+        # Buscar banda y fit params
         for j in bandas:
             if j in i:
-                band=j
+                band = j
         for params in fit_params:
             if params in i:
-                fparams=params
+                fparams = params
+
         for c in componentes:
             if i.startswith(f'{metric}_{c}_'):
                 print(f'Match found: {c} in {i}')
-                componente = c
-                d_sep['Component'] = [componente] * len(d_sep)
-                try:
-                    if band: 
-                        d_sep['Band'] = [band] * len(d_sep)
-                except:
-                    pass
-                
-                try:
-                    if fparams:
-                        d_sep['Fit_params'] = [fparams] * len(d_sep)
-                except:
-                    pass
-        
-                d_sep = d_sep.rename(columns={i: type})
+                d_sep['Component'] = c
+                if band:
+                    d_sep['Band'] = band
+                if fparams:
+                    d_sep['Fit_params'] = fparams
+
+                d_sep = d_sep.rename(columns={i: colname})
                 data_new = pd.concat((data_new, d_sep), ignore_index=True)
-                
-                
-        #data_new=data_new.append(d_sep,ignore_index = True) #Uno el dataframe 
-    try:
-        path="{input_path}\data_long\IC".format(input_path=path).replace('\\','/')
-        os.makedirs(path)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-        
-    print(data_new['Band'].isnull().sum())
-    if data_new['Band'].isnull().sum()!=0 or data_new['Band'].isna().sum()!=0:
-        data_new.drop(['Band'],axis=1,inplace=True)
-        type='ape_fit_params'
-    data_new.reset_index(drop=True).to_feather('{path}\data_{name}_{task}_long_{metric}_{spatial_matrix}_{norm}_components.feather'.format(path=path,name=data_new['database'].unique()[0],task=data_new['condition'].unique()[0],metric=type,spatial_matrix=spatial_matrix,norm=norm).replace('\\','/'))
-    print('Dataframe de {type} '.format(type=type))
+
+    # Crear carpeta
+    save_dir = f"{path}/data_long/IC".replace('\\', '/')
+    os.makedirs(save_dir, exist_ok=True)
+
+    # Evitar crash si no hay datos
+    if data_new.empty:
+        print(f"[WARN] Sin datos para metric={metric}, spatial_matrix={spatial_matrix}. No se genera archivo.")
+        return
+
+    # Si hay NaNs en Band, eliminarla
+    if data_new['Band'].isna().any():
+        data_new.drop(['Band'], axis=1, inplace=True)
+        colname = 'ape_fit_params'
+
+    # Guardar archivo
+    name = data_new['database'].unique()[0]
+    task = data_new['condition'].unique()[0]
+    out_path = f"{save_dir}/data_{name}_{task}_long_{metric}_{spatial_matrix}_{norm}_components.feather".replace('\\', '/')
+    data_new.reset_index(drop=True).to_feather(out_path)
+    print(f"Dataframe de {colname} guardado en {out_path}")
+
 
 def dataframe_long_cross_roi(data,type,columns,name,path):
     '''Function used to convert a dataframe to be used for graphing by ROIs'''

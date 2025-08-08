@@ -8,7 +8,9 @@ from sovaharmony.data_structure.query_derivatives import get_dataframe_columns_s
 from sovaharmony.utils import * 
 import time 
 
-def pipeline (THE_DATASETS=list,prep=False,post=False,portables=False,tmontage=str,prepdf=False,propdf=False,spatial_matrix=list,metrics=list,IC=False, Sensors=False,roi=False,OVERWRITE= False,bands=dict):
+def pipeline (THE_DATASETS=list,prep=False,post=False,portables=False,tmontage=str,prepdf=False,propdf=False,spatial_matrix=list,metrics=list,IC=False, Sensors=False,roi=False,OVERWRITE= False,bands=dict, L_FREQ = int,
+              H_FREQ = int,
+              epoch_length = int):
     '''
     Input
         - THE_DATASETS: list
@@ -32,7 +34,11 @@ def pipeline (THE_DATASETS=list,prep=False,post=False,portables=False,tmontage=s
         ## Preprocessing pipeline
         if prep:
             start = time.perf_counter()
-            harmonize(dataset,fast_mode=False)
+            harmonize(dataset,
+                      L_FREQ=L_FREQ,
+                      H_FREQ=H_FREQ,
+                      epoch_length=epoch_length,
+                      fast_mode=False)
             final = time.perf_counter()
             print('TIME PREPROCESSING:::::::::::::::::::'+ dataset['input_path']+ dataset['layout']['task'], final-start)
 
@@ -64,6 +70,7 @@ def pipeline (THE_DATASETS=list,prep=False,post=False,portables=False,tmontage=s
                     if IC: 
                         start = time.perf_counter()
                         data_IC=get_dataframe_columnsIC(dataset,feature=m,spatial_matrix=j ,fit_params=metrics[m]['fit_params'],norm=metrics[m]['norm'],demographic=metrics[m]['demographic'])
+                        print(data_IC)
                         final = time.perf_counter()
                         print('TIME FEATHER IC:::::::::::::::::::'+ dataset['input_path']+ m + dataset['layout']['task'], final-start)
                     if Sensors  or roi:

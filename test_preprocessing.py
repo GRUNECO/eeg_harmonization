@@ -43,8 +43,8 @@ pipeline(THE_DATASETS,
          L_FREQ = L_FREQ,
          H_FREQ = H_FREQ,
          epoch_length = epoch_length,
-         prep = True, # if you need preprocessing 
-         post = True, # if you need postprocessing
+         prep = False, # if you need preprocessing 
+         post = False, # if you need postprocessing
          portables = False, # if you need reduce the number of the sensors
          prepdf = False,
          propdf = True,

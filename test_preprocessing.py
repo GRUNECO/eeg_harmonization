@@ -35,20 +35,24 @@ bands ={'Delta':(1.5,6),
         'Gamma':(30,45)
         }
 
+import inspect
+print(inspect.signature(pipeline))
+print(pipeline.__module__)
+
 pipeline(THE_DATASETS,
          L_FREQ = L_FREQ,
          H_FREQ = H_FREQ,
          epoch_length = epoch_length,
-         prep=True,# if you need preprocessing 
-         post=True,# if you need postprocessing
-         portables=False,# if you need reduce the number of the sensors
-         prepdf=False,
-         propdf=True,
-         spatial_matrix=spatial,
-         metrics=metrics,
-         IC=True, 
-         Sensors=False,
-         roi=False,
-         OVERWRITE=True,
-         bands=bands,
+         prep = True, # if you need preprocessing 
+         post = True, # if you need postprocessing
+         portables = False, # if you need reduce the number of the sensors
+         prepdf = False,
+         propdf = True,
+         spatial_matrix = spatial,
+         metrics = metrics,
+         IC = True, 
+         Sensors = False,
+         roi = False,
+         OVERWRITE = True,
+         bands = bands,
         )

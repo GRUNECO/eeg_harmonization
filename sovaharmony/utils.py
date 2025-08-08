@@ -248,6 +248,7 @@ def dataframe_long_components(data, colname, columns, path, spatial_matrix=str, 
     out_path = f"{save_dir}/data_{name}_{task}_long_{metric}_{spatial_matrix}_{norm}_components.feather".replace('\\', '/')
     data_new.reset_index(drop=True).to_feather(out_path)
     print(f"Dataframe de {colname} guardado en {out_path}")
+    return data_new
 
 
 def dataframe_long_cross_roi(data,type,columns,name,path):

@@ -6,6 +6,8 @@ import re
 import pandas as pd
 from bids.layout import parse_file_entities
 from sovaharmony.utils import load_txt, load_file
+
+
 def get_dataframe_columnsIC(
     THE_DATASET,
     feature=None,
@@ -41,6 +43,7 @@ def get_dataframe_columnsIC(
     task = THE_DATASET.get('layout', {}).get('task', None)
     group_regex = THE_DATASET.get('group_regex', None)
     name = THE_DATASET.get('name', None)
+    layout = BIDSLayout(input_path)
     runlabel = THE_DATASET.get('run-label', '')
 
     if not input_path or not feature:
@@ -50,9 +53,11 @@ def get_dataframe_columnsIC(
     # Layout BIDS
     layout = BIDSLayout(input_path, derivatives=True)
     layout.get(scope='derivatives', return_type='file')
-
-    # Buscar archivos que coincidan
-    paths = layout.get(extension='.txt', task=task, suffix=feature, return_type='filename')
+    if feature == 'power':
+        # Buscar archivos que coincidan con la característica y matriz espacial
+        paths = layout.get(extension='.txt', task=task, suffix='psd', return_type='filename')
+    else:
+        paths = layout.get(extension='.txt', task=task, suffix=feature, return_type='filename')
 
     norm_str = 'True' if norm else 'False'
     filter_tag = f"space-ics[{spatial_matrix}]_norm-{norm_str}"
@@ -63,24 +68,25 @@ def get_dataframe_columnsIC(
         return pd.DataFrame()
 
     list_subjects = []
-
+    
     for file_path in paths:
         data = load_txt(file_path)
 
         # Etiquetas de componentes según la matriz espacial
         if spatial_matrix == '58x25':
             comp_labels = [f'C{i}' for i in range(1, 26)]
+            bandas = data['metadata']['kwargs']['bands']
         elif spatial_matrix == '54x10':
             comp_labels = [f'C{i}' for i in range(1, 11)]
+            bandas = data['metadata']['kwargs']['bands']
         elif spatial_matrix in ('cresta', 'openBCI', 'paper'):
             comp_labels = ['C1', 'C2', 'C3', 'C5', 'C6', 'C8', 'C9', 'C10']
+            bandas = data['metadata']['axes']['bands']
         else:
             print(f"[WARN] spatial_matrix desconocido: {spatial_matrix}")
             continue
 
         icvalues = np.array(data['values'])
-        bandas = data['metadata']['axes']['bands']
-
         datos_1_sujeto = {}
         info_bids_sujeto = parse_file_entities(file_path)
         datos_1_sujeto['participant_id'] = 'sub-' + info_bids_sujeto['subject']
@@ -108,10 +114,9 @@ def get_dataframe_columnsIC(
                             datos_1_sujeto[f'{feature}_{comp_labels[c]}_M{band1}_{band.title()}'] = icvalues[c][b][b1]
                     elif data['metadata']['type'] in ('sl', 'coherence-bands'):
                         datos_1_sujeto[f'{feature}_{comp_labels[c]}_{band.title()}'] = np.mean(icvalues[b][c])
-                    elif data['metadata']['type'] in ('entropy', 'power', 'irasa') and not fit_params:
+                    elif data['metadata']['type'] in ('entropy', 'power', 'irasa', 'psd') and not fit_params:
                         datos_1_sujeto[f'{feature}_{comp_labels[c]}_{band.title()}'] = icvalues[b, c]
-
-        list_subjects.append(datos_1_sujeto)
+            list_subjects.append(datos_1_sujeto)
 
     if not list_subjects:
         print(f"[WARN] Lista de sujetos vacía para {feature} ({spatial_matrix}, norm={norm_str})")

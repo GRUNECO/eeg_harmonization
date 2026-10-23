@@ -97,3 +97,13 @@ Orden de archivos:
 
 *URL to article:* 	https://www.sciencedirect.com/science/article/pii/S1388245723005989<br>
 
+### 4.	Refereed article
+*Title of article:* 	Comprehensive methodology for sample enrichment in EEG biomarker studies for Alzheimer's risk classification.<br>
+*Author(s):* 	Henao Isaza V, Aguillon D, Tobón-Quintero CA, Lopera F, Ochoa-Gómez JF.<br>
+*Title of publication:* 	PLOS One<br>
+*ISSN:* 	1932-6203<br>
+*Volume/Issue and page number:* 	Volume 21, Issue 3, e0343722<br>
+*Date of publication or accepted for publication:* 	March 2026<br>
+*Peer review proof:* 	Peer-reviewed journal<br>
+*URL to article:* 	https://doi.org/10.1371/journal.pone.0343722<br>
+

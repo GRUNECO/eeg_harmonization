@@ -1,5 +1,9 @@
 # eeg-harmonization
 
+> **Update (2026-10-23).** The script `sovaharmony/metrics/pme.py` (cross-frequency / PME features) was updated to correct an inversion error detected by the team: the loops computed the opposite triangle of carrier / modulation-band pairs. If you have used these features in a study, please reinstall, clone or download the repository again. Only the cross-frequency (PME) features are affected, but if you used the previous version of the code, you need to re-run it.
+>
+> **APPLEE users:** APPLEE ([GNACo/APPLEE](https://github.com/GNACo/APPLEE)) uses this package and its `requirements.txt` still pins a version with the previous code. See [docs/APPLEE_crossfreq_labels.md](docs/APPLEE_crossfreq_labels.md) for how to install the corrected version and how the cross-frequency columns are named.
+
 ## Installation
 ```bash
 Third-party installation

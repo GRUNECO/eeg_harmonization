@@ -1,3 +1,14 @@
+# =============================================================================
+# CORRECTED COPY of sovaharmony/metrics/pme.py  (see pme_original.py for the unmodified file)
+# Fix (2026-10-23): the triangle of valid (modulation band i, sub-band j) pairs was inverted.
+#   original: j in range(0, i+1)  -> sub-band index <= modulation index (with ascending bands this
+#             filters the envelope of a SLOW band with a FAST modulation band, e.g. Delta at 30-45 Hz)
+#   fixed:    j in range(i, Num_Bands) -> modulation band index <= sub-band index, as documented in the
+#             docstring of Modulation_Bands_Decomposition (modulation bands above the sub-band are left at 0,
+#             Bedrosian). Bands must be passed in ASCENDING order (Delta ... Gamma).
+# Also fixed in Modulation_Bands_Decomposition_Hamming, Modulation_Bands_Spectrum and
+# Parseval_Theorem_Modulation_Bands (same triangle). Axis meaning of the output: [signal, M_band i, band j].
+# =============================================================================
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -258,20 +269,20 @@ def Modulation_Bands_Decomposition(SubBand_Signal, Fs, M_Bands = [[1.5,6],[6,8.5
                 Num_Bands, Values = SubBand_Signal.shape
                 MBand_Signal = np.zeros((Num_M_Bands, Num_Bands, Values))
                 for i, M_Band in enumerate(M_Bands):
-                    for j in range(0,i+1):
+                    for j in range(i, Num_Bands):
                         MBand_Signal[i,j,:] = mne.filter.filter_data(SubBand_Signal[j], Fs, M_Band[0],M_Band[1])
             elif (SubBand_Signal.ndim == 3):
                 Num_Signals, Num_Bands, Values = SubBand_Signal.shape
                 MBand_Signal = np.zeros((Num_Signals, Num_M_Bands, Num_Bands, Values))
                 for i, M_Band in enumerate(M_Bands):
-                    for j in range(0,i+1):
+                    for j in range(i, Num_Bands):
                         MBand_Signal[:,i,j,:] = mne.filter.filter_data(SubBand_Signal[:,j,:], Fs, M_Band[0],M_Band[1])
             elif (SubBand_Signal.ndim == 4):
                 Num_Signals, Num_Bands, Values, Epochs = SubBand_Signal.shape
                 Temp_Signal = np.reshape(SubBand_Signal, (Num_Signals, Num_Bands, Values*Epochs), order='F')
                 MBand_Signal = np.zeros((Num_Signals, Num_M_Bands, Num_Bands, Values, Epochs))
                 for i, M_Band in enumerate(M_Bands):
-                    for j in range(0,i+1):
+                    for j in range(i, Num_Bands):
                         MBand_Signal[:,i,j,:,:] = np.reshape(mne.filter.filter_data(Temp_Signal[:,j,:], Fs, M_Band[0],M_Band[1]), 
                                     (Num_Signals, Values, Epochs), order='F')
             else:
@@ -289,13 +300,13 @@ def Modulation_Bands_Decomposition(SubBand_Signal, Fs, M_Bands = [[1.5,6],[6,8.5
                 Num_Bands, Values = SubBand_Signal.shape
                 MBand_Signal = np.zeros((Num_M_Bands, Num_Bands, Values-Delay))
                 for i, M_Band in enumerate(M_Bands):
-                    for j in range(0,i+1):
+                    for j in range(i, Num_Bands):
                         MBand_Signal[i,j,:] = BandPass_Filter_Hamming_Window(SubBand_Signal[j], M_Band, Fs, Order)
             elif (SubBand_Signal.ndim == 3):
                 Num_Signals, Num_Bands, Values = SubBand_Signal.shape
                 MBand_Signal = np.zeros((Num_Signals, Num_M_Bands, Num_Bands, Values-Delay))
                 for i, M_Band in enumerate(M_Bands):
-                    for j in range(0,i+1):
+                    for j in range(i, Num_Bands):
                         MBand_Signal[:,i,j,:] =  BandPass_Filter_Hamming_Window(SubBand_Signal[:,j,:], M_Band, Fs, Order)
             elif (SubBand_Signal.ndim == 4):
                 Num_Signals, Num_Bands, Values, Epochs = SubBand_Signal.shape
@@ -304,7 +315,7 @@ def Modulation_Bands_Decomposition(SubBand_Signal, Fs, M_Bands = [[1.5,6],[6,8.5
                 New_Epochs = Epochs - Reject
                 MBand_Signal = np.zeros((Num_Signals, Num_M_Bands, Num_Bands, Values, New_Epochs))
                 for i, M_Band in enumerate(M_Bands):
-                    for j in range(0,i+1):
+                    for j in range(i, Num_Bands):
                         MBand_Signal[:,i,j,:,:] = np.reshape(BandPass_Filter_Hamming_Window(Temp_Signal[:,j,:], M_Band, Fs, Order)[:,(Reject*Values)-Delay:], 
                                       (Num_Signals, Values, New_Epochs), order='F')
             else:
@@ -356,7 +367,7 @@ def Modulation_Bands_Decomposition_Hamming(SubBand_Signal, Fs, M_Bands = [[1.5,6
             i_mod_j =  np.absolute(np.fft.fft(SubBand_Signal, axis=2))
             Eij = np.zeros((Num_Signals, len(M_Bands), Num_Bands, Epochs))
             for i, M_Band in enumerate(M_Bands):
-                for j in range(0,i+1):
+                for j in range(i, Num_Bands):
                     Eij[:,i,j,:] = np.mean(i_mod_j[:, j, int(M_Band[0]/frec_res):int(M_Band[1]/frec_res)+1, :], axis=1)
         else:
             raise DoingError('The signal variable can only have 2, 3 or 4 dimensions!!')
@@ -427,7 +438,7 @@ def Modulation_Bands_Spectrum(Signal):
             else:
                 Spectrum = np.zeros((M_Bands, Bands, Values))
             for M_Band in range(0, M_Bands):
-                for Band in range(0, M_Band+1):
+                for Band in range(M_Band, Bands):
                     Spectrum[M_Band, Band, :] = Signal_Spectrum(Signal[M_Band, Band, :])
         elif (Signal.ndim == 4):
             Num_Signals, M_Bands, Bands, Values = Signal.shape
@@ -436,7 +447,7 @@ def Modulation_Bands_Spectrum(Signal):
             else:
                 Spectrum = np.zeros((Num_Signals, M_Bands, Bands, Values))
             for M_Band in range(0, M_Bands):
-                for Band in range(0, M_Band+1):
+                for Band in range(M_Band, Bands):
                     Spectrum[:, M_Band, Band, :] = Signal_Spectrum(Signal[:, M_Band, Band, :])
         elif (Signal.ndim == 5):
             Num_Signals, M_Bands, Bands, Values, Epochs = Signal.shape
@@ -445,7 +456,7 @@ def Modulation_Bands_Spectrum(Signal):
             else:
                 Spectrum = np.zeros((Num_Signals, M_Bands, Bands, Values, Epochs))
             for M_Band in range(0, M_Bands):
-                for Band in range(0, M_Band+1):
+                for Band in range(M_Band, Bands):
                     Spectrum[:, M_Band, Band, :, :] = Signal_Spectrum(Signal[:, M_Band, Band, :, :])
         else:
             raise DoingError('The signal variable can only have 3, 4 or 5 dimensions!!')
@@ -506,19 +517,19 @@ def Parseval_Theorem_Modulation_Bands(Spectrum):
             M_Bands, Bands, Values = Spectrum.shape
             Energy = np.zeros((M_Bands, Bands))
             for M_Band in range(0, M_Bands):
-                for Band in range(0, M_Band+1):
+                for Band in range(M_Band, Bands):
                     Energy[M_Band, Band] = Parseval_Theorem(Spectrum[M_Band, Band, :]) 
         elif (Spectrum.ndim == 4):
             Num_Signals, M_Bands, Bands, Values = Spectrum.shape
             Energy = np.zeros((Num_Signals, M_Bands, Bands))
             for M_Band in range(0, M_Bands):
-                for Band in range(0, M_Band+1):
+                for Band in range(M_Band, Bands):
                     Energy[:, M_Band, Band] = Parseval_Theorem(Spectrum[:, M_Band, Band, :]) 
         elif (Spectrum.ndim == 5):
             Num_Signals, M_Bands, Bands, Values, Epochs = Spectrum.shape
             Energy = np.zeros((Num_Signals, M_Bands, Bands, Epochs))
             for M_Band in range(0, M_Bands):
-                for Band in range(0, M_Band+1):
+                for Band in range(M_Band, Bands):
                     Energy[:, M_Band, Band, :] = Parseval_Theorem(Spectrum[:, M_Band, Band, :, :]) 
         else:
             raise DoingError('The signal variable can only have 3, 4 or 5 dimensions!!')

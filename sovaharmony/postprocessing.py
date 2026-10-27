@@ -26,6 +26,7 @@ def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_sel
         'L_FREQ' : high-pass frequency for detrending (def 1)
         'H_FREQ' : low-pass frequency (def 50)
         'epoch_length': length of epoching in seconds (def 5)
+        'features': list of str, features to compute (def ['psd','power']). Options: psd, power, power_osc, power_ape, sl, cohfreq, entropy, crossfreq
         }
         
      - def_spatial_filter: str
@@ -55,6 +56,23 @@ def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_sel
     os.makedirs(log_path, exist_ok=True)
     logger,currentdt = cfg_logger(log_path)
     desc_pipeline = "sovaharmony, a harmonization eeg pipeline using the bids standard"
+    # Features to compute. Select them with the key 'features' of THE_DATASET (list of names).
+    # 'psd' is the full multitaper spectrum (no band axis); the band-based tables of
+    # sovaharmony.pipeline (propdf=True) need 'power' or any of the other band-based features.
+    available_features={
+        'psd':{'bands':bands},
+        'power':{'bands':bands,'irasa':False,'osc':False,'aperiodic':False},
+        'power_osc':{'bands':bands,'irasa':True,'osc':True,'aperiodic':False},
+        'power_ape':{'bands':bands,'irasa':True,'osc':False,'aperiodic':True},
+        'sl':{'bands':bands},
+        'cohfreq':{'window':3,'bands':bands},
+        'entropy':{'bands':bands,'D':3},
+        'crossfreq':{'bands':bands},
+    }
+    feature_names = THE_DATASET.get('features',['psd','power'])
+    unknown = [f for f in feature_names if f not in available_features]
+    if unknown:
+        raise ValueError(f"Unknown features {unknown}. Available: {list(available_features)}")
     num_files = len(eegs)
     for i,eeg_file in enumerate(eegs):
         #process=str(i)+'/'+str(num_files)
@@ -65,16 +83,7 @@ def features(THE_DATASET, def_spatial_filter='54x10',portables=False,montage_sel
 
         json_dict = {"Description":desc_pipeline,"RawSources":[eeg_file.replace(bids_root,'')],"Configuration":THE_DATASET}
         #('absPower',{'bands':bands,'normalize':False})
-        features_tuples=[
-            ('psd',{'bands':bands}),
-            #('power',{'bands':bands,'irasa':False,'osc':False,'aperiodic':False}),
-            #('power_osc',{'bands':bands,'irasa':True,'osc':True, 'aperiodic':False}),
-            #('power_ape',{'bands':bands,'irasa':True,'osc':False,'aperiodic':True}),
-            #('sl',{'bands':bands}),
-            #('cohfreq',{'window':3,'bands':bands}),
-            #('entropy',{'bands':bands,'D':3}),
-            #('crossfreq',{'bands':bands}),
-        ]
+        features_tuples=[(name,available_features[name]) for name in feature_names]
         times_strings = []
         for feature,kwargs in features_tuples:
             try:

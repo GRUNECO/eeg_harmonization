@@ -7,7 +7,10 @@ Usage (from the repository root):
 
 Edit config_params/config_params_high_density.py first.
 """
+import os
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # repository root
 
 from sovaharmony.pipeline import pipeline
 from config_params.config_params_high_density import (

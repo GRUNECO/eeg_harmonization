@@ -30,7 +30,7 @@ Python 3.11 was used for the last tests of this README. The package depends on f
 git clone https://github.com/GRUNECO/eeg_harmonization.git
 cd eeg_harmonization
 python -m venv .venv
-# Windows: .venv\Scriptsctivate      Linux/macOS: source .venv/bin/activate
+# Windows (PowerShell): .venv\Scripts\Activate.ps1      Linux/macOS: source .venv/bin/activate
 pip install -r requirements.txt
 pip install -e .
 ```
@@ -77,7 +77,7 @@ harmonize(BIOMARCADORES, L_FREQ=1, H_FREQ=50, epoch_length=5)
 
 ### Points to check for your own data
 
-- **Channels.** If the dataset has no `channels` key, the 54 channels listed in `sovaharmony/preprocessing.py` (`default_channels`) are kept. The spatial filters (`sovaharmony/spatial_filters/`) were trained on specific channel sets: `54x10` (10 components from 54 channels), `54x25`, `58x25`, `62x19`, `53x53`. The features on components use the intersection between the filter's channels and the recording's channels. Check that your montage contains the channels of the filter you choose.
+- **Channels.** If the dataset has no `channels` key, the 54 channels listed in `sovaharmony/preprocessing.py` (`default_channels`) are kept. The spatial filters (`sovaharmony/spatial_filters/`) were trained on specific channel sets: `54x10` (10 components from 54 channels, the default for high density), `58x25`, `62x19`, `53x53`. The features on components use the intersection between the filter's channels and the recording's channels. Check that your montage contains the channels of the filter you choose.
 - **Features.** Stage 2 computes the features listed in the `features` key of each dataset (default `['psd', 'power']`). Options: `psd`, `power`, `power_osc`, `power_ape`, `sl`, `cohfreq`, `entropy`, `crossfreq`. `psd` is the full multitaper spectrum (one value per frequency, no bands); the others are summarized by band. Stage 3 builds tables only from band-based features, so `metrics` in the configuration must list those (for example `power`), not `psd`.
 - **Components or sensors.** `spatial = ['54x10']` computes the features on ICs; `spatial = [None]` computes them on sensors.
 - **Low density (8 channels).** Use `portables=True` and `tmontage` (`'cresta'`, `'openBCI'` or `'paper'`, defined in `sovaharmony/metrics/features.py`). `processingEEG.py` is an example of this use.

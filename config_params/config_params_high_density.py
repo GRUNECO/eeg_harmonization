@@ -24,7 +24,7 @@ THE_DATASETS = [
 ]
 
 # Spatial filter that projects the 54 channels onto independent components (ICs).
-# Available: '54x10', '54x25' (see sovaharmony/spatial_filters), '58x25', '62x19', '53x53'.
+# Available: '54x10' (default, same 54 channels as default_channels), '58x25', '62x19', '53x53' (see sovaharmony/spatial_filters).
 # Use [None] to compute the features on the sensors instead of on components.
 spatial = ['54x10']
 

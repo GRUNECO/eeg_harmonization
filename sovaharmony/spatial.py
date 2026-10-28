@@ -23,11 +23,11 @@ def get_spatial_filter(name='62x19',portables=False,montage_select=None):
         - name: str
             Name of spatial matrix, for example:
                 62x19
-                54x25
+                58x25
                 54x10
                 
         - portables: Bool
-            Use portables in False, when use use the high density, for example 54x10 or 54x25
+            Use portables in False, when use use the high density, for example 54x10
             If you need used the spatial matrix portatil, use portables in True
             
         - montage_select: str

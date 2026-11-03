@@ -32,10 +32,19 @@ cd eeg_harmonization
 python -m venv .venv
 # Windows (PowerShell): .venv\Scripts\Activate.ps1      Linux/macOS: source .venv/bin/activate
 pip install -r requirements.txt
-pip install -e .
+pip install -e . --no-deps
 ```
 
-`requirements.txt` fixes exact versions (for example `numpy==2.1.3`, `mne==1.8.0`). Use a separate environment for this package to avoid conflicts with other projects.
+`requirements.txt` fixes exact versions (for example `numpy==2.1.3`, `mne==1.8.0`). Use a separate environment for this package to avoid conflicts with other projects. The second `pip install` uses `--no-deps` because the first one already installed every dependency; `setup.py` reads the same `requirements.txt`, so without the flag pip would check all the pins a second time.
+
+### Windows notes
+
+- **Clone into a short path** (for example `C:\HD`). If the repository is cloned inside deeply nested folders (such as `Documents\...\...`), `git clone` can fail with `Filename too long` while creating files under `sovaharmony/Reproducibilidad/`. If you cannot use a short path, run `git config --global core.longpaths true` before cloning (a one-time setting; it also keeps `git status` from showing those files as modified).
+- **Script execution disabled.** If `.venv\Scripts\Activate.ps1` fails with "running scripts is disabled on this system", run this once, answer `Y` (or `S` in Spanish) if PowerShell asks for confirmation, and activate the environment again:
+
+  ```powershell
+  Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+  ```
 
 ### Upgrading
 

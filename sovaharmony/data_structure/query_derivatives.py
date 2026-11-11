@@ -53,11 +53,9 @@ def get_dataframe_columnsIC(
     # Layout BIDS
     layout = BIDSLayout(input_path, derivatives=True)
     layout.get(scope='derivatives', return_type='file')
-    if feature == 'power':
-        # Buscar archivos que coincidan con la característica y matriz espacial
-        paths = layout.get(extension='.txt', task=task, suffix='psd', return_type='filename')
-    else:
-        paths = layout.get(extension='.txt', task=task, suffix=feature, return_type='filename')
+    # Buscar archivos de la característica pedida (para 'power', los *_power.txt: potencia por banda).
+    # No usar los *_psd.txt: son el espectro completo (componentes x frecuencias) y no tienen eje de bandas.
+    paths = layout.get(extension='.txt', task=task, suffix=feature, return_type='filename')
 
     norm_str = 'True' if norm else 'False'
     filter_tag = f"space-ics[{spatial_matrix}]_norm-{norm_str}"

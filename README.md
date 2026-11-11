@@ -6,17 +6,17 @@
 
 # eeg-harmonization (`sovaharmony`)
 
-Pipeline to preprocess and harmonize resting-state EEG recorded in different databases and laboratories, and to extract features from it. It works on datasets in [BIDS](https://bids.neuroimaging.io/) format and writes its outputs into a `derivatives/sovaharmony` folder inside each dataset.
+Pipeline to preprocess and harmonize resting-state EEG recorded in different databases and laboratories, and to extract features from it. It works on datasets in [BIDS](https://bids.neuroimaging.io/) format and writes its outputs into the `derivatives` folder inside each dataset (stages 1 and 2 in `derivatives/sovaharmony`, the tables of stage 3 in `derivatives/data_columns` and `derivatives/data_long`).
 
 By default it is configured for **high-density EEG** (54 channels). A reduction to an 8-channel montage (low density, used with portable devices) is available as an option.
 
 ## What the pipeline does
 
-| Stage | Function | What it does | Output (inside `<dataset>/derivatives/sovaharmony`) |
+| Stage | Function | What it does | Output (inside `<dataset>/derivatives`) |
 |---|---|---|---|
-| 1. Preprocessing | `harmonize` (`sovaharmony/preprocessing.py`) | Cleaning with PREP and wavelet-ICA, epoching, rejection of bad epochs, Huber normalization. | `.fif` files (`prep`, `wica`, `reject[...]`, `huber[...]`), quality statistics, log in `code/` |
-| 2. Features | `features` (`sovaharmony/postprocessing.py`) | Computes features per epoch, on the sensors or on independent components (ICs) obtained with a spatial filter. | `.txt` / `.json` files per recording and feature |
-| 3. Data frames | `pipeline(..., prepdf=True, propdf=True)` | Collects the previous outputs into tables (one row per participant). | `.feather` / long-format tables |
+| 1. Preprocessing | `harmonize` (`sovaharmony/preprocessing.py`) | Cleaning with PREP and wavelet-ICA, epoching, rejection of bad epochs, Huber normalization. | `.fif` files (`prep`, `wica`, `reject[...]`, `huber[...]`), quality statistics, log in `code/` (all in `sovaharmony/`) |
+| 2. Features | `features` (`sovaharmony/postprocessing.py`) | Computes features per epoch, on the sensors or on independent components (ICs) obtained with a spatial filter. | `.txt` / `.json` files per recording and feature (in `sovaharmony/`) |
+| 3. Data frames | `pipeline(..., prepdf=True, propdf=True)` | Collects the previous outputs into tables (one row per participant). | `.feather` tables in `data_columns/` (one row per participant) and `data_long/` (long format), plus PREP / wICA / reject quality tables (`data_<task>_PREP.feather`, ...) at the `derivatives` root |
 
 Stages are controlled with the flags `prep`, `post`, `prepdf`, `propdf` of `sovaharmony.pipeline.pipeline`, so each one can be run separately.
 

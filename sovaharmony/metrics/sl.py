@@ -329,8 +329,11 @@ def synchronization(data, config, num_it, speed):
 
 
 def get_sl_1band(signal,fmin=None,fmax=None):
+    # mne's filter() works IN PLACE. Filter a copy: otherwise the caller's signal is modified, and when this
+    # function is called once per band on the same object (see features._get_sl) the band filters
+    # accumulate, so every band after the first is computed on the residual of the previous filters.
     if fmin and fmax:
-        new_signal = signal.filter(fmin,fmax)
+        new_signal = signal.copy().filter(fmin,fmax)
     else:
         new_signal = signal.copy()
     data = new_signal.get_data()

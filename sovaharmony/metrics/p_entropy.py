@@ -90,8 +90,11 @@ def weighted_ordinal_patterns(ts, embdim, embdelay):
     return(wop)
 
 def get_entropy_freq(signal,D=3,fmin=None,fmax=None):
+    # mne's filter() works IN PLACE. Filter a copy: otherwise the caller's signal is modified, and when this
+    # function is called once per band on the same object (see features._get_entropy) the band filters
+    # accumulate, so every band after the first is computed on the residual of the previous filters.
     if fmin and fmax:
-        new_signal =signal.filter(fmin,fmax)
+        new_signal =signal.copy().filter(fmin,fmax)
     else:
         new_signal =signal.copy()
 
